@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -20,7 +21,8 @@ def _require_live() -> None:
 
 def _load_live_config() -> Config:
     try:
-        return Config.from_env()
+        env_file = Path(__file__).resolve().parents[1] / ".env"
+        return Config.from_env(env_file=env_file if env_file.is_file() else None)
     except ValueError as exc:
         pytest.skip(f"Missing UniFi env config: {exc}")
         raise
