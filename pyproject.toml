@@ -1,0 +1,117 @@
+[build-system]
+requires = ["setuptools==82.0.0", "wheel==0.46.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unifi-topology"
+version = "0.1.0"
+description = "Python library for UniFi network topology discovery and SVG rendering"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Merlijn Tishauser" }]
+keywords = ["unifi", "network", "topology", "diagram", "svg"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Home Automation",
+  "Topic :: System :: Networking",
+]
+dependencies = [
+  "requests>=2.31,<3",
+  "python-dotenv==1.2.1",
+  "PyYAML==6.0.3",
+  "dnspython==2.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/merlijntishauser/unifi-topology"
+Repository = "https://github.com/merlijntishauser/unifi-topology"
+Issues = "https://github.com/merlijntishauser/unifi-topology/issues"
+Changelog = "https://github.com/merlijntishauser/unifi-topology/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+dev = [
+  "Faker==40.5.1",
+  "pre-commit==4.5.1",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyright==1.1.408",
+  "radon==6.0.1",
+  "ruff==0.15.2",
+  "xenon==0.9.3"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["C90", "E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.pyright]
+pythonVersion = "3.13"
+typeCheckingMode = "standard"
+include = ["src", "tests"]
+venvPath = "."
+venv = ".venv"
+
+# Xenon enforces cyclomatic complexity thresholds:
+# A=1-5 (simple), B=6-10 (low), C=11-20 (moderate), D=21-30 (high), E=31-40 (very high), F=41+ (error-prone)
+# Run: xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
+# For detailed analysis: radon cc src/unifi_topology -a -s
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["src/unifi_topology/assets"]
+addopts = "-ra"
+markers = [
+    "unit: Pure unit tests with no external dependencies",
+    "integration: Tests involving multiple components working together",
+    "contract: API contract verification tests",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["unifi_topology"]
+
+[tool.coverage.paths]
+source = [
+    "src/unifi_topology",
+    "*/site-packages/unifi_topology",
+]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+"unifi_topology" = [
+  "assets/icons/*.svg",
+  "assets/icons/isometric/*.svg",
+  "assets/icons/isometric/ISOPACKS_LICENSE",
+  "assets/icons/modern/*.svg",
+  "assets/icons/modern-flat/*.svg",
+  "assets/themes/*.yaml",
+  "assets/fonts/*.woff2",
+  "assets/fonts/*_LICENSE",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

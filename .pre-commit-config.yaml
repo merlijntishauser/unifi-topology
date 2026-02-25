@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.4
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: .venv/bin/pyright
+        language: system
+        pass_filenames: false
+      - id: xenon
+        name: xenon complexity check
+        entry: .venv/bin/xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
+        language: system
+        pass_filenames: false
+      - id: complexity-max
+        name: complexity max 12
+        entry: ./scripts/check_complexity.sh 12
+        language: system
+        pass_filenames: false
+      - id: pytest
+        name: pytest
+        entry: .venv/bin/pytest
+        language: system
+        pass_filenames: false
