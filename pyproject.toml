@@ -103,6 +103,7 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
 "unifi_topology" = [
+  "py.typed",
   "assets/icons/*.svg",
   "assets/icons/isometric/*.svg",
   "assets/icons/isometric/ISOPACKS_LICENSE",

@@ -1,5 +1,10 @@
 # unifi-topology
 
+[![CI](https://github.com/merlijntishauser/unifi-topology/actions/workflows/ci.yml/badge.svg)](https://github.com/merlijntishauser/unifi-topology/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/unifi-topology)](https://pypi.org/project/unifi-topology/)
+[![Python](https://img.shields.io/pypi/pyversions/unifi-topology)](https://pypi.org/project/unifi-topology/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Python library for UniFi network topology discovery and SVG diagram rendering.
 
 Extracted from [unifi-network-maps](https://github.com/merlijntishauser/unifi-network-maps) to provide a clean library API for programmatic use, including the [Home Assistant integration](https://github.com/merlijntishauser/unifi-network-maps-ha).
@@ -81,6 +86,10 @@ make test        # pytest
 make ci          # all checks
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
+
 ## License
 
-MIT
+MIT -- see [LICENSE](LICENSE). Third-party licenses in [LICENSES.md](LICENSES.md).
