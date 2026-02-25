@@ -10,8 +10,8 @@ from unifi_topology.model.classify import (
 )
 from unifi_topology.model.clients import (
     _client_channel,
-    _client_uplink_mac,
-    _client_uplink_port,
+    client_uplink_mac,
+    client_uplink_port,
     build_client_edges,
     build_client_port_map,
     build_node_type_map,
@@ -413,12 +413,12 @@ def test_aggregation_group_reads_object_attr():
 
 def test_client_uplink_mac_nested():
     client = {"uplink": {"uplink_mac": "aa:bb"}}
-    assert _client_uplink_mac(client) == "aa:bb"
+    assert client_uplink_mac(client) == "aa:bb"
 
 
 def test_client_uplink_port_nested_str():
     client = {"uplink": {"uplink_remote_port": "3"}}
-    assert _client_uplink_port(client) == 3
+    assert client_uplink_port(client) == 3
 
 
 def test_build_client_edges_skips_unwired():
@@ -546,27 +546,27 @@ def test_client_display_name_missing_returns_none():
 
 def test_client_uplink_port_direct_int():
     client = {"uplink_remote_port": 4}
-    assert _client_uplink_port(client) == 4
+    assert client_uplink_port(client) == 4
 
 
 def test_client_uplink_port_direct_str_digit():
     client = {"sw_port": "7"}
-    assert _client_uplink_port(client) == 7
+    assert client_uplink_port(client) == 7
 
 
 def test_client_uplink_port_parses_port_label():
     client = {"uplink_remote_port": "Port 9"}
-    assert _client_uplink_port(client) == 9
+    assert client_uplink_port(client) == 9
 
 
 def test_client_uplink_port_nested_int():
     client = {"uplink": {"uplink_remote_port": 8}}
-    assert _client_uplink_port(client) == 8
+    assert client_uplink_port(client) == 8
 
 
 def test_client_uplink_mac_nested_empty():
     client = {"uplink": {"uplink_mac": ""}}
-    assert _client_uplink_mac(client) is None
+    assert client_uplink_mac(client) is None
 
 
 def test_build_client_edges_include_ports_without_port():

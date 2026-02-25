@@ -16,7 +16,7 @@ from .ports import extract_port_number
 from .topology import ClientPortMap, Device, Edge
 
 
-def _client_uplink_mac(client: object) -> str | None:
+def client_uplink_mac(client: object) -> str | None:
     """Get the MAC address of the device this client is connected to."""
     mac = first_string_field(
         client, "ap_mac", "sw_mac", "uplink_mac", "uplink_device_mac", "last_uplink_mac"
@@ -55,7 +55,7 @@ def _parse_port_value(value: object | None) -> int | None:
     return None
 
 
-def _client_uplink_port(client: object) -> int | None:
+def client_uplink_port(client: object) -> int | None:
     """Get the port number this client is connected to."""
     for value in _client_port_values(client):
         parsed = _parse_port_value(value)
@@ -152,7 +152,7 @@ def build_client_edges(
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
         name = client_display_name(client)
-        uplink_mac = _client_uplink_mac(client)
+        uplink_mac = client_uplink_mac(client)
         if not name or not uplink_mac:
             continue
         device_name = device_index.get(normalize_mac(uplink_mac))
@@ -160,7 +160,7 @@ def build_client_edges(
             continue
         label = None
         if include_ports:
-            uplink_port = _client_uplink_port(client)
+            uplink_port = client_uplink_port(client)
             if uplink_port is not None:
                 label = f"{device_name}: Port {uplink_port} <-> {name}"
         key = (device_name, name)
@@ -225,8 +225,8 @@ def build_client_port_map(
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
         name = client_display_name(client)
-        uplink_mac = _client_uplink_mac(client)
-        uplink_port = _client_uplink_port(client)
+        uplink_mac = client_uplink_mac(client)
+        uplink_port = client_uplink_port(client)
         if not name or not uplink_mac or uplink_port is None:
             continue
         device_name = device_index.get(normalize_mac(uplink_mac))

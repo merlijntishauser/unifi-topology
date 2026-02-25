@@ -133,6 +133,14 @@ def load_svg_theme(path: str | Path) -> SvgTheme:
     return _load_svg_theme_from_path(theme_path)
 
 
+def builtin_theme_yaml_path(name: str) -> Path:
+    """Return the file path for a built-in theme YAML."""
+    if name not in BUILTIN_THEMES:
+        valid = ", ".join(sorted(BUILTIN_THEMES.keys()))
+        raise ValueError(f"Unknown theme: {name}. Valid themes: {valid}")
+    return _ASSETS_DIR / BUILTIN_THEMES[name]
+
+
 def resolve_svg_themes(
     theme_name: str | None = None,
     theme_file: str | Path | None = None,
