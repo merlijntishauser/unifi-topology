@@ -26,7 +26,7 @@ jobs:
           python -m pip install -r requirements-build.txt
           python -m pip install build -c constraints.txt
           python -m build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: dist
           path: dist/
