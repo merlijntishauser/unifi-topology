@@ -10,11 +10,11 @@ from unifi_topology.model.classify import (
 )
 from unifi_topology.model.clients import (
     _client_channel,
-    client_uplink_mac,
-    client_uplink_port,
     build_client_edges,
     build_client_port_map,
     build_node_type_map,
+    client_uplink_mac,
+    client_uplink_port,
 )
 from unifi_topology.model.edges import (
     _port_speed_by_idx,
