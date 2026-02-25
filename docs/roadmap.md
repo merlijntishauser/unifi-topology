@@ -2,6 +2,28 @@
 
 Items extracted from the original `unifi-network-maps` roadmap that belong to this library.
 
+## Security
+
+### Race condition in cache file operations (HIGH)
+In `adapters/unifi.py` -- window between `tmp_path.write_text()` and `tmp_path.replace()` allows file modification. Fix: use `os.O_EXCL`, set restrictive permissions immediately on temp file.
+
+### Incomplete XSS protection in SVG output (MEDIUM)
+In `render/svg.py` -- custom `_escape_text()` only escapes `&<>`; should use `html.escape()` for consistency.
+
+### Unvalidated environment variable integers (LOW)
+In `adapters/unifi.py` -- env vars (`UNIFI_CACHE_TTL_SECONDS`, `UNIFI_RETRY_ATTEMPTS`, etc.) use `.isdigit()` but no range validation. Fix: add reasonable bounds checks after conversion.
+
+## Features
+
+### UniFi 2D theme
+Matching Ubiquiti's 2D visual style.
+
+### Multi-row client layout
+Clients placed across multiple rows instead of one horizontal row, to keep SVG more square.
+
+### Cable/link labeling
+Extend port label composition with optional cable-name mapping file; needs port metadata (`port_desc`, `port_overrides`).
+
 ## Inline UniFi client (unifi_api.py)
 
 ### Auth response: check HTTP status before parsing JSON
