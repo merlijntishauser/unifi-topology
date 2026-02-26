@@ -16,5 +16,6 @@ src/*.egg-info/
 .coverage.*
 build/
 /dist/
+/site/
 /.run/
 /.claude/
