@@ -32,11 +32,11 @@ from unifi_topology import (
 
 # Connect to UniFi controller
 config = Config.from_env()
-raw_devices = fetch_devices(config)
+api_devices = fetch_devices(config)
 networks = fetch_networks(config)
 
 # Build topology model
-devices = normalize_devices(raw_devices)
+devices = normalize_devices(api_devices)
 result = build_topology(devices, include_ports=True, only_unifi=False)
 wan_info = extract_wan_info(devices, list(networks))
 
