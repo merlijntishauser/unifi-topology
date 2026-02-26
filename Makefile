@@ -1,5 +1,5 @@
 .PHONY: venv install lint format typecheck complexity test test-unit test-integration test-contract \
-        coverage ci help
+        coverage ci version-bump help
 
 VENV = .venv/bin
 PYTHON ?= python
@@ -68,6 +68,10 @@ ci:
 	@echo ""
 	@echo "=== All checks passed ==="
 
+# Release
+version-bump:
+	@scripts/version_bump.sh
+
 # Help
 help:
 	@echo "Available targets:"
@@ -83,3 +87,4 @@ help:
 	@echo "  test-contract - Run contract tests only"
 	@echo "  coverage    - Run tests with coverage report"
 	@echo "  ci          - Run all CI checks"
+	@echo "  version-bump - Bump version, commit, tag, and push"
