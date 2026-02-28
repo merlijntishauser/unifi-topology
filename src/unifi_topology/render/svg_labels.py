@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..model.topology import WanInfo, WanInterface
+from ..model.topology import VpnTunnel, WanInfo, WanInterface
 
 
 def _escape_text(value: str) -> str:
@@ -191,3 +191,12 @@ def _build_wan_label_lines(wan_info: WanInfo) -> list[str]:
             label_lines.append(wan_info.wan1.ip_address)
 
     return label_lines
+
+
+def _build_vpn_label_lines(tunnels: list[VpnTunnel]) -> list[str]:
+    """Build label lines for VPN tunnel display."""
+    lines: list[str] = []
+    for tunnel in tunnels:
+        status = "UP" if tunnel.up else "DOWN"
+        lines.append(f"{tunnel.name} ({status})")
+    return lines

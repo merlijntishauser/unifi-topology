@@ -6,7 +6,7 @@ import math
 from dataclasses import dataclass
 from html import escape as _escape_html
 
-from ..model.topology import Edge, WanInfo
+from ..model.topology import Edge, VpnTunnel, WanInfo
 from .svg_icons import _build_decal_colors, _load_isometric_icons
 from .svg_iso_edges import _render_iso_edges
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
@@ -17,6 +17,7 @@ from .svg_labels import (
 )
 from .svg_layout import _build_node_to_group_map, _resolve_group_order
 from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme, _svg_style_block, svg_defs
+from .svg_vpn import _render_iso_vpn_tunnels
 from .svg_wan import _vlan_group_colors
 
 # Re-export IsoLayout for external consumers
@@ -497,6 +498,7 @@ def render_svg_isometric(
     group_order: list[str] | None = None,
     group_vlan_ids: dict[str, int] | None = None,
     wan_info: WanInfo | None = None,
+    vpn_tunnels: list[VpnTunnel] | None = None,
 ) -> str:
     """Render an isometric (2.5D) SVG network diagram.
 
@@ -517,6 +519,10 @@ def render_svg_isometric(
         view_width, view_height = _expand_viewbox_for_wan(
             view_width, view_height, wan_info, node_types, positions, layout, options
         )
+    if vpn_tunnels:
+        # VPN box extends to the south-west; expand viewport to accommodate
+        view_width = view_width + 200
+        view_height = view_height + 100
 
     out_width = options.width or int(view_width)
     out_height = options.height or int(view_height)
@@ -572,6 +578,19 @@ def render_svg_isometric(
     )
 
     _maybe_render_wan_upstream(lines, wan_info, node_types, positions, layout, options, theme)
+
+    if vpn_tunnels:
+        gateway_pos = _find_gateway_position(node_types, positions)
+        if gateway_pos:
+            _render_iso_vpn_tunnels(
+                lines,
+                vpn_tunnels,
+                gateway_pos,
+                layout.tile_width,
+                layout.tile_height,
+                options,
+                theme,
+            )
 
     lines.append("</svg>")
     return "\n".join(lines) + "\n"

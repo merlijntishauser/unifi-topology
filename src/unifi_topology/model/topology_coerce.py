@@ -305,6 +305,12 @@ def _resolve_lldp_info(
     raise ValueError(f"Device {name} missing LLDP info")
 
 
+def _coerce_network_table(device: DeviceSource) -> list[dict[str, object]]:
+    """Extract and validate network_table entries from device data."""
+    raw = as_list(get_field(device, "network_table"))
+    return [e for e in raw if isinstance(e, dict)]
+
+
 def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None = None) -> Device:
     name = get_field(device, "name")
     mac = get_field(device, "mac")
@@ -324,6 +330,7 @@ def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None 
     coerced_lldp = [coerce_lldp(entry) for entry in lldp_entries]
     port_table = _coerce_port_table(device, network_vlan_map)
     poe_ports = _poe_ports_from_device(device, network_vlan_map)
+    network_table = _coerce_network_table(device)
 
     return Device(
         name=str(name),
@@ -339,6 +346,7 @@ def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None 
         last_uplink=last_uplink,
         version=str(version or ""),
         in_gateway_mode=in_gateway_mode,
+        network_table=network_table,
     )
 
 

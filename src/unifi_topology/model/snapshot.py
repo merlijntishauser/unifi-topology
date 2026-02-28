@@ -157,7 +157,7 @@ def wan_info_from_dict(data: dict[str, Any]) -> WanInfo:
 
 def device_to_dict(device: Device) -> dict[str, Any]:
     """Serialize a Device to a dictionary."""
-    return {
+    result: dict[str, Any] = {
         "name": device.name,
         "model_name": device.model_name,
         "model": device.model,
@@ -171,6 +171,9 @@ def device_to_dict(device: Device) -> dict[str, Any]:
         "last_uplink": uplink_info_to_dict(device.last_uplink) if device.last_uplink else None,
         "version": device.version,
     }
+    if device.network_table:
+        result["network_table"] = device.network_table
+    return result
 
 
 def device_from_dict(data: dict[str, Any]) -> Device:
@@ -180,6 +183,7 @@ def device_from_dict(data: dict[str, Any]) -> Device:
     poe_ports = {int(k): v for k, v in data.get("poe_ports", {}).items()}
     uplink = uplink_info_from_dict(data["uplink"]) if data.get("uplink") else None
     last_uplink = uplink_info_from_dict(data["last_uplink"]) if data.get("last_uplink") else None
+    network_table = data.get("network_table", [])
     return Device(
         name=data.get("name", ""),
         model_name=data.get("model_name", ""),
@@ -193,6 +197,7 @@ def device_from_dict(data: dict[str, Any]) -> Device:
         uplink=uplink,
         last_uplink=last_uplink,
         version=data.get("version", ""),
+        network_table=network_table if isinstance(network_table, list) else [],
     )
 
 
