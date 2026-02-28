@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .helpers import normalize_mac
 from .lldp import LLDPEntry
@@ -67,6 +67,7 @@ class Device:
     last_uplink: UplinkInfo | None = None
     version: str = ""
     in_gateway_mode: bool | None = None
+    network_table: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -104,6 +105,19 @@ class WanInfo:
 
     wan1: WanInterface | None = None
     wan2: WanInterface | None = None
+
+
+@dataclass(frozen=True)
+class VpnTunnel:
+    """A single VPN tunnel on a gateway device."""
+
+    name: str
+    vpn_type: str
+    remote_subnets: tuple[str, ...]
+    ifname: str | None
+    enabled: bool
+    up: bool
+    gateway_mac: str | None
 
 
 @dataclass(frozen=True)
@@ -200,6 +214,7 @@ __all__ = [
     "TopologyResult",
     "Topology",
     "UplinkInfo",
+    "VpnTunnel",
     "WanInfo",
     "WanInterface",
     # Functions

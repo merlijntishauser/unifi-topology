@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from ..model.topology import Edge, WanInfo
+from ..model.topology import Edge, VpnTunnel, WanInfo
 from .svg_edges import _render_svg_edges
 from .svg_icons import (
     _TYPE_COLORS,
@@ -22,6 +22,7 @@ from .svg_layout import (
     _svg_node_group_attrs,
 )
 from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme, _svg_style_block, svg_defs
+from .svg_vpn import _render_vpn_tunnels, _vpn_box_height_estimate
 from .svg_wan import (
     _apply_wan_offset,
     _find_gateway_position,
@@ -37,6 +38,7 @@ def _compute_svg_layout(
     groups: dict[str, list[str]] | None,
     group_order: list[str] | None,
     wan_info: WanInfo | None,
+    vpn_tunnels: list[VpnTunnel] | None = None,
 ) -> tuple[dict[str, tuple[float, float]], list[GroupBounds], float, float, bool]:
     """Compute node positions, group bounds, and canvas dimensions.
 
@@ -57,6 +59,10 @@ def _compute_svg_layout(
             positions, group_bounds_list, height, wan_box_height
         )
 
+    if vpn_tunnels:
+        vpn_extra = _vpn_box_height_estimate(len(vpn_tunnels), options.font_size)
+        height = height + vpn_extra
+
     return positions, group_bounds_list, float(width), float(height), bool(use_grouped)
 
 
@@ -71,12 +77,13 @@ def render_svg(
     group_order: list[str] | None = None,
     group_vlan_ids: dict[str, int] | None = None,
     wan_info: WanInfo | None = None,
+    vpn_tunnels: list[VpnTunnel] | None = None,
 ) -> str:
     options = options or SvgOptions()
     icons = _load_icons(theme.icon_set, decal_color=theme.text_primary)
 
     positions, group_bounds_list, width, height, use_grouped = _compute_svg_layout(
-        edges, node_types, options, groups, group_order, wan_info
+        edges, node_types, options, groups, group_order, wan_info, vpn_tunnels
     )
 
     out_width = options.width or width
@@ -112,6 +119,11 @@ def render_svg(
         gateway_pos = _find_gateway_position(node_types, positions)
         if gateway_pos:
             _render_wan_upstream(lines, wan_info, gateway_pos, options, theme)
+
+    if vpn_tunnels:
+        gateway_pos = _find_gateway_position(node_types, positions)
+        if gateway_pos:
+            _render_vpn_tunnels(lines, vpn_tunnels, gateway_pos, options, theme)
 
     lines.append("</svg>")
     return "\n".join(lines) + "\n"
@@ -232,6 +244,7 @@ def render_dual(
     vlan_names: dict[int, str] | None = None,
     vlan_node_map: dict[str, int | None] | None = None,
     wan_info: WanInfo | None = None,
+    vpn_tunnels: list[VpnTunnel] | None = None,
     isometric: bool = False,
 ) -> dict[str, str | None]:
     """Render both physical and VLAN-grouped SVGs from shared topology data.
@@ -257,6 +270,7 @@ def render_dual(
         options=physical_options,
         theme=theme,
         wan_info=wan_info,
+        vpn_tunnels=vpn_tunnels,
     )
 
     # Build VLAN groups
@@ -281,6 +295,7 @@ def render_dual(
         group_order=group_order,
         group_vlan_ids=group_vlan_ids,
         wan_info=wan_info,
+        vpn_tunnels=vpn_tunnels,
     )
 
     return {"physical": physical_svg, "vlan": vlan_svg}

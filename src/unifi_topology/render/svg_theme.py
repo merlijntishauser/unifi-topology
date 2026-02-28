@@ -61,6 +61,11 @@ class SvgTheme:
     wan_globe: tuple[str, str] = ("#4fc3f7", "#0288d1")
     wan_background: str = "#f0f9ff"  # Light blue tint for WAN box
 
+    # VPN tunnels
+    vpn_up: tuple[str, str] = ("#66bb6a", "#2e7d32")
+    vpn_down: tuple[str, str] = ("#ef5350", "#c62828")
+    vpn_background: str = "#f0fff0"
+
     # PoE indicator
     poe_fill: str = "#1565c0"  # Dark blue
     poe_stroke: str = "#ffc107"  # Golden
@@ -195,8 +200,10 @@ def svg_defs(prefix: str, theme: SvgTheme = DEFAULT_THEME) -> str:
         "</filter>"
     )
 
-    # Globe gradient and PoE bolt symbol
+    # Globe gradient, VPN gradients, and PoE bolt symbol
     parts.append(_gradient(f"{gradient_prefix}globe", theme.wan_globe))
+    parts.append(_gradient(f"{gradient_prefix}vpn-up", theme.vpn_up))
+    parts.append(_gradient(f"{gradient_prefix}vpn-down", theme.vpn_down))
     parts.append(
         f'<symbol id="{filter_prefix}poe-bolt" viewBox="0 0 24 24">'
         '<path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z" clip-rule="evenodd"/>'
