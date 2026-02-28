@@ -1,6 +1,6 @@
 """UniFi network topology discovery and SVG rendering library."""
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 from .adapters import Config, fetch_clients, fetch_devices, fetch_networks, resolve_hostnames
 from .model import (
