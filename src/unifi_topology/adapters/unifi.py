@@ -133,6 +133,12 @@ def _device_uplink_fields(device: object) -> dict[str, object | None]:
     }
 
 
+def _serialize_network_table(value: object | None) -> list[dict[str, object]]:
+    """Serialize network_table entries for cache (preserves VPN tunnel data)."""
+    entries = as_list(value)
+    return [dict(e) for e in entries if isinstance(e, dict)]
+
+
 def _serialize_device_for_cache(device: object) -> dict[str, object]:
     payload = {
         "name": get_field(device, "name"),
@@ -145,6 +151,7 @@ def _serialize_device_for_cache(device: object) -> dict[str, object]:
         "displayable_version": first_attr(device, "displayable_version", "version"),
         "lldp_info": _serialize_lldp_entries(_device_lldp_value(device)),
         "port_table": _serialize_port_table(get_field(device, "port_table")),
+        "network_table": _serialize_network_table(get_field(device, "network_table")),
     }
     payload.update(_device_uplink_fields(device))
     return payload
