@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/merlijntishauser/unifi-topology/actions/workflows/ci.yml/badge.svg)](https://github.com/merlijntishauser/unifi-topology/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/unifi-topology)](https://pypi.org/project/unifi-topology/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dw/unifi-topology)](https://pypi.org/project/unifi-topology/)
 [![Python](https://img.shields.io/pypi/pyversions/unifi-topology)](https://pypi.org/project/unifi-topology/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
