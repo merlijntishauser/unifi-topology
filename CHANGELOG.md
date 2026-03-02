@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 1.0.4 (2026-02-28)
+
+### Fixed
+
+- `network_table` field lost during device cache serialization, breaking VPN tunnel extraction from cached data
+
 ## 1.0.3 (2026-02-28)
 
 ### Added
@@ -37,7 +43,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/merlijntishauser/unifi-topology/releases/tag/v1.0.1
