@@ -39,7 +39,7 @@ Changelog = "https://github.com/merlijntishauser/unifi-topology/blob/main/CHANGE
 
 [project.optional-dependencies]
 dev = [
-  "Faker==40.5.1",
+  "Faker==40.8.0",
   "pre-commit==4.5.1",
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
@@ -49,7 +49,7 @@ dev = [
   "xenon==0.9.3",
 ]
 docs = [
-  "mkdocs-material==9.7.3",
+  "mkdocs-material==9.7.4",
   "mkdocstrings[python]==1.0.3",
 ]
 
