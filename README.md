@@ -55,11 +55,17 @@ svg = render_svg(result.devices, result.edges, theme=theme, options=options, wan
 - `fetch_devices(config)` -- Fetch device list from UniFi controller
 - `fetch_clients(config)` -- Fetch active clients
 - `fetch_networks(config)` -- Fetch network/VLAN configuration
+- `fetch_firewall_zones(config)` -- Fetch firewall zone definitions
+- `fetch_firewall_policies(config)` -- Fetch zone-based firewall policies
+- `fetch_firewall_groups(config)` -- Fetch firewall address/port groups
 - `resolve_hostnames(ips, dns_server)` -- Reverse DNS resolution
 
 ### Model
 
 - `normalize_devices(raw)` -- Convert raw API data to `Device` objects
+- `normalize_firewall_zones(raw)` -- Convert raw zone data to `FirewallZone` objects
+- `normalize_firewall_policies(raw)` -- Convert raw policy data to `FirewallPolicy` objects
+- `normalize_firewall_groups(raw)` -- Convert raw group data to `FirewallGroup` objects
 - `build_topology(devices, ...)` -- Build topology graph (`TopologyResult` with devices + edges)
 - `build_device_inventory(devices)` -- Build device info table (`list[DeviceInfo]`)
 - `extract_wan_info(devices, networks)` -- Extract WAN upstream info
