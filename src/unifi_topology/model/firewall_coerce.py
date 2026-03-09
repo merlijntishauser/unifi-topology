@@ -32,6 +32,14 @@ def _resolve_action(entry: object) -> str:
     return action if action else "BLOCK"
 
 
+def _zone_id_from_nested(entry: object, key: str) -> str:
+    """Extract zone_id from a nested dict (e.g. entry["source"]["zone_id"])."""
+    nested = first_attr(entry, key)
+    if isinstance(nested, dict):
+        return _as_str(nested.get("zone_id"))
+    return ""
+
+
 def _resolve_zone_ids(entry: object) -> tuple[str, str]:
     """Extract source and destination zone IDs from a policy entry."""
     source = _as_str(
@@ -42,7 +50,7 @@ def _resolve_zone_ids(entry: object) -> tuple[str, str]:
             "source_zone",
             "src_zone_id",
         )
-    )
+    ) or _zone_id_from_nested(entry, "source")
     dest = _as_str(
         first_attr(
             entry,
@@ -51,14 +59,44 @@ def _resolve_zone_ids(entry: object) -> tuple[str, str]:
             "destination_zone",
             "dst_zone_id",
         )
-    )
+    ) or _zone_id_from_nested(entry, "destination")
     return source, dest
+
+
+def _port_ranges_from_nested(entry: object) -> tuple[str, ...]:
+    """Extract port ranges from nested source/destination dicts."""
+    dst = first_attr(entry, "destination")
+    if not isinstance(dst, dict):
+        return ()
+    if dst.get("port_matching_type") == "ANY":
+        return ()
+    port = dst.get("port")
+    if port is not None:
+        return (str(port),)
+    return ()
+
+
+def _ip_ranges_from_nested(entry: object) -> tuple[str, ...]:
+    """Extract IP ranges from nested destination dict."""
+    dst = first_attr(entry, "destination")
+    if not isinstance(dst, dict):
+        return ()
+    ips = dst.get("ips")
+    if isinstance(ips, list):
+        return tuple(str(ip) for ip in ips if ip is not None)
+    return ()
 
 
 def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
     """Build a FirewallPolicy from a raw entry with a validated ID."""
     source_zone, dest_zone = _resolve_zone_ids(entry)
     enabled_raw = first_attr(entry, "enabled")
+    port_ranges = _as_tuple_str(first_attr(entry, "port_ranges", "ports", "dst_port"))
+    if not port_ranges:
+        port_ranges = _port_ranges_from_nested(entry)
+    ip_ranges = _as_tuple_str(first_attr(entry, "ip_ranges", "addresses", "dst_address"))
+    if not ip_ranges:
+        ip_ranges = _ip_ranges_from_nested(entry)
     return FirewallPolicy(
         id=policy_id,
         name=_as_str(first_attr(entry, "name", "description", "policy_name")),
@@ -67,8 +105,8 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
         source_zone_id=source_zone,
         destination_zone_id=dest_zone,
         protocol=_as_str(first_attr(entry, "protocol", "ip_protocol"), default="all"),
-        port_ranges=_as_tuple_str(first_attr(entry, "port_ranges", "ports", "dst_port")),
-        ip_ranges=_as_tuple_str(first_attr(entry, "ip_ranges", "addresses", "dst_address")),
+        port_ranges=port_ranges,
+        ip_ranges=ip_ranges,
         description=_as_str(first_attr(entry, "description", "desc")),
         index=as_int(first_attr(entry, "index", "rule_index", "order", "position")),
         predefined=as_bool(first_attr(entry, "predefined", "is_predefined")),
