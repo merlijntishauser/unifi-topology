@@ -2,12 +2,22 @@
 
 from .config import Config
 from .dns import resolve_hostnames
-from .unifi import fetch_clients, fetch_devices, fetch_networks
+from .unifi import (
+    fetch_clients,
+    fetch_devices,
+    fetch_firewall_groups,
+    fetch_firewall_policies,
+    fetch_firewall_zones,
+    fetch_networks,
+)
 
 __all__ = [
     "Config",
     "fetch_clients",
     "fetch_devices",
+    "fetch_firewall_groups",
+    "fetch_firewall_policies",
+    "fetch_firewall_zones",
     "fetch_networks",
     "resolve_hostnames",
 ]

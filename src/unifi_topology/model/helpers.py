@@ -35,6 +35,20 @@ def as_bool(value: object | None) -> bool:
     return False
 
 
+def as_int(value: object | None, default: int = 0) -> int:
+    """Coerce *value* to an integer."""
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        try:
+            return int(value.strip())
+        except ValueError:
+            return default
+    return default
+
+
 def first_attr(obj: object, *names: str) -> object | None:
     """Return the first non-None field value from *names*."""
     for name in names:
