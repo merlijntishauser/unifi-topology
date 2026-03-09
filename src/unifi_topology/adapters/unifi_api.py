@@ -167,8 +167,8 @@ class UnifiClient:
         return self._get(f"/api/s/{site}/rest/networkconf")
 
     def get_firewall_zones(self, site: str) -> list[dict[str, object]]:
-        """Fetch firewall zone definitions (Integration API v1)."""
-        return self._get_v2(f"/v2/api/site/{site}/firewall/zones")
+        """Fetch firewall zone definitions (V2 API)."""
+        return self._get_v2(f"/v2/api/site/{site}/firewall/zone")
 
     def get_firewall_policies(self, site: str) -> list[dict[str, object]]:
         """Fetch zone-based firewall policies (V2 API)."""

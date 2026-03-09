@@ -69,7 +69,7 @@ def test_get_firewall_zones_url(monkeypatch):
 
     result = client.get_firewall_zones("default")
     assert result == [{"_id": "z1", "name": "LAN"}]
-    assert session.calls[1][1] == "https://unifi.local/v2/api/site/default/firewall/zones"
+    assert session.calls[1][1] == "https://unifi.local/v2/api/site/default/firewall/zone"
 
 
 def test_get_firewall_zones_udm_pro_url(monkeypatch):
@@ -82,7 +82,7 @@ def test_get_firewall_zones_udm_pro_url(monkeypatch):
     assert result == [{"_id": "z1", "name": "WAN"}]
     assert (
         session.calls[1][1]
-        == "https://unifi.local/proxy/network/v2/api/site/default/firewall/zones"
+        == "https://unifi.local/proxy/network/v2/api/site/default/firewall/zone"
     )
 
 
