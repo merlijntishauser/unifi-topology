@@ -116,6 +116,42 @@ class UnifiClient:
 
         return payload["data"]
 
+    def _get_v2(self, path: str) -> list[dict[str, object]]:
+        """GET for V2/Integration API endpoints.
+
+        These endpoints may return a plain list or a different envelope.
+        Handles both cases.
+        """
+        url = f"{self._api_base}{path}"
+        response = self._session.get(url, verify=self._verify_ssl)
+
+        if response.status_code == 401:
+            logger.debug("Got 401, re-authenticating")
+            self._authenticate()
+            response = self._session.get(url, verify=self._verify_ssl)
+
+        if not response.ok:
+            raise UnifiApiError(f"GET {path} failed (HTTP {response.status_code})")
+
+        try:
+            payload = response.json()
+        except ValueError as exc:
+            raise UnifiApiError(f"Non-JSON response for {path}") from exc
+
+        # Handle plain list response
+        if isinstance(payload, list):
+            return payload
+
+        # Handle dict with "data" field (classic envelope)
+        if isinstance(payload, dict) and "data" in payload:
+            return payload["data"]
+
+        # Handle dict that is a single object (wrap in list)
+        if isinstance(payload, dict):
+            return [payload]
+
+        raise UnifiApiError(f"Unexpected response format for {path}")
+
     def get_devices(self, site: str, *, detailed: bool = False) -> list[dict[str, object]]:
         endpoint = "stat/device" if detailed else "stat/device-basic"
         return self._get(f"/api/s/{site}/{endpoint}")
@@ -125,3 +161,15 @@ class UnifiClient:
 
     def get_networkconf(self, site: str) -> list[dict[str, object]]:
         return self._get(f"/api/s/{site}/rest/networkconf")
+
+    def get_firewall_zones(self, site: str) -> list[dict[str, object]]:
+        """Fetch firewall zone definitions (Integration API v1)."""
+        return self._get_v2(f"/v2/api/site/{site}/firewall/zones")
+
+    def get_firewall_policies(self, site: str) -> list[dict[str, object]]:
+        """Fetch zone-based firewall policies (V2 API)."""
+        return self._get_v2(f"/v2/api/site/{site}/firewall-policies")
+
+    def get_firewall_groups(self, site: str) -> list[dict[str, object]]:
+        """Fetch firewall address/port groups (classic API)."""
+        return self._get(f"/api/s/{site}/rest/firewallgroup")

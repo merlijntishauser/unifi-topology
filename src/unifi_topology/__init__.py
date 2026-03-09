@@ -2,11 +2,23 @@
 
 __version__ = "1.0.4"
 
-from .adapters import Config, fetch_clients, fetch_devices, fetch_networks, resolve_hostnames
+from .adapters import (
+    Config,
+    fetch_clients,
+    fetch_devices,
+    fetch_firewall_groups,
+    fetch_firewall_policies,
+    fetch_firewall_zones,
+    fetch_networks,
+    resolve_hostnames,
+)
 from .model import (
     Device,
     DeviceInfo,
     Edge,
+    FirewallGroup,
+    FirewallPolicy,
+    FirewallZone,
     TopologyResult,
     VpnTunnel,
     WanInfo,
@@ -19,6 +31,9 @@ from .model import (
     extract_wan_info,
     group_devices_by_type,
     normalize_devices,
+    normalize_firewall_groups,
+    normalize_firewall_policies,
+    normalize_firewall_zones,
 )
 from .render import (
     DEFAULT_SVG_THEME,
@@ -36,6 +51,9 @@ __all__ = [
     "Device",
     "DeviceInfo",
     "Edge",
+    "FirewallGroup",
+    "FirewallPolicy",
+    "FirewallZone",
     "SvgOptions",
     "SvgTheme",
     "TopologyResult",
@@ -50,9 +68,15 @@ __all__ = [
     "extract_wan_info",
     "fetch_clients",
     "fetch_devices",
+    "fetch_firewall_groups",
+    "fetch_firewall_policies",
+    "fetch_firewall_zones",
     "fetch_networks",
     "group_devices_by_type",
     "normalize_devices",
+    "normalize_firewall_groups",
+    "normalize_firewall_policies",
+    "normalize_firewall_zones",
     "render_dual",
     "render_svg",
     "render_svg_isometric",

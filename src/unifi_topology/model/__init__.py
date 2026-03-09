@@ -6,6 +6,12 @@ from typing import TYPE_CHECKING
 
 from .clients import build_client_edges, build_node_type_map
 from .edges import build_device_index, build_topology, group_devices_by_type, group_nodes_by_vlan
+from .firewall import FirewallGroup, FirewallPolicy, FirewallZone
+from .firewall_coerce import (
+    normalize_firewall_groups,
+    normalize_firewall_policies,
+    normalize_firewall_zones,
+)
 from .inventory import DeviceInfo, build_device_inventory
 from .topology import Device, Edge, TopologyResult, VpnTunnel, WanInfo
 from .topology_coerce import normalize_devices
@@ -19,6 +25,9 @@ __all__ = [
     "Device",
     "DeviceInfo",
     "Edge",
+    "FirewallGroup",
+    "FirewallPolicy",
+    "FirewallZone",
     "MockOptions",
     "TopologyResult",
     "VpnTunnel",
@@ -34,6 +43,9 @@ __all__ = [
     "group_devices_by_type",
     "group_nodes_by_vlan",
     "normalize_devices",
+    "normalize_firewall_groups",
+    "normalize_firewall_policies",
+    "normalize_firewall_zones",
 ]
 
 
