@@ -1,6 +1,6 @@
 """UniFi network topology discovery and SVG rendering library."""
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 from .adapters import (
     Config,
