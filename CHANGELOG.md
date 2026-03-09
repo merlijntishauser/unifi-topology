@@ -7,16 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 1.0.4 (2026-02-28)
-
-### Fixed
-
-- `network_table` field lost during device cache serialization, breaking VPN tunnel extraction from cached data
-
-## 1.0.3 (2026-02-28)
+## [1.0.5] (2026-03-09)
 
 ### Added
+- Firewall support: `FirewallZone`, `FirewallPolicy`, `FirewallGroup` data models with normalization and flexible field name resolution
+- `fetch_firewall_zones`, `fetch_firewall_policies`, `fetch_firewall_groups` with cache/retry/stale-cache fallback
+- V2/Integration API support in `UnifiClient` (`_get_v2` method) for zone and policy endpoints
 
+### Changed
+- Relaxed runtime dependency pins from exact versions to compatible ranges to reduce conflicts with downstream consumers
+
+## [1.0.4] (2026-02-28)
+
+### Fixed
+- `network_table` field lost during device cache serialization, breaking VPN tunnel extraction from cached data
+
+## [1.0.3] (2026-02-28)
+
+### Added
 - VPN tunnel support: extraction from gateway device data and SVG rendering
 - MkDocs documentation site with API reference, deployed to GitHub Pages
 - `make docs` / `make docs-serve` / `make version-bump` targets
@@ -25,15 +33,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README badges (CI, PyPI, Python version, license)
 
 ### Changed
-
 - Expanded `SECURITY.md` with supported versions, response timeline, and scope
 
-## 1.0.1 (2026-02-25)
+## [1.0.1] (2026-02-25)
 
 First stable release, extracted from `unifi-network-maps` v1.6.x.
 
 ### Added
-
 - `adapters` -- UniFi API client, environment config, DNS hostname resolution
 - `model` -- Topology model, device normalization, edge building, client handling, VLAN info, diff/snapshot, mock data generation
 - `render` -- SVG orthogonal and isometric rendering, theming, icons, inventory tables
@@ -43,7 +49,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.1...v1.0.2
