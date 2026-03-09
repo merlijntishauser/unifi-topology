@@ -541,6 +541,49 @@ def fetch_payload(
     }
 
 
+def _fetch_cached(
+    config: Config,
+    *,
+    site: str | None = None,
+    use_cache: bool = True,
+    cache_prefix: str,
+    operation: str,
+    api_call: Callable[[UnifiClient, str], Callable[[], Sequence[object]]],
+    serialize: Callable[[Sequence[object]], Sequence[object]] | None = None,
+) -> Sequence[object]:
+    """Generic fetch-with-cache for any UniFi API resource."""
+    site_name = site or config.site
+    ttl_seconds = _cache_ttl_seconds()
+    cache_path = _cache_dir() / f"{cache_prefix}_{_cache_key(config.url, site_name)}.json"
+    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
+    if cache_safe:
+        cached = _load_cache(cache_path, ttl_seconds)
+        if cached is not None:
+            logger.debug("Using cached %s (%d)", operation, len(cached))
+            return cached
+
+    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
+        return api_call(client, site_name)
+
+    try:
+        data = _connect_and_fetch(config, operation, _make_fetch)
+    except Exception as exc:  # noqa: BLE001 - fallback to cache
+        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
+        if stale_cached is not None:
+            logger.warning(
+                "%s failed; using stale cache (%ds old): %s",
+                operation.capitalize(),
+                int(cache_age or 0),
+                exc,
+            )
+            return stale_cached
+        raise
+    if use_cache:
+        _save_cache(cache_path, serialize(data) if serialize else data)
+    logger.debug("Fetched %d %s", len(data), operation)
+    return data
+
+
 def fetch_firewall_zones(
     config: Config,
     *,
@@ -548,38 +591,14 @@ def fetch_firewall_zones(
     use_cache: bool = True,
 ) -> Sequence[object]:
     """Fetch firewall zone definitions from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"fw_zones_{_cache_key(config.url, site_name)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached firewall zones (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_firewall_zones(site_name)
-
-        return _fetch
-
-    try:
-        zones = _connect_and_fetch(config, "firewall zone fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Firewall zone fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, zones)
-    logger.debug("Fetched %d firewall zones", len(zones))
-    return zones
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="fw_zones",
+        operation="firewall zones",
+        api_call=lambda client, site_name: lambda: client.get_firewall_zones(site_name),
+    )
 
 
 def fetch_firewall_policies(
@@ -589,38 +608,14 @@ def fetch_firewall_policies(
     use_cache: bool = True,
 ) -> Sequence[object]:
     """Fetch zone-based firewall policies from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"fw_policies_{_cache_key(config.url, site_name)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached firewall policies (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_firewall_policies(site_name)
-
-        return _fetch
-
-    try:
-        policies = _connect_and_fetch(config, "firewall policy fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Firewall policy fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, policies)
-    logger.debug("Fetched %d firewall policies", len(policies))
-    return policies
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="fw_policies",
+        operation="firewall policies",
+        api_call=lambda client, site_name: lambda: client.get_firewall_policies(site_name),
+    )
 
 
 def fetch_firewall_groups(
@@ -630,38 +625,14 @@ def fetch_firewall_groups(
     use_cache: bool = True,
 ) -> Sequence[object]:
     """Fetch firewall address/port groups from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"fw_groups_{_cache_key(config.url, site_name)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached firewall groups (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_firewall_groups(site_name)
-
-        return _fetch
-
-    try:
-        groups = _connect_and_fetch(config, "firewall group fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Firewall group fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, groups)
-    logger.debug("Fetched %d firewall groups", len(groups))
-    return groups
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="fw_groups",
+        operation="firewall groups",
+        api_call=lambda client, site_name: lambda: client.get_firewall_groups(site_name),
+    )
 
 
 def _fetch_payload_clients(

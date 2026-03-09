@@ -1,10 +1,14 @@
 """Tests for firewall data normalization."""
 
+import pytest
+
 from unifi_topology.model.firewall_coerce import (
     normalize_firewall_groups,
     normalize_firewall_policies,
     normalize_firewall_zones,
 )
+
+pytestmark = pytest.mark.unit
 
 
 class TestNormalizeZones:

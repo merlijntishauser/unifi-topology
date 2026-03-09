@@ -146,8 +146,12 @@ class UnifiClient:
         if isinstance(payload, dict) and "data" in payload:
             return payload["data"]
 
-        # Handle dict that is a single object (wrap in list)
+        # Handle dict that is a single object (wrap in list),
+        # but reject payloads that look like error responses.
         if isinstance(payload, dict):
+            if "errorCode" in payload or "error" in payload:
+                msg = payload.get("message") or payload.get("error") or "unknown error"
+                raise UnifiApiError(f"Error response for {path}: {msg}")
             return [payload]
 
         raise UnifiApiError(f"Unexpected response format for {path}")

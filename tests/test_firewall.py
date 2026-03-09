@@ -4,6 +4,8 @@ import pytest
 
 from unifi_topology.model.firewall import FirewallGroup, FirewallPolicy, FirewallZone
 
+pytestmark = pytest.mark.unit
+
 
 class TestFirewallZone:
     def test_basic(self):

@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from .firewall import FirewallGroup, FirewallPolicy, FirewallZone
-from .helpers import first_attr
+from .helpers import as_bool, as_int, first_attr
 
 
 def _as_str(value: object, default: str = "") -> str:
@@ -13,31 +13,6 @@ def _as_str(value: object, default: str = "") -> str:
     if value is None:
         return default
     return str(value).strip()
-
-
-def _as_bool(value: object, default: bool = False) -> bool:
-    """Coerce value to bool."""
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, str):
-        return value.strip().lower() in {"true", "1", "yes"}
-    if isinstance(value, int):
-        return value != 0
-    return default
-
-
-def _as_int(value: object, default: int = 0) -> int:
-    """Coerce value to int."""
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return int(value)
-    if isinstance(value, str):
-        try:
-            return int(value.strip())
-        except ValueError:
-            return default
-    return default
 
 
 def _as_tuple_str(value: object) -> tuple[str, ...]:
@@ -49,6 +24,55 @@ def _as_tuple_str(value: object) -> tuple[str, ...]:
     if isinstance(value, list | tuple):
         return tuple(str(v) for v in value if v is not None)
     return ()
+
+
+def _resolve_action(entry: object) -> str:
+    """Extract and normalise the firewall action (defaults to BLOCK)."""
+    action = _as_str(first_attr(entry, "action", "policy_action")).upper()
+    return action if action else "BLOCK"
+
+
+def _resolve_zone_ids(entry: object) -> tuple[str, str]:
+    """Extract source and destination zone IDs from a policy entry."""
+    source = _as_str(
+        first_attr(
+            entry,
+            "source_zone_id",
+            "sourceZoneId",
+            "source_zone",
+            "src_zone_id",
+        )
+    )
+    dest = _as_str(
+        first_attr(
+            entry,
+            "destination_zone_id",
+            "destinationZoneId",
+            "destination_zone",
+            "dst_zone_id",
+        )
+    )
+    return source, dest
+
+
+def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
+    """Build a FirewallPolicy from a raw entry with a validated ID."""
+    source_zone, dest_zone = _resolve_zone_ids(entry)
+    enabled_raw = first_attr(entry, "enabled")
+    return FirewallPolicy(
+        id=policy_id,
+        name=_as_str(first_attr(entry, "name", "description", "policy_name")),
+        enabled=as_bool(enabled_raw) if enabled_raw is not None else True,
+        action=_resolve_action(entry),
+        source_zone_id=source_zone,
+        destination_zone_id=dest_zone,
+        protocol=_as_str(first_attr(entry, "protocol", "ip_protocol"), default="all"),
+        port_ranges=_as_tuple_str(first_attr(entry, "port_ranges", "ports", "dst_port")),
+        ip_ranges=_as_tuple_str(first_attr(entry, "ip_ranges", "addresses", "dst_address")),
+        description=_as_str(first_attr(entry, "description", "desc")),
+        index=as_int(first_attr(entry, "index", "rule_index", "order", "position")),
+        predefined=as_bool(first_attr(entry, "predefined", "is_predefined")),
+    )
 
 
 def normalize_firewall_zones(raw: Iterable[object]) -> list[FirewallZone]:
@@ -77,46 +101,7 @@ def normalize_firewall_policies(raw: Iterable[object]) -> list[FirewallPolicy]:
         policy_id = _as_str(first_attr(entry, "_id", "id", "policy_id"))
         if not policy_id:
             continue
-
-        action = _as_str(first_attr(entry, "action", "policy_action")).upper()
-        if not action:
-            action = "BLOCK"
-
-        source_zone = _as_str(
-            first_attr(
-                entry,
-                "source_zone_id",
-                "sourceZoneId",
-                "source_zone",
-                "src_zone_id",
-            )
-        )
-        dest_zone = _as_str(
-            first_attr(
-                entry,
-                "destination_zone_id",
-                "destinationZoneId",
-                "destination_zone",
-                "dst_zone_id",
-            )
-        )
-
-        policies.append(
-            FirewallPolicy(
-                id=policy_id,
-                name=_as_str(first_attr(entry, "name", "description", "policy_name")),
-                enabled=_as_bool(first_attr(entry, "enabled"), default=True),
-                action=action,
-                source_zone_id=source_zone,
-                destination_zone_id=dest_zone,
-                protocol=_as_str(first_attr(entry, "protocol", "ip_protocol"), default="all"),
-                port_ranges=_as_tuple_str(first_attr(entry, "port_ranges", "ports", "dst_port")),
-                ip_ranges=_as_tuple_str(first_attr(entry, "ip_ranges", "addresses", "dst_address")),
-                description=_as_str(first_attr(entry, "description", "desc")),
-                index=_as_int(first_attr(entry, "index", "rule_index", "order", "position")),
-                predefined=_as_bool(first_attr(entry, "predefined", "is_predefined")),
-            )
-        )
+        policies.append(_build_policy(entry, policy_id))
     return policies
 
 
