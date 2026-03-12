@@ -106,7 +106,7 @@ jobs:
           python -m pip install -e . -c constraints.txt
           python -m pip install -r requirements-dev.txt -c constraints.txt
       - name: Dependency audit
-        run: pip-audit
+        run: python -m pip_audit
 
   test-unit:
     runs-on: ubuntu-latest
