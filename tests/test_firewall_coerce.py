@@ -182,6 +182,278 @@ class TestNormalizePolicies:
         assert policies[0].source_zone_id == "flat_src"
         assert policies[0].destination_zone_id == "flat_dst"
 
+    def test_source_ip_ranges_flat(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+                "source_ip_ranges": ["10.0.0.0/8"],
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_ip_ranges == ("10.0.0.0/8",)
+
+    def test_source_ip_ranges_nested(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {"zone_id": "z1", "ips": ["192.168.1.0/24"]},
+                "destination": {"zone_id": "z2"},
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_ip_ranges == ("192.168.1.0/24",)
+
+    def test_source_port_ranges_nested(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {
+                    "zone_id": "z1",
+                    "port": "8080",
+                    "port_matching_type": "SPECIFIC",
+                },
+                "destination": {"zone_id": "z2"},
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_port_ranges == ("8080",)
+
+    def test_source_port_ranges_any(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {
+                    "zone_id": "z1",
+                    "port_matching_type": "ANY",
+                },
+                "destination": {"zone_id": "z2"},
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_port_ranges == ()
+
+    def test_mac_addresses(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {
+                    "zone_id": "z1",
+                    "mac_addresses": ["AA:BB:CC:DD:EE:FF"],
+                },
+                "destination": {
+                    "zone_id": "z2",
+                    "mac_addresses": ["11:22:33:44:55:66"],
+                },
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_mac_addresses == ("AA:BB:CC:DD:EE:FF",)
+        assert policies[0].destination_mac_addresses == ("11:22:33:44:55:66",)
+
+    def test_network_ids(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {"zone_id": "z1", "network_id": "net1"},
+                "destination": {"zone_id": "z2", "network_id": "net2"},
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_network_id == "net1"
+        assert policies[0].destination_network_id == "net2"
+
+    def test_group_ids(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source": {
+                    "zone_id": "z1",
+                    "port_group_id": "pg1",
+                    "address_group_id": "ag1",
+                },
+                "destination": {
+                    "zone_id": "z2",
+                    "port_group_id": "pg2",
+                    "address_group_id": "ag2",
+                },
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].source_port_group_id == "pg1"
+        assert policies[0].destination_port_group_id == "pg2"
+        assert policies[0].source_address_group_id == "ag1"
+        assert policies[0].destination_address_group_id == "ag2"
+
+    def test_connection_state_type(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+                "connection_state_type": "ESTABLISHED",
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].connection_state_type == "ESTABLISHED"
+
+    def test_connection_logging(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+                "connection_logging": True,
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].connection_logging is True
+
+    def test_schedule(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+                "schedule": "weekdays-only",
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].schedule == "weekdays-only"
+
+    def test_match_ip_sec(self):
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+                "match_ip_sec": "MATCH_IPSEC",
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        assert policies[0].match_ip_sec == "MATCH_IPSEC"
+
+    def test_defaults_for_new_fields(self):
+        """New fields default to empty when not present in raw data."""
+        raw = [
+            {
+                "_id": "p1",
+                "name": "x",
+                "enabled": True,
+                "action": "ALLOW",
+                "source_zone_id": "z1",
+                "destination_zone_id": "z2",
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        p = policies[0]
+        assert p.source_ip_ranges == ()
+        assert p.source_mac_addresses == ()
+        assert p.source_port_ranges == ()
+        assert p.source_network_id == ""
+        assert p.destination_mac_addresses == ()
+        assert p.destination_network_id == ""
+        assert p.source_port_group_id == ""
+        assert p.destination_port_group_id == ""
+        assert p.source_address_group_id == ""
+        assert p.destination_address_group_id == ""
+        assert p.connection_state_type == ""
+        assert p.connection_logging is False
+        assert p.schedule == ""
+        assert p.match_ip_sec == ""
+
+    def test_full_v2_nested_entry(self):
+        """Realistic v2 API entry with many nested fields."""
+        raw = [
+            {
+                "_id": "p1",
+                "name": "Restrict IoT",
+                "enabled": True,
+                "action": "ALLOW",
+                "protocol": "tcp",
+                "source": {
+                    "zone_id": "z_iot",
+                    "ips": ["10.10.0.0/16"],
+                    "mac_addresses": ["AA:BB:CC:DD:EE:FF"],
+                    "port": "1024",
+                    "port_matching_type": "SPECIFIC",
+                    "network_id": "net_iot",
+                    "port_group_id": "pg_src",
+                    "address_group_id": "ag_src",
+                },
+                "destination": {
+                    "zone_id": "z_lan",
+                    "ips": ["192.168.1.0/24"],
+                    "mac_addresses": ["11:22:33:44:55:66"],
+                    "port": "443",
+                    "port_matching_type": "SPECIFIC",
+                    "network_id": "net_lan",
+                    "port_group_id": "pg_dst",
+                    "address_group_id": "ag_dst",
+                },
+                "connection_state_type": "NEW",
+                "connection_logging": True,
+                "schedule": "work-hours",
+                "match_ip_sec": "MATCH_IPSEC",
+                "index": 500,
+                "predefined": False,
+            },
+        ]
+        policies = normalize_firewall_policies(raw)
+        p = policies[0]
+        assert p.source_zone_id == "z_iot"
+        assert p.destination_zone_id == "z_lan"
+        assert p.source_ip_ranges == ("10.10.0.0/16",)
+        assert p.ip_ranges == ("192.168.1.0/24",)
+        assert p.source_mac_addresses == ("AA:BB:CC:DD:EE:FF",)
+        assert p.destination_mac_addresses == ("11:22:33:44:55:66",)
+        assert p.source_port_ranges == ("1024",)
+        assert p.port_ranges == ("443",)
+        assert p.source_network_id == "net_iot"
+        assert p.destination_network_id == "net_lan"
+        assert p.source_port_group_id == "pg_src"
+        assert p.destination_port_group_id == "pg_dst"
+        assert p.source_address_group_id == "ag_src"
+        assert p.destination_address_group_id == "ag_dst"
+        assert p.connection_state_type == "NEW"
+        assert p.connection_logging is True
+        assert p.schedule == "work-hours"
+        assert p.match_ip_sec == "MATCH_IPSEC"
+
 
 class TestNormalizeGroups:
     def test_basic(self):

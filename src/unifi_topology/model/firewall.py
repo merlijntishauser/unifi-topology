@@ -30,6 +30,24 @@ class FirewallPolicy:
     description: str = ""
     index: int = 0
     predefined: bool = False
+    # Source-side filtering
+    source_ip_ranges: tuple[str, ...] = ()
+    source_mac_addresses: tuple[str, ...] = ()
+    source_port_ranges: tuple[str, ...] = ()
+    source_network_id: str = ""
+    # Destination-side filtering
+    destination_mac_addresses: tuple[str, ...] = ()
+    destination_network_id: str = ""
+    # Firewall group references (IDs)
+    source_port_group_id: str = ""
+    destination_port_group_id: str = ""
+    source_address_group_id: str = ""
+    destination_address_group_id: str = ""
+    # Connection state / metadata
+    connection_state_type: str = ""
+    connection_logging: bool = False
+    schedule: str = ""
+    match_ip_sec: str = ""
 
 
 @dataclass(frozen=True)

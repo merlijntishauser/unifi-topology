@@ -87,6 +87,63 @@ def _ip_ranges_from_nested(entry: object) -> tuple[str, ...]:
     return ()
 
 
+def _source_ip_ranges_from_nested(entry: object) -> tuple[str, ...]:
+    """Extract IP ranges from nested source dict."""
+    src = first_attr(entry, "source")
+    if not isinstance(src, dict):
+        return ()
+    ips = src.get("ips")
+    if isinstance(ips, list):
+        return tuple(str(ip) for ip in ips if ip is not None)
+    return ()
+
+
+def _source_port_ranges_from_nested(entry: object) -> tuple[str, ...]:
+    """Extract port ranges from nested source dict."""
+    src = first_attr(entry, "source")
+    if not isinstance(src, dict):
+        return ()
+    if src.get("port_matching_type") == "ANY":
+        return ()
+    port = src.get("port")
+    if port is not None:
+        return (str(port),)
+    return ()
+
+
+def _mac_addresses_from_nested(entry: object, key: str) -> tuple[str, ...]:
+    """Extract MAC addresses from a nested dict."""
+    nested = first_attr(entry, key)
+    if not isinstance(nested, dict):
+        return ()
+    macs = nested.get("mac_addresses")
+    if isinstance(macs, list):
+        return tuple(str(m) for m in macs if m is not None)
+    return ()
+
+
+def _network_id_from_nested(entry: object, key: str) -> str:
+    """Extract network_id from a nested dict."""
+    nested = first_attr(entry, key)
+    if isinstance(nested, dict):
+        nid = nested.get("network_id")
+        if nid is not None:
+            return str(nid)
+    return ""
+
+
+def _group_id_from_nested(
+    entry: object, key: str, group_key: str,
+) -> str:
+    """Extract a firewall group ID from a nested dict."""
+    nested = first_attr(entry, key)
+    if isinstance(nested, dict):
+        gid = nested.get(group_key)
+        if gid is not None:
+            return str(gid)
+    return ""
+
+
 def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
     """Build a FirewallPolicy from a raw entry with a validated ID."""
     source_zone, dest_zone = _resolve_zone_ids(entry)
@@ -97,6 +154,12 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
     ip_ranges = _as_tuple_str(first_attr(entry, "ip_ranges", "addresses", "dst_address"))
     if not ip_ranges:
         ip_ranges = _ip_ranges_from_nested(entry)
+    source_ip_ranges = _as_tuple_str(first_attr(entry, "source_ip_ranges", "src_address"))
+    if not source_ip_ranges:
+        source_ip_ranges = _source_ip_ranges_from_nested(entry)
+    source_port_ranges = _as_tuple_str(first_attr(entry, "source_port_ranges", "src_port"))
+    if not source_port_ranges:
+        source_port_ranges = _source_port_ranges_from_nested(entry)
     return FirewallPolicy(
         id=policy_id,
         name=_as_str(first_attr(entry, "name", "description", "policy_name")),
@@ -110,6 +173,20 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
         description=_as_str(first_attr(entry, "description", "desc")),
         index=as_int(first_attr(entry, "index", "rule_index", "order", "position")),
         predefined=as_bool(first_attr(entry, "predefined", "is_predefined")),
+        source_ip_ranges=source_ip_ranges,
+        source_mac_addresses=_mac_addresses_from_nested(entry, "source"),
+        source_port_ranges=source_port_ranges,
+        source_network_id=_network_id_from_nested(entry, "source"),
+        destination_mac_addresses=_mac_addresses_from_nested(entry, "destination"),
+        destination_network_id=_network_id_from_nested(entry, "destination"),
+        source_port_group_id=_group_id_from_nested(entry, "source", "port_group_id"),
+        destination_port_group_id=_group_id_from_nested(entry, "destination", "port_group_id"),
+        source_address_group_id=_group_id_from_nested(entry, "source", "address_group_id"),
+        destination_address_group_id=_group_id_from_nested(entry, "destination", "address_group_id"),
+        connection_state_type=_as_str(first_attr(entry, "connection_state_type", "state_type")),
+        connection_logging=as_bool(first_attr(entry, "connection_logging", "logging")),
+        schedule=_as_str(first_attr(entry, "schedule")),
+        match_ip_sec=_as_str(first_attr(entry, "match_ip_sec", "ipsec")),
     )
 
 
