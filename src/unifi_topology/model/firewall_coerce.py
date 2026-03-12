@@ -133,7 +133,9 @@ def _network_id_from_nested(entry: object, key: str) -> str:
 
 
 def _group_id_from_nested(
-    entry: object, key: str, group_key: str,
+    entry: object,
+    key: str,
+    group_key: str,
 ) -> str:
     """Extract a firewall group ID from a nested dict."""
     nested = first_attr(entry, key)
@@ -182,7 +184,9 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
         source_port_group_id=_group_id_from_nested(entry, "source", "port_group_id"),
         destination_port_group_id=_group_id_from_nested(entry, "destination", "port_group_id"),
         source_address_group_id=_group_id_from_nested(entry, "source", "address_group_id"),
-        destination_address_group_id=_group_id_from_nested(entry, "destination", "address_group_id"),
+        destination_address_group_id=_group_id_from_nested(
+            entry, "destination", "address_group_id"
+        ),
         connection_state_type=_as_str(first_attr(entry, "connection_state_type", "state_type")),
         connection_logging=as_bool(first_attr(entry, "connection_logging", "logging")),
         schedule=_as_str(first_attr(entry, "schedule")),

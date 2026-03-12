@@ -131,7 +131,11 @@ class TestNormalizePolicies:
                 "enabled": True,
                 "action": "ALLOW",
                 "protocol": "udp",
-                "source": {"zone_id": "z_internal", "port": "5353", "port_matching_type": "SPECIFIC"},
+                "source": {
+                    "zone_id": "z_internal",
+                    "port": "5353",
+                    "port_matching_type": "SPECIFIC",
+                },
                 "destination": {
                     "zone_id": "z_gateway",
                     "port": "5353",
