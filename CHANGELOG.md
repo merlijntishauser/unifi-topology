@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Extended `FirewallPolicy` with source-side filtering fields: `source_ip_ranges`, `source_mac_addresses`, `source_port_ranges`, `source_network_id`
+- Added destination-side fields: `destination_mac_addresses`, `destination_network_id`
+- Added firewall group references: `source_port_group_id`, `destination_port_group_id`, `source_address_group_id`, `destination_address_group_id`
+- Added connection/metadata fields: `connection_state_type`, `connection_logging`, `schedule`, `match_ip_sec`
+- Normalization extracts all new fields from both flat and nested (v2 API) formats
+
 ## [1.0.5] (2026-03-09)
 
 ### Added
