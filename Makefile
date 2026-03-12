@@ -1,4 +1,4 @@
-.PHONY: venv install lint format typecheck complexity test test-unit test-integration test-contract \
+.PHONY: venv install lint format typecheck complexity audit test test-unit test-integration test-contract \
         coverage ci version-bump docs docs-serve help
 
 VENV = .venv/bin
@@ -32,6 +32,9 @@ complexity:
 	$(VENV)/xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
 	@./scripts/check_complexity.sh 12
 
+audit:
+	$(VENV)/pip-audit
+
 # Testing
 test:
 	$(VENV)/pytest
@@ -63,6 +66,9 @@ ci:
 	$(VENV)/xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
 	@./scripts/check_complexity.sh 12
 	@echo ""
+	@echo "=== Dependency Audit ==="
+	$(VENV)/pip-audit
+	@echo ""
 	@echo "=== Tests ==="
 	$(VENV)/pytest -q
 	@echo ""
@@ -88,6 +94,7 @@ help:
 	@echo "  format      - Run ruff formatter"
 	@echo "  typecheck   - Run pyright type checker"
 	@echo "  complexity  - Run complexity checks"
+	@echo "  audit       - Run dependency vulnerability audit"
 	@echo "  test        - Run all tests"
 	@echo "  test-unit   - Run unit tests only"
 	@echo "  test-integration - Run integration tests only"
