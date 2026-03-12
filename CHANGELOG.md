@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.6] (2026-03-12)
+## [1.0.8] (2026-03-12)
 
 ### Added
 - Extended `FirewallPolicy` with source-side filtering fields: `source_ip_ranges`, `source_mac_addresses`, `source_port_ranges`, `source_network_id`
@@ -58,8 +58,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.6...HEAD
-[1.0.6]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.5...v1.0.6
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.8...HEAD
+[1.0.8]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.5...v1.0.8
 [1.0.5]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.2...v1.0.3
