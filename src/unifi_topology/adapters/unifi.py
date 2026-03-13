@@ -293,6 +293,31 @@ def _save_cache(path: Path, data: Sequence[object]) -> None:
         logger.debug("Failed to write cache %s: %s", path, exc)
 
 
+def invalidate_cache(
+    config: Config,
+    *,
+    prefixes: Sequence[str] = ("fw_policies",),
+    site: str | None = None,
+) -> int:
+    """Remove cached data files matching the given prefixes.
+
+    Returns the number of cache files removed.
+    """
+    site_name = site or config.site
+    removed = 0
+    for prefix in prefixes:
+        cache_path = _cache_dir() / f"{prefix}_{_cache_key(config.url, site_name)}.json"
+        if cache_path.exists():
+            try:
+                with _cache_lock(cache_path):
+                    cache_path.unlink(missing_ok=True)
+                removed += 1
+                logger.debug("Invalidated cache: %s", cache_path.name)
+            except OSError as exc:
+                logger.warning("Failed to invalidate cache %s: %s", cache_path, exc)
+    return removed
+
+
 def _retry_attempts() -> int:
     value = os.environ.get("UNIFI_RETRY_ATTEMPTS", "").strip()
     if not value:
@@ -645,3 +670,31 @@ def _fetch_payload_clients(
     if not include_clients:
         return []
     return list(fetch_clients(config, site=site, use_cache=use_cache))
+
+
+def toggle_firewall_policy(
+    config: Config,
+    policy_id: str,
+    *,
+    enabled: bool,
+    site: str | None = None,
+) -> None:
+    """Toggle a firewall policy's enabled state and invalidate cache."""
+    site_name = site or config.site
+    client = _create_client(config, is_udm_pro=True)
+    client.update_firewall_policy(site_name, policy_id, {"enabled": enabled})
+    invalidate_cache(config, site=site)
+
+
+def swap_firewall_policy_order(
+    config: Config,
+    policy_id_a: str,
+    policy_id_b: str,
+    *,
+    site: str | None = None,
+) -> None:
+    """Swap the index of two firewall policies and invalidate cache."""
+    site_name = site or config.site
+    client = _create_client(config, is_udm_pro=True)
+    client.swap_firewall_policy_order(site_name, policy_id_a, policy_id_b)
+    invalidate_cache(config, site=site)

@@ -421,3 +421,89 @@ def test_non_429_auth_error_retries_legacy(monkeypatch, tmp_path):
     )
     devices = list(unifi.fetch_devices(config))
     assert len(devices) == 1
+
+
+# ------------------------------------------------------------------
+# Cache invalidation
+# ------------------------------------------------------------------
+
+
+def test_invalidate_cache_removes_file(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    cache_path = tmp_path / f"fw_policies_{unifi._cache_key(config.url, config.site)}.json"
+    unifi._save_cache(cache_path, [{"_id": "p1"}])
+    assert cache_path.exists()
+    removed = unifi.invalidate_cache(config)
+    assert removed == 1
+    assert not cache_path.exists()
+
+
+def test_invalidate_cache_returns_zero_when_no_file(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    removed = unifi.invalidate_cache(config)
+    assert removed == 0
+
+
+def test_invalidate_cache_multiple_prefixes(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    for prefix in ("fw_policies", "fw_zones"):
+        cache_path = tmp_path / f"{prefix}_{unifi._cache_key(config.url, config.site)}.json"
+        unifi._save_cache(cache_path, [{"data": True}])
+    removed = unifi.invalidate_cache(config, prefixes=("fw_policies", "fw_zones"))
+    assert removed == 2
+
+
+# ------------------------------------------------------------------
+# Toggle / Swap firewall policies
+# ------------------------------------------------------------------
+
+
+def test_toggle_firewall_policy_calls_client(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    calls: list[tuple[str, str, str, dict[str, object]]] = []
+
+    class FakeClient:
+        def update_firewall_policy(
+            self, site: str, policy_id: str, updates: dict[str, object]
+        ) -> dict[str, object]:
+            calls.append(("update", site, policy_id, updates))
+            return {"_id": policy_id, **updates}
+
+    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: FakeClient())
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    unifi.toggle_firewall_policy(config, "p1", enabled=False)
+    assert calls == [("update", "default", "p1", {"enabled": False})]
+
+
+def test_swap_firewall_policy_order_calls_client(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    calls: list[tuple[str, str, str, str]] = []
+
+    class FakeClient:
+        def swap_firewall_policy_order(self, site: str, id_a: str, id_b: str) -> None:
+            calls.append(("swap", site, id_a, id_b))
+
+    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: FakeClient())
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    unifi.swap_firewall_policy_order(config, "pa", "pb")
+    assert calls == [("swap", "default", "pa", "pb")]
+
+
+def test_toggle_invalidates_cache(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    config = Config(url="https://example", site="default", user="user", password="pass", verify_ssl=True)
+    cache_path = tmp_path / f"fw_policies_{unifi._cache_key(config.url, config.site)}.json"
+    unifi._save_cache(cache_path, [{"_id": "p1"}])
+
+    class FakeClient:
+        def update_firewall_policy(
+            self, site: str, policy_id: str, updates: dict[str, object]
+        ) -> dict[str, object]:
+            return {"_id": policy_id}
+
+    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: FakeClient())
+    unifi.toggle_firewall_policy(config, "p1", enabled=False)
+    assert not cache_path.exists()

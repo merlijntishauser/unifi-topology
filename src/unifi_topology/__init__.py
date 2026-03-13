@@ -1,16 +1,20 @@
 """UniFi network topology discovery and SVG rendering library."""
 
-__version__ = "1.0.8"
+__version__ = "1.1.0"
 
 from .adapters import (
     Config,
+    UnifiWriteError,
     fetch_clients,
     fetch_devices,
     fetch_firewall_groups,
     fetch_firewall_policies,
     fetch_firewall_zones,
     fetch_networks,
+    invalidate_cache,
     resolve_hostnames,
+    swap_firewall_policy_order,
+    toggle_firewall_policy,
 )
 from .model import (
     Device,
@@ -64,6 +68,7 @@ __all__ = [
     "build_device_inventory",
     "build_node_type_map",
     "build_topology",
+    "UnifiWriteError",
     "extract_vpn_tunnels",
     "extract_wan_info",
     "fetch_clients",
@@ -73,6 +78,7 @@ __all__ = [
     "fetch_firewall_zones",
     "fetch_networks",
     "group_devices_by_type",
+    "invalidate_cache",
     "normalize_devices",
     "normalize_firewall_groups",
     "normalize_firewall_policies",
@@ -82,4 +88,6 @@ __all__ = [
     "render_svg_isometric",
     "resolve_hostnames",
     "resolve_svg_themes",
+    "swap_firewall_policy_order",
+    "toggle_firewall_policy",
 ]

@@ -21,6 +21,10 @@ class UnifiApiError(Exception):
     """An API request to the UniFi controller failed."""
 
 
+class UnifiWriteError(UnifiApiError):
+    """A write (mutation) operation to the UniFi controller failed."""
+
+
 class UnifiClient:
     """Minimal UniFi controller client.
 
@@ -44,6 +48,7 @@ class UnifiClient:
         self._verify_ssl = verify_ssl
         self._api_base = f"{self._url}/proxy/network" if is_udm_pro else self._url
         self._session = requests.Session()
+        self._csrf_token: str | None = None
 
         if not verify_ssl:
             import urllib3
@@ -68,6 +73,7 @@ class UnifiClient:
         except requests.RequestException as exc:
             raise UnifiAuthError(f"Login request failed: {exc}") from exc
         self._validate_auth_response(response)
+        self._csrf_token = response.headers.get("X-CSRF-Token")
 
     def _validate_auth_response(self, response: requests.Response) -> None:
         try:
@@ -177,3 +183,71 @@ class UnifiClient:
     def get_firewall_groups(self, site: str) -> list[dict[str, object]]:
         """Fetch firewall address/port groups (classic API)."""
         return self._get(f"/api/s/{site}/rest/firewallgroup")
+
+    # ------------------------------------------------------------------
+    # Write operations
+    # ------------------------------------------------------------------
+
+    def _put_v2(self, path: str, payload: dict[str, object]) -> dict[str, object]:
+        """PUT to a V2/Integration API endpoint."""
+        url = f"{self._api_base}{path}"
+        headers: dict[str, str] = {}
+        if self._csrf_token:
+            headers["X-CSRF-Token"] = self._csrf_token
+        response = self._session.put(url, json=payload, headers=headers, verify=self._verify_ssl)
+
+        if response.status_code == 401:
+            logger.debug("Got 401 on PUT, re-authenticating")
+            self._authenticate()
+            headers = {}
+            if self._csrf_token:
+                headers["X-CSRF-Token"] = self._csrf_token
+            response = self._session.put(url, json=payload, headers=headers, verify=self._verify_ssl)
+
+        if not response.ok:
+            try:
+                detail = response.json()
+            except ValueError:
+                detail = response.text
+            raise UnifiWriteError(f"PUT {path} failed (HTTP {response.status_code}): {detail}")
+
+        try:
+            result = response.json()
+        except ValueError as exc:
+            raise UnifiWriteError(f"Non-JSON response for PUT {path}") from exc
+
+        if isinstance(result, dict):
+            return result
+        raise UnifiWriteError(f"Unexpected response format for PUT {path}")
+
+    def _get_v2_single(self, path: str) -> dict[str, object]:
+        """GET a single resource from a V2 API endpoint."""
+        results = self._get_v2(path)
+        if len(results) != 1:
+            raise UnifiApiError(f"Expected single resource at {path}, got {len(results)}")
+        return results[0]
+
+    def update_firewall_policy(
+        self, site: str, policy_id: str, updates: dict[str, object]
+    ) -> dict[str, object]:
+        """Fetch a policy, apply updates, and PUT it back. Returns the updated policy."""
+        path = f"/v2/api/site/{site}/firewall-policies/{policy_id}"
+        policy = self._get_v2_single(path)
+        policy.update(updates)
+        return self._put_v2(path, policy)
+
+    def swap_firewall_policy_order(self, site: str, policy_id_a: str, policy_id_b: str) -> None:
+        """Swap the index (priority) of two firewall policies."""
+        path = f"/v2/api/site/{site}/firewall-policies"
+        all_policies = self._get_v2(path)
+        policy_a = next((p for p in all_policies if p.get("_id") == policy_id_a), None)
+        policy_b = next((p for p in all_policies if p.get("_id") == policy_id_b), None)
+        if policy_a is None or policy_b is None:
+            missing = [pid for pid, p in [(policy_id_a, policy_a), (policy_id_b, policy_b)] if p is None]
+            raise UnifiWriteError(f"Policy not found: {', '.join(missing)}")
+        idx_a = policy_a["index"]
+        idx_b = policy_b["index"]
+        policy_a["index"] = idx_b
+        policy_b["index"] = idx_a
+        self._put_v2(f"{path}/{policy_id_a}", policy_a)
+        self._put_v2(f"{path}/{policy_id_b}", policy_b)

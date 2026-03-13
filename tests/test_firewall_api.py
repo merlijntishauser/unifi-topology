@@ -11,10 +11,12 @@ pytestmark = pytest.mark.unit
 class FakeResponse:
     """Minimal stand-in for ``requests.Response``."""
 
-    def __init__(self, status_code=200, json_data=None, *, ok=True):
+    def __init__(self, status_code=200, json_data=None, *, ok=True, headers=None):
         self.status_code = status_code
         self._json_data = json_data
         self.ok = ok
+        self.headers = headers or {}
+        self.text = ""
 
     def json(self):
         if self._json_data is None:
