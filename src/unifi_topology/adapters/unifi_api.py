@@ -202,7 +202,9 @@ class UnifiClient:
             headers = {}
             if self._csrf_token:
                 headers["X-CSRF-Token"] = self._csrf_token
-            response = self._session.put(url, json=payload, headers=headers, verify=self._verify_ssl)
+            response = self._session.put(
+                url, json=payload, headers=headers, verify=self._verify_ssl
+            )
 
         if not response.ok:
             try:
@@ -243,7 +245,9 @@ class UnifiClient:
         policy_a = next((p for p in all_policies if p.get("_id") == policy_id_a), None)
         policy_b = next((p for p in all_policies if p.get("_id") == policy_id_b), None)
         if policy_a is None or policy_b is None:
-            missing = [pid for pid, p in [(policy_id_a, policy_a), (policy_id_b, policy_b)] if p is None]
+            missing = [
+                pid for pid, p in [(policy_id_a, policy_a), (policy_id_b, policy_b)] if p is None
+            ]
             raise UnifiWriteError(f"Policy not found: {', '.join(missing)}")
         idx_a = policy_a["index"]
         idx_b = policy_b["index"]
