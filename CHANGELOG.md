@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] (2026-03-14)
+
+### Added
+- Cache invalidation: `invalidate_cache` for clearing cached API responses after write operations
+- `UnifiClient` instance caching per config to avoid repeated logins and prevent 429 rate-limit errors
+- `clear_client_cache()` for explicit client cache control
+
+
+## [1.1.0] (2026-03-12)
+
+### Added
+- Firewall policy write operations: `toggle_firewall_policy` and `swap_firewall_policy_order`
+- `pip-audit` dependency vulnerability scanning in CI and Makefile
+
+### Changed
+- CI quality checks (lint, typecheck, complexity, audit) now run in parallel instead of sequentially
+
 ## [1.0.8] (2026-03-12)
 
 ### Added
@@ -58,7 +75,9 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.8...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.8...v1.1.0
 [1.0.8]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.5...v1.0.8
 [1.0.5]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.3...v1.0.4
