@@ -3,6 +3,7 @@
 from .config import Config
 from .dns import resolve_hostnames
 from .unifi import (
+    clear_client_cache,
     fetch_clients,
     fetch_devices,
     fetch_firewall_groups,
@@ -18,6 +19,7 @@ from .unifi_api import UnifiWriteError
 __all__ = [
     "Config",
     "UnifiWriteError",
+    "clear_client_cache",
     "fetch_clients",
     "fetch_devices",
     "fetch_firewall_groups",

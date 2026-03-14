@@ -390,6 +390,31 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
     )
 
 
+_client_cache: dict[tuple[str, str, bool], UnifiClient] = {}
+
+
+def _get_or_create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
+    """Get a cached client or create a new one."""
+    cache_key = (config.url, config.user, is_udm_pro)
+    client = _client_cache.get(cache_key)
+    if client is not None:
+        return client
+    client = _create_client(config, is_udm_pro=is_udm_pro)
+    _client_cache[cache_key] = client
+    return client
+
+
+def _evict_client(config: Config, *, is_udm_pro: bool) -> None:
+    """Remove a cached client entry."""
+    cache_key = (config.url, config.user, is_udm_pro)
+    _client_cache.pop(cache_key, None)
+
+
+def clear_client_cache() -> None:
+    """Clear all cached client sessions."""
+    _client_cache.clear()
+
+
 def _is_rate_limited(exc: Exception) -> bool:
     return "429" in str(exc)
 
@@ -404,14 +429,16 @@ def _connect_and_fetch(
     On ``UnifiAuthError`` that isn't rate-limited, retries with
     legacy auth.  Any other error (rate limit, network, etc.) propagates
     to the caller's stale-cache handler.
+
+    Reuses cached client sessions per config to avoid repeated logins.
     """
     try:
-        client = _create_client(config, is_udm_pro=True)
+        client = _get_or_create_client(config, is_udm_pro=True)
     except UnifiAuthError as exc:
         if _is_rate_limited(exc):
             raise
         logger.debug("UDM Pro authentication failed, retrying legacy auth")
-        client = _create_client(config, is_udm_pro=False)
+        client = _get_or_create_client(config, is_udm_pro=False)
 
     return _call_with_retries(operation, fetch_fn(client))
 
@@ -681,8 +708,9 @@ def toggle_firewall_policy(
 ) -> None:
     """Toggle a firewall policy's enabled state and invalidate cache."""
     site_name = site or config.site
-    client = _create_client(config, is_udm_pro=True)
+    client = _get_or_create_client(config, is_udm_pro=True)
     client.update_firewall_policy(site_name, policy_id, {"enabled": enabled})
+    clear_client_cache()
     invalidate_cache(config, site=site)
 
 
@@ -695,6 +723,7 @@ def swap_firewall_policy_order(
 ) -> None:
     """Swap the index of two firewall policies and invalidate cache."""
     site_name = site or config.site
-    client = _create_client(config, is_udm_pro=True)
+    client = _get_or_create_client(config, is_udm_pro=True)
     client.swap_firewall_policy_order(site_name, policy_id_a, policy_id_b)
+    clear_client_cache()
     invalidate_cache(config, site=site)
