@@ -524,3 +524,294 @@ class TestDescriptionGeneration:
         }
         diff = compare_topologies([], [], old_clients=[], new_clients=[wired_client])
         assert "wired" in diff.events[0].description
+
+    def test_device_changed_uplink_mac(self):
+        """Cover _describe_device_changed with uplink_mac change (line 300-301)."""
+        from unifi_topology.model.topology import UplinkInfo
+
+        old_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=UplinkInfo(mac="11:11:11:11:11:11", name="Old Gateway", port=1),
+            last_uplink=None,
+            version="6.5.0",
+        )
+        new_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=UplinkInfo(mac="22:22:22:22:22:22", name="New Gateway", port=1),
+            last_uplink=None,
+            version="6.5.0",
+        )
+        diff = compare_topologies([old_device], [new_device])
+        assert len(diff.events) == 1
+        assert "uplink changed" in diff.events[0].description
+
+    def test_device_changed_uplink_port(self):
+        """Cover _describe_device_changed with uplink_port change (line 302-303)."""
+        from unifi_topology.model.topology import UplinkInfo
+
+        old_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=UplinkInfo(mac="11:11:11:11:11:11", name="Gateway", port=1),
+            last_uplink=None,
+            version="6.5.0",
+        )
+        new_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=UplinkInfo(mac="11:11:11:11:11:11", name="Gateway", port=5),
+            last_uplink=None,
+            version="6.5.0",
+        )
+        diff = compare_topologies([old_device], [new_device])
+        assert len(diff.events) == 1
+        assert "moved to port" in diff.events[0].description
+
+    def test_device_changed_generic_property(self):
+        """Cover _describe_device_changed with generic key (line 304)."""
+        old_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="6.5.0",
+        )
+        new_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="7.0.0",
+        )
+        diff = compare_topologies([old_device], [new_device])
+        assert len(diff.events) == 1
+        assert "version changed" in diff.events[0].description
+
+    def test_device_changed_multiple_properties(self):
+        """Cover _describe_device_changed with multiple changes (line 305)."""
+        old_device = Device(
+            name="switch-1",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.10",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="6.5.0",
+        )
+        new_device = Device(
+            name="switch-main",
+            model_name="Switch",
+            model="USW",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.99",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="7.0.0",
+        )
+        diff = compare_topologies([old_device], [new_device])
+        assert len(diff.events) == 1
+        assert "changed" in diff.events[0].description
+        assert "properties" in diff.events[0].description
+
+    def test_client_changed_ip(self):
+        """Cover _describe_client_changed with ip change (line 331-332)."""
+        old_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "ip": "192.168.1.100",
+        }
+        new_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "ip": "192.168.1.200",
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        assert "IP changed" in diff.events[0].description
+
+    def test_client_changed_uplink_mac(self):
+        """Cover _describe_client_changed with uplink_mac change (line 333-334)."""
+        old_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "sw_mac": "11:11:11:11:11:11",
+        }
+        new_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "sw_mac": "22:22:22:22:22:22",
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        assert "moved to different device" in diff.events[0].description
+
+    def test_client_changed_uplink_port(self):
+        """Cover _describe_client_changed with uplink_port change (line 335-336)."""
+        old_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "sw_port": 5,
+        }
+        new_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "sw_port": 10,
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        assert "moved to port" in diff.events[0].description
+
+    def test_client_changed_generic_property(self):
+        """Cover _describe_client_changed with generic key (line 337)."""
+        old_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "channel": 36,
+        }
+        new_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "channel": 149,
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        assert "channel changed" in diff.events[0].description
+
+    def test_client_changed_multiple_properties(self):
+        """Cover _describe_client_changed with multiple changes (line 338)."""
+        old_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "ip": "192.168.1.100",
+            "channel": 36,
+        }
+        new_client = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "name": "laptop",
+            "ip": "192.168.1.200",
+            "channel": 149,
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        assert "changed" in diff.events[0].description
+        assert "properties" in diff.events[0].description
+
+    def test_edge_changed_poe(self):
+        """Cover _describe_edge_changed with poe change (lines 383-387)."""
+        old_edge = Edge(
+            left="switch-1",
+            right="ap-1",
+            label="Port 24",
+            poe=False,
+            wireless=False,
+            speed=1000,
+            channel=None,
+            vlans=(1,),
+            active_vlans=(1,),
+            is_trunk=False,
+        )
+        new_edge = Edge(
+            left="switch-1",
+            right="ap-1",
+            label="Port 24",
+            poe=True,
+            wireless=False,
+            speed=1000,
+            channel=None,
+            vlans=(1,),
+            active_vlans=(1,),
+            is_trunk=False,
+        )
+        diff = compare_topologies([], [], old_edges=[old_edge], new_edges=[new_edge])
+        assert len(diff.events) == 1
+        assert "PoE enabled" in diff.events[0].description
+
+    def test_edge_changed_poe_disabled(self):
+        """Cover _describe_edge_changed with poe disabled."""
+        old_edge = Edge(
+            left="switch-1",
+            right="ap-1",
+            label="Port 24",
+            poe=True,
+            wireless=False,
+            speed=1000,
+        )
+        new_edge = Edge(
+            left="switch-1",
+            right="ap-1",
+            label="Port 24",
+            poe=False,
+            wireless=False,
+            speed=1000,
+        )
+        diff = compare_topologies([], [], old_edges=[old_edge], new_edges=[new_edge])
+        assert len(diff.events) == 1
+        assert "PoE disabled" in diff.events[0].description
+
+    def test_client_with_no_name_uses_mac(self):
+        """Cover fallback to mac for client descriptions."""
+        old_client: dict[str, object] = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "ip": "192.168.1.100",
+        }
+        new_client: dict[str, object] = {
+            "mac": "cc:dd:ee:ff:00:11",
+            "ip": "192.168.1.200",
+        }
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert len(diff.events) == 1
+        # Falls back to mac since no name or hostname
+        assert "cc:dd:ee:ff:00:11" in diff.events[0].description

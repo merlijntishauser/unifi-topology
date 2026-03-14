@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+from unifi_topology.model.connection import ConnectionInfo
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.snapshot import (
+    _serialize_value,
     client_from_dict,
     client_to_dict,
+    connection_info_from_dict,
+    connection_info_to_dict,
     device_from_dict,
     device_to_dict,
     edge_from_dict,
@@ -269,3 +273,211 @@ class TestClientSerialization:
         client = client_from_dict(data)
         assert client["mac"] == "aa:bb:cc:dd:ee:ff"
         assert client["custom"] == "value"
+
+
+# --- _serialize_value coverage ---
+
+
+class TestSerializeValue:
+    def test_list_serialization(self):
+        result = _serialize_value([1, "two", None])
+        assert result == [1, "two", None]
+
+    def test_dict_serialization(self):
+        result = _serialize_value({"a": 1, "b": "two"})
+        assert result == {"a": 1, "b": "two"}
+
+    def test_nested_dataclass_serialization(self):
+        uplink = UplinkInfo(mac="aa:bb:cc:dd:ee:ff", name="Switch", port=24)
+        result = _serialize_value(uplink)
+        assert result == {"mac": "aa:bb:cc:dd:ee:ff", "name": "Switch", "port": 24}
+
+    def test_fallback_to_str(self):
+        """Non-primitive, non-container values fall back to str()."""
+        result = _serialize_value(object.__class__)
+        assert isinstance(result, str)
+
+    def test_nested_list_of_dataclasses(self):
+        entries = [
+            LLDPEntry(chassis_id="aa:bb", port_id="eth0"),
+            LLDPEntry(chassis_id="cc:dd", port_id="eth1"),
+        ]
+        result = _serialize_value(entries)
+        assert len(result) == 2
+        assert result[0]["chassis_id"] == "aa:bb"
+        assert result[1]["port_id"] == "eth1"
+
+    def test_dict_with_nested_values(self):
+        data = {"uplink": UplinkInfo(mac="aa:bb", name="S", port=1)}
+        result = _serialize_value(data)
+        assert result["uplink"]["mac"] == "aa:bb"
+
+
+# --- WanInfo null branches ---
+
+
+class TestWanInfoNullBranches:
+    def test_wan_info_both_none(self):
+        """Cover line 136: wan1 is None produces result['wan1'] = None."""
+        info = WanInfo(wan1=None, wan2=None)
+        data = wan_info_to_dict(info)
+        assert data["wan1"] is None
+        assert data["wan2"] is None
+
+    def test_wan_info_from_dict_with_wan2(self):
+        """Cover line 148->150: wan2 is present in data."""
+        data = {
+            "wan1": None,
+            "wan2": {
+                "port_idx": 9,
+                "link_speed": 100,
+                "ip_address": "10.0.0.1",
+                "enabled": True,
+            },
+        }
+        restored = wan_info_from_dict(data)
+        assert restored.wan1 is None
+        assert restored.wan2 is not None
+        assert restored.wan2.port_idx == 9
+        assert restored.wan2.ip_address == "10.0.0.1"
+
+
+# --- Device with network_table ---
+
+
+class TestDeviceNetworkTable:
+    def test_device_with_network_table(self):
+        """Cover line 175: device.network_table is truthy."""
+        device = Device(
+            name="gateway",
+            model_name="UniFi Dream Machine",
+            model="UDM",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="192.168.1.1",
+            type="ugw",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="3.0.0",
+            network_table=[{"name": "LAN", "subnet": "192.168.1.0/24"}],
+        )
+        data = device_to_dict(device)
+        assert "network_table" in data
+        assert data["network_table"] == [{"name": "LAN", "subnet": "192.168.1.0/24"}]
+
+    def test_device_without_network_table(self):
+        """When network_table is empty, key is omitted from dict."""
+        device = Device(
+            name="switch",
+            model_name="Switch",
+            model="USW",
+            mac="11:22:33:44:55:66",
+            ip="192.168.1.2",
+            type="switch",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="6.0",
+            network_table=[],
+        )
+        data = device_to_dict(device)
+        assert "network_table" not in data
+
+
+# --- ConnectionInfo ---
+
+
+class TestConnectionInfoSerialization:
+    def test_connection_info_to_dict(self):
+        """Cover line 209: connection_info_to_dict."""
+        conn = ConnectionInfo(
+            signal_dbm=-55,
+            noise_dbm=-95,
+            tx_rate_mbps=400,
+            rx_rate_mbps=300,
+            satisfaction=85,
+            quality="good",
+        )
+        data = connection_info_to_dict(conn)
+        assert data["signal_dbm"] == -55
+        assert data["noise_dbm"] == -95
+        assert data["tx_rate_mbps"] == 400
+        assert data["rx_rate_mbps"] == 300
+        assert data["satisfaction"] == 85
+        assert data["quality"] == "good"
+
+    def test_connection_info_from_dict(self):
+        """Cover line 214: connection_info_from_dict."""
+        data = {
+            "signal_dbm": -60,
+            "noise_dbm": -90,
+            "tx_rate_mbps": 200,
+            "rx_rate_mbps": 150,
+            "satisfaction": 75,
+            "quality": "fair",
+        }
+        conn = connection_info_from_dict(data)
+        assert conn.signal_dbm == -60
+        assert conn.noise_dbm == -90
+        assert conn.tx_rate_mbps == 200
+        assert conn.rx_rate_mbps == 150
+        assert conn.satisfaction == 75
+        assert conn.quality == "fair"
+
+    def test_connection_info_round_trip(self):
+        conn = ConnectionInfo(signal_dbm=-70, quality="fair")
+        data = connection_info_to_dict(conn)
+        restored = connection_info_from_dict(data)
+        assert restored.signal_dbm == conn.signal_dbm
+        assert restored.quality == conn.quality
+
+    def test_connection_info_from_dict_with_defaults(self):
+        """All fields default to None when missing."""
+        data: dict[str, object] = {}
+        conn = connection_info_from_dict(data)
+        assert conn.signal_dbm is None
+        assert conn.noise_dbm is None
+        assert conn.quality is None
+
+
+# --- Edge with connection ---
+
+
+class TestEdgeWithConnection:
+    def test_edge_round_trip_with_connection(self):
+        """Cover line 248: edge_from_dict with connection data present."""
+        conn = ConnectionInfo(
+            signal_dbm=-50,
+            noise_dbm=-90,
+            tx_rate_mbps=866,
+            rx_rate_mbps=400,
+            satisfaction=95,
+            quality="excellent",
+        )
+        edge = Edge(
+            left="ap-1",
+            right="client-1",
+            label="WiFi",
+            poe=False,
+            wireless=True,
+            speed=None,
+            channel=36,
+            vlans=(),
+            active_vlans=(),
+            is_trunk=False,
+            connection=conn,
+        )
+        data = edge_to_dict(edge)
+        assert data["connection"] is not None
+        assert data["connection"]["signal_dbm"] == -50
+
+        restored = edge_from_dict(data)
+        assert restored.connection is not None
+        assert restored.connection.signal_dbm == -50
+        assert restored.connection.quality == "excellent"
+        assert restored.wireless is True
+        assert restored.channel == 36

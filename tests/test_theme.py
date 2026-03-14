@@ -1,6 +1,13 @@
 import pytest
 
-from unifi_topology.render.theme import BUILTIN_THEMES, load_svg_theme, resolve_svg_themes
+from unifi_topology.render.theme import (
+    BUILTIN_THEMES,
+    _coerce_pair,
+    _coerce_vlan_colors,
+    builtin_theme_yaml_path,
+    load_svg_theme,
+    resolve_svg_themes,
+)
 
 
 def test_load_svg_theme_rejects_non_object(tmp_path):
@@ -114,3 +121,54 @@ def test_builtin_themes_all_exist():
     for theme_name in BUILTIN_THEMES:
         svg_theme = resolve_svg_themes(theme_name=theme_name)
         assert svg_theme is not None
+
+
+def test_coerce_pair_from_list():
+    """Test _coerce_pair accepts a list of two strings."""
+    result = _coerce_pair(["#aaa", "#bbb"], ("#000", "#111"))
+    assert result == ("#aaa", "#bbb")
+
+
+def test_coerce_pair_from_tuple():
+    """Test _coerce_pair accepts a tuple of two strings."""
+    result = _coerce_pair(("#ccc", "#ddd"), ("#000", "#111"))
+    assert result == ("#ccc", "#ddd")
+
+
+def test_coerce_pair_dict_non_string_values_returns_default():
+    """Test _coerce_pair returns default when dict values are not strings."""
+    result = _coerce_pair({"from": 123, "to": 456}, ("#000", "#111"))
+    assert result == ("#000", "#111")
+
+
+def test_coerce_vlan_colors_string_digit_keys():
+    """Test _coerce_vlan_colors parses string-digit keys as integers."""
+    result = _coerce_vlan_colors({"10": "#aaa", "20": "#bbb"})
+    assert result == {10: "#aaa", 20: "#bbb"}
+
+
+def test_coerce_vlan_colors_skips_non_string_color():
+    """Test _coerce_vlan_colors skips entries where color is not a string."""
+    result = _coerce_vlan_colors({1: 12345, 2: "#bbb"})
+    assert result == {2: "#bbb"}
+
+
+def test_builtin_theme_yaml_path_valid():
+    """Test builtin_theme_yaml_path returns a path for a valid theme."""
+    path = builtin_theme_yaml_path("unifi")
+    assert path.exists()
+    assert path.name == "unifi.yaml"
+
+
+def test_builtin_theme_yaml_path_invalid_raises():
+    """Test builtin_theme_yaml_path raises ValueError for unknown theme."""
+    with pytest.raises(ValueError, match="Unknown theme"):
+        builtin_theme_yaml_path("nonexistent-theme")
+
+
+def test_resolve_svg_themes_no_args_returns_default():
+    """Test resolve_svg_themes with no arguments returns the default theme."""
+    from unifi_topology.render.svg_theme import DEFAULT_THEME
+
+    result = resolve_svg_themes()
+    assert result is DEFAULT_THEME

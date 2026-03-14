@@ -475,3 +475,128 @@ def test_render_svg_isometric_uses_theme_icon_set():
         theme=theme,
     )
     assert "<svg" in output
+
+
+def test_load_icons_primary_missing_falls_back_to_isometric(monkeypatch):
+    """_load_icons falls back to isometric set when primary icon file is missing."""
+    # Create a custom icon set where gateway maps to a file that does not exist,
+    # so the fallback isometric path is used (which maps to real files on disk).
+    patched_sets = {
+        "custom": (
+            "nonexistent-dir",  # flat subdir that does not exist
+            "isometric",
+            svg_icons_module._ICON_FILES_ISOMETRIC,  # same file names but in missing dir
+            svg_icons_module._ISO_ICON_FILES_ISOMETRIC,
+        ),
+        "isometric": svg_icons_module._ICON_SETS["isometric"],
+    }
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_icons("custom")
+    # Fallback should have loaded the isometric icons
+    assert "gateway" in icons
+    assert icons["gateway"].startswith("data:image/svg+xml;base64,")
+
+
+def test_load_icons_no_filename_in_primary_falls_back(monkeypatch):
+    """_load_icons uses fallback when primary file_map has no entry for a node type."""
+    # Primary map is empty, so filename will be None; fallback has all entries
+    patched_sets = {
+        "sparse": (
+            "",
+            "isometric",
+            {},  # empty primary file map
+            svg_icons_module._ISO_ICON_FILES_ISOMETRIC,
+        ),
+        "isometric": svg_icons_module._ICON_SETS["isometric"],
+    }
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_icons("sparse")
+    # All node types should load via fallback
+    assert "gateway" in icons
+    assert "switch" in icons
+
+
+def test_load_icons_no_fallback_filename_skips(monkeypatch):
+    """_load_icons skips node type when neither primary nor fallback has a filename."""
+    # Both primary and fallback file maps are empty
+    patched_sets = {
+        "isometric": (
+            "",
+            "isometric",
+            {},  # empty primary
+            svg_icons_module._ISO_ICON_FILES_ISOMETRIC,
+        ),
+    }
+    # Also need fallback (isometric set) to have empty flat file map
+    patched_sets["isometric"] = (
+        "",
+        "isometric",
+        {},  # empty fallback flat files too
+        svg_icons_module._ISO_ICON_FILES_ISOMETRIC,
+    )
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_icons("isometric")
+    assert len(icons) == 0
+
+
+def test_load_isometric_icons_primary_missing_falls_back(monkeypatch):
+    """_load_isometric_icons falls back when primary iso icon path does not exist."""
+    patched_sets = {
+        "custom": (
+            "",
+            "nonexistent-iso-dir",  # iso subdir that does not exist
+            svg_icons_module._ICON_FILES_ISOMETRIC,
+            svg_icons_module._ISO_ICON_FILES_ISOMETRIC,  # same names but in missing dir
+        ),
+        "isometric": svg_icons_module._ICON_SETS["isometric"],
+    }
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_isometric_icons("custom")
+    # Fallback should have loaded the isometric icons
+    assert "gateway" in icons
+    assert icons["gateway"].startswith("data:image/svg+xml;base64,")
+
+
+def test_load_isometric_icons_no_filename_in_primary_falls_back(monkeypatch):
+    """_load_isometric_icons uses fallback when primary iso_file_map has no entry."""
+    patched_sets = {
+        "sparse": (
+            "",
+            "isometric",
+            svg_icons_module._ICON_FILES_ISOMETRIC,
+            {},  # empty primary iso file map
+        ),
+        "isometric": svg_icons_module._ICON_SETS["isometric"],
+    }
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_isometric_icons("sparse")
+    assert "gateway" in icons
+    assert "switch" in icons
+
+
+def test_load_isometric_icons_no_fallback_filename_skips(monkeypatch):
+    """_load_isometric_icons skips node type when neither primary nor fallback has a filename."""
+    patched_sets = {
+        "isometric": (
+            "",
+            "isometric",
+            svg_icons_module._ICON_FILES_ISOMETRIC,
+            {},  # empty primary iso files
+        ),
+    }
+    # Fallback iso files also empty
+    patched_sets["isometric"] = (
+        "",
+        "isometric",
+        svg_icons_module._ICON_FILES_ISOMETRIC,
+        {},  # empty fallback iso files
+    )
+    monkeypatch.setattr(svg_icons_module, "_ICON_SETS", patched_sets)
+
+    icons = svg_icons_module._load_isometric_icons("isometric")
+    assert len(icons) == 0

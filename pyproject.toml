@@ -93,6 +93,7 @@ markers = [
 [tool.coverage.run]
 branch = true
 source = ["unifi_topology"]
+omit = ["src/unifi_topology/model/mock.py"]
 
 [tool.coverage.paths]
 source = [
