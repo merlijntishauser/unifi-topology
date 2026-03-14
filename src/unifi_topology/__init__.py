@@ -4,6 +4,9 @@ __version__ = "1.1.0"
 
 from .adapters import (
     Config,
+    UnifiApiError,
+    UnifiAuthError,
+    UnifiError,
     UnifiWriteError,
     fetch_clients,
     fetch_devices,
@@ -68,6 +71,9 @@ __all__ = [
     "build_device_inventory",
     "build_node_type_map",
     "build_topology",
+    "UnifiApiError",
+    "UnifiAuthError",
+    "UnifiError",
     "UnifiWriteError",
     "extract_vpn_tunnels",
     "extract_wan_info",

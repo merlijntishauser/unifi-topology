@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cache invalidation: `invalidate_cache` for clearing cached API responses after write operations
 - `UnifiClient` instance caching per config to avoid repeated logins and prevent 429 rate-limit errors
 - `clear_client_cache()` for explicit client cache control
+- `UnifiError` base exception class so consumers can catch all unifi-topology errors with a single `except UnifiError`
+- Export `UnifiApiError` and `UnifiAuthError` from the public API
 
 
 ## [1.1.0] (2026-03-12)

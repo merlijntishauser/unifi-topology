@@ -14,10 +14,13 @@ from .unifi import (
     swap_firewall_policy_order,
     toggle_firewall_policy,
 )
-from .unifi_api import UnifiWriteError
+from .unifi_api import UnifiApiError, UnifiAuthError, UnifiError, UnifiWriteError
 
 __all__ = [
     "Config",
+    "UnifiApiError",
+    "UnifiAuthError",
+    "UnifiError",
     "UnifiWriteError",
     "clear_client_cache",
     "fetch_clients",

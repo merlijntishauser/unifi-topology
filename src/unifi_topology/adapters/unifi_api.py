@@ -13,11 +13,15 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-class UnifiAuthError(Exception):
+class UnifiError(Exception):
+    """Base class for all unifi-topology errors."""
+
+
+class UnifiAuthError(UnifiError):
     """Authentication with the UniFi controller failed."""
 
 
-class UnifiApiError(Exception):
+class UnifiApiError(UnifiError):
     """An API request to the UniFi controller failed."""
 
 
