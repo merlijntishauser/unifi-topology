@@ -24,7 +24,9 @@ import requests
 
 STORE_BASE = "https://store.ui.com"
 STORE_HOME = f"{STORE_BASE}/us/en"
-OUTPUT_PATH = Path(__file__).resolve().parent.parent / "src" / "unifi_topology" / "assets" / "models.json"
+OUTPUT_PATH = (
+    Path(__file__).resolve().parent.parent / "src" / "unifi_topology" / "assets" / "models.json"
+)
 
 CATEGORIES = [
     "all-cloud-gateways",
@@ -45,7 +47,9 @@ def _extract_build_id(session: requests.Session) -> str:
     return match.group(1)
 
 
-def _fetch_category(session: requests.Session, build_id: str, category: str) -> list[dict[str, Any]]:
+def _fetch_category(
+    session: requests.Session, build_id: str, category: str
+) -> list[dict[str, Any]]:
     """Fetch all products in a store category."""
     url = f"{STORE_BASE}/_next/data/{build_id}/us/en/category/{category}.json"
     params = {"store": "us", "language": "en", "category": category}
