@@ -443,156 +443,6 @@ def _connect_and_fetch(
     return _call_with_retries(operation, fetch_fn(client))
 
 
-def fetch_devices(
-    config: Config,
-    *,
-    site: str | None = None,
-    detailed: bool = True,
-    use_cache: bool = True,
-) -> Sequence[object]:
-    """Fetch devices from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"devices_{_cache_key(config.url, site_name, str(detailed))}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached devices (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_devices(site_name, detailed=detailed)
-
-        return _fetch
-
-    try:
-        devices = _connect_and_fetch(config, "device fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Device fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, _serialize_devices_for_cache(devices))
-    logger.debug("Fetched %d devices", len(devices))
-    return devices
-
-
-def fetch_clients(
-    config: Config,
-    *,
-    site: str | None = None,
-    use_cache: bool = True,
-) -> Sequence[object]:
-    """Fetch active clients from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"clients_{_cache_key(config.url, site_name)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached clients (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_clients(site_name)
-
-        return _fetch
-
-    try:
-        clients = _connect_and_fetch(config, "client fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Client fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, clients)
-    logger.debug("Fetched %d clients", len(clients))
-    return clients
-
-
-def fetch_networks(
-    config: Config,
-    *,
-    site: str | None = None,
-    use_cache: bool = True,
-) -> Sequence[object]:
-    """Fetch network inventory from UniFi Controller."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"networks_{_cache_key(config.url, site_name)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached networks (%d)", len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        def _fetch() -> Sequence[object]:
-            return client.get_networkconf(site_name)
-
-        return _fetch
-
-    try:
-        networks = _connect_and_fetch(config, "network fetch", _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "Network fetch failed; using stale cache (%ds old): %s",
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, _serialize_networks_for_cache(networks))
-    logger.debug("Fetched %d networks", len(networks))
-    return networks
-
-
-def fetch_payload(
-    config: Config,
-    *,
-    site: str | None = None,
-    include_clients: bool = True,
-    use_cache: bool = True,
-) -> dict[str, list[object] | list[dict[str, object]]]:
-    """Fetch devices, clients, and VLAN inventory for payload output."""
-    devices = list(fetch_devices(config, site=site, detailed=True, use_cache=use_cache))
-    clients = _fetch_payload_clients(
-        config,
-        site=site,
-        include_clients=include_clients,
-        use_cache=use_cache,
-    )
-    networks = list(fetch_networks(config, site=site, use_cache=use_cache))
-    normalized_networks = normalize_networks(networks)
-    vlan_info = build_vlan_info(clients, normalized_networks)
-    return {
-        "devices": devices,
-        "clients": clients,
-        "networks": normalized_networks,
-        "vlan_info": vlan_info,
-    }
-
-
 def _fetch_cached(
     config: Config,
     *,
@@ -602,11 +452,13 @@ def _fetch_cached(
     operation: str,
     api_call: Callable[[UnifiClient, str], Callable[[], Sequence[object]]],
     serialize: Callable[[Sequence[object]], Sequence[object]] | None = None,
+    cache_key_extra: Sequence[str] = (),
 ) -> Sequence[object]:
     """Generic fetch-with-cache for any UniFi API resource."""
     site_name = site or config.site
     ttl_seconds = _cache_ttl_seconds()
-    cache_path = _cache_dir() / f"{cache_prefix}_{_cache_key(config.url, site_name)}.json"
+    key_parts = (config.url, site_name, *cache_key_extra)
+    cache_path = _cache_dir() / f"{cache_prefix}_{_cache_key(*key_parts)}.json"
     cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
     if cache_safe:
         cached = _load_cache(cache_path, ttl_seconds)
@@ -634,6 +486,87 @@ def _fetch_cached(
         _save_cache(cache_path, serialize(data) if serialize else data)
     logger.debug("Fetched %d %s", len(data), operation)
     return data
+
+
+def fetch_devices(
+    config: Config,
+    *,
+    site: str | None = None,
+    detailed: bool = True,
+    use_cache: bool = True,
+) -> Sequence[object]:
+    """Fetch devices from UniFi Controller."""
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="devices",
+        operation="devices",
+        api_call=lambda client, site_name: lambda: client.get_devices(site_name, detailed=detailed),
+        serialize=_serialize_devices_for_cache,
+        cache_key_extra=(str(detailed),),
+    )
+
+
+def fetch_clients(
+    config: Config,
+    *,
+    site: str | None = None,
+    use_cache: bool = True,
+) -> Sequence[object]:
+    """Fetch active clients from UniFi Controller."""
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="clients",
+        operation="clients",
+        api_call=lambda client, site_name: lambda: client.get_clients(site_name),
+    )
+
+
+def fetch_networks(
+    config: Config,
+    *,
+    site: str | None = None,
+    use_cache: bool = True,
+) -> Sequence[object]:
+    """Fetch network inventory from UniFi Controller."""
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="networks",
+        operation="networks",
+        api_call=lambda client, site_name: lambda: client.get_networkconf(site_name),
+        serialize=_serialize_networks_for_cache,
+    )
+
+
+def fetch_payload(
+    config: Config,
+    *,
+    site: str | None = None,
+    include_clients: bool = True,
+    use_cache: bool = True,
+) -> dict[str, list[object] | list[dict[str, object]]]:
+    """Fetch devices, clients, and VLAN inventory for payload output."""
+    devices = list(fetch_devices(config, site=site, detailed=True, use_cache=use_cache))
+    clients = _fetch_payload_clients(
+        config,
+        site=site,
+        include_clients=include_clients,
+        use_cache=use_cache,
+    )
+    networks = list(fetch_networks(config, site=site, use_cache=use_cache))
+    normalized_networks = normalize_networks(networks)
+    vlan_info = build_vlan_info(clients, normalized_networks)
+    return {
+        "devices": devices,
+        "clients": clients,
+        "networks": normalized_networks,
+        "vlan_info": vlan_info,
+    }
 
 
 def fetch_firewall_zones(
