@@ -8,6 +8,27 @@ from ..model.topology import Edge
 from . import _svg_edge_labels_record, _svg_edge_shared
 from .svg_theme import SvgOptions, SvgTheme
 
+__all__ = [
+    "_client_attachment",
+    "_client_port_text",
+    "_compute_elbow_path",
+    "_edge_label_context",
+    "_edge_opacity",
+    "_edge_render_state",
+    "_infra_label_text",
+    "_record_client_label",
+    "_record_edge_labels",
+    "_record_infra_label",
+    "_render_poe_icon",
+    "_render_single_edge",
+    "_render_standard_edge",
+    "_render_svg_edges",
+    "_render_vlan_endpoint_markers",
+    "_render_vlan_striped_edge",
+    "_upstream_name_from_label",
+    "_vlan_data_attrs",
+]
+
 _client_attachment = _svg_edge_labels_record._client_attachment
 _client_port_text = _svg_edge_labels_record._client_port_text
 _edge_label_context = _svg_edge_labels_record._edge_label_context

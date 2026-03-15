@@ -4,6 +4,27 @@ from __future__ import annotations
 
 from . import _svg_group_layout, _svg_tree_layout
 
+__all__ = [
+    "GroupBounds",
+    "_assign_nodes_to_groups",
+    "_build_children_maps",
+    "_build_node_to_group_map",
+    "_compute_group_bounds",
+    "_filter_edges_for_group",
+    "_layout_grouped_nodes",
+    "_layout_nodes",
+    "_layout_nodeset",
+    "_layout_positions",
+    "_layout_single_group",
+    "_offset_positions",
+    "_resolve_group_order",
+    "_resolve_roots",
+    "_sort_children",
+    "_sort_key_for_nodes",
+    "_svg_node_group_attrs",
+    "_tree_layout_indices",
+]
+
 GroupBounds = _svg_group_layout.GroupBounds
 _assign_nodes_to_groups = _svg_group_layout._assign_nodes_to_groups
 _build_children_maps = _svg_tree_layout._build_children_maps

@@ -21,6 +21,40 @@ from .topology import (
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    "_build_adjacency",
+    "_build_edge_map",
+    "_build_ordered_edges",
+    "_collect_lldp_links",
+    "_collect_uplink_links",
+    "_discover_links",
+    "_find_port_by_idx",
+    "_lldp_candidates",
+    "_match_port_by_name",
+    "_match_port_by_number",
+    "_maybe_add_uplink_link",
+    "_node_vlans",
+    "_partition_nodes_by_vlan",
+    "_populate_port_maps",
+    "_port_speed_by_idx",
+    "_port_vlans_by_idx",
+    "_primary_vlan_for_node",
+    "_resolve_port_idx_from_lldp",
+    "_seed_tree_queue",
+    "_tree_edges_from_parent",
+    "_tree_parents",
+    "_uplink_name",
+    "_visit_tree_neighbor",
+    "build_device_index",
+    "build_edges",
+    "build_port_map",
+    "build_tree_edges_by_topology",
+    "build_topology",
+    "enrich_edges_with_active_vlans",
+    "group_devices_by_type",
+    "group_nodes_by_vlan",
+]
+
 build_device_index = _build_device_index
 _lldp_candidates = _edge_ports._lldp_candidates
 _match_port_by_name = _edge_ports._match_port_by_name

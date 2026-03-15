@@ -35,8 +35,35 @@ _render_iso_group_boundaries = _svg_iso_overlays._render_iso_group_boundaries
 _render_iso_wan_upstream = _svg_iso_overlays._render_iso_wan_upstream
 _iso_group_parallelogram = _svg_iso_overlays._iso_group_parallelogram
 
-# Re-export IsoLayout for external consumers
-__all__ = ["IsoLayout", "render_svg_isometric"]
+__all__ = [
+    "IsoGroupBounds",
+    "IsoLayout",
+    "IsoLayoutPositions",
+    "_apply_iso_offsets",
+    "_compute_iso_group_bounds",
+    "_expand_viewbox_for_overlays",
+    "_expand_viewbox_for_wan",
+    "_find_gateway_position",
+    "_iso_grid_extents",
+    "_iso_grid_line",
+    "_iso_grid_lines",
+    "_iso_group_parallelogram",
+    "_iso_layout",
+    "_iso_layout_positions",
+    "_iso_offsets",
+    "_iso_output_size",
+    "_iso_viewport_size",
+    "_position_extents",
+    "_project_iso_positions",
+    "_render_grouped_boundaries",
+    "_render_iso_boundaries_if_needed",
+    "_render_iso_gateway_overlays",
+    "_render_iso_grid",
+    "_render_iso_group_boundaries",
+    "_render_iso_nodes_and_edges",
+    "_render_iso_wan_upstream",
+    "render_svg_isometric",
+]
 
 
 def _render_iso_nodes_and_edges(

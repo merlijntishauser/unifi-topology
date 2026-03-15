@@ -4,6 +4,26 @@ from __future__ import annotations
 
 from . import _svg_edge_labels, _svg_gateway_labels
 
+__all__ = [
+    "_build_dual_wan_label_lines",
+    "_build_single_wan_label_lines",
+    "_build_vpn_label_lines",
+    "_build_wan_label_lines",
+    "_compact_edge_label",
+    "_escape_text",
+    "_extract_device_name",
+    "_extract_port_text",
+    "_format_compact_ports",
+    "_format_port_label_lines",
+    "_format_wan_interface_line",
+    "_format_wan_speed",
+    "_format_wan_speed_line",
+    "_label_metrics",
+    "_shorten_prefix",
+    "_strip_local_port",
+    "_wrap_text",
+]
+
 
 def _escape_text(value: str) -> str:
     return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

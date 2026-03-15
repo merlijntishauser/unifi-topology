@@ -9,6 +9,20 @@ from ._svg_node_attrs import _svg_node_group_attrs as _svg_node_group_attrs
 from ._svg_tree_layout import _layout_nodes, _layout_nodeset
 from .svg_theme import SvgOptions
 
+__all__ = [
+    "GroupBounds",
+    "_assign_nodes_to_groups",
+    "_build_node_to_group_map",
+    "_compute_group_bounds",
+    "_filter_edges_for_group",
+    "_layout_grouped_nodes",
+    "_layout_single_group",
+    "_layout_ungrouped_nodes",
+    "_offset_positions",
+    "_resolve_group_order",
+    "_svg_node_group_attrs",
+]
+
 
 @dataclass(frozen=True)
 class GroupBounds:

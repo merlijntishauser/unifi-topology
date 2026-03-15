@@ -6,6 +6,19 @@ from ..model.topology import Edge
 from . import _svg_edge_labels_record
 from .svg_labels import _shorten_prefix
 
+__all__ = [
+    "_client_attachment",
+    "_client_port_text",
+    "_edge_label_context",
+    "_infra_label_text",
+    "_iso_client_attachment",
+    "_record_iso_client_edge_label",
+    "_record_iso_device_edge_label",
+    "_record_iso_edge_label",
+    "_record_iso_edge_labels",
+    "_upstream_name_from_label",
+]
+
 _client_attachment = _svg_edge_labels_record._client_attachment
 _client_port_text = _svg_edge_labels_record._client_port_text
 _edge_label_context = _svg_edge_labels_record._edge_label_context

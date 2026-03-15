@@ -1,5 +1,20 @@
 """Compatibility facade for private isometric edge helpers."""
 
+__all__ = [
+    "_iso_client_attachment",
+    "_iso_edge_path",
+    "_iso_front_anchor",
+    "_record_iso_client_edge_label",
+    "_record_iso_device_edge_label",
+    "_record_iso_edge_label",
+    "_render_iso_edges",
+    "_render_iso_poe_icon",
+    "_render_iso_standard_edge",
+    "_render_iso_vlan_striped_edge",
+    "_render_single_iso_edge",
+    "_resolve_edge_coords",
+]
+
 from ._svg_iso_edge_draw import _iso_edge_path as _iso_edge_path
 from ._svg_iso_edge_draw import _iso_front_anchor as _iso_front_anchor
 from ._svg_iso_edge_draw import _render_iso_edges as _render_iso_edges

@@ -1,5 +1,23 @@
 """Compatibility facade for device and client classification helpers."""
 
+__all__ = [
+    "_classify_by_device_name",
+    "_classify_by_name",
+    "_classify_by_unifi_info",
+    "_classify_by_vendor",
+    "_classify_known_device_type",
+    "_client_ucore_display_name",
+    "_client_ucore_info",
+    "_client_unifi_flag",
+    "_client_vendor",
+    "_normalized_device_type",
+    "_ucore_has_device_info",
+    "classify_client_type",
+    "classify_device_type",
+    "client_display_name",
+    "client_is_unifi",
+]
+
 from ._classify_client import _classify_by_name as _classify_by_name
 from ._classify_client import _classify_by_unifi_info as _classify_by_unifi_info
 from ._classify_client import _classify_by_vendor as _classify_by_vendor

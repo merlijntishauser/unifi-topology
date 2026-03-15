@@ -4,6 +4,25 @@ from __future__ import annotations
 
 from . import _firewall_nested, _firewall_policy_coerce
 
+__all__ = [
+    "_as_str",
+    "_as_tuple_str",
+    "_build_policy",
+    "_group_id_from_nested",
+    "_ip_ranges_from_nested",
+    "_mac_addresses_from_nested",
+    "_network_id_from_nested",
+    "_port_ranges_from_nested",
+    "_resolve_action",
+    "_resolve_zone_ids",
+    "_source_ip_ranges_from_nested",
+    "_source_port_ranges_from_nested",
+    "_zone_id_from_nested",
+    "normalize_firewall_groups",
+    "normalize_firewall_policies",
+    "normalize_firewall_zones",
+]
+
 _as_str = _firewall_nested._as_str
 _as_tuple_str = _firewall_nested._as_tuple_str
 _build_policy = _firewall_policy_coerce._build_policy
