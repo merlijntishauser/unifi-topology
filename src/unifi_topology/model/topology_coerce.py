@@ -5,7 +5,8 @@ from __future__ import annotations
 import logging
 from collections.abc import Iterable
 
-from .helpers import as_bool, as_list, first_attr, get_field
+from ._raw import RawRecord
+from .helpers import as_bool, as_list, get_field
 from .lldp import coerce_lldp
 from .topology import Device, DeviceSource, PortInfo, UplinkInfo
 
@@ -49,7 +50,7 @@ def _as_group_id(value: object | None) -> str | None:
 
 
 def _aggregation_group(port_entry: object) -> object | None:
-    keys = (
+    return RawRecord(port_entry).present(
         "aggregation_group",
         "aggregation_id",
         "aggregate_id",
@@ -60,18 +61,8 @@ def _aggregation_group(port_entry: object) -> object | None:
         "link_aggregation_id",
         "aggregate",
         "aggregated_by",
+        skip_values=(None, "", False),
     )
-    if isinstance(port_entry, dict):
-        for key in keys:
-            value = port_entry.get(key)
-            if value not in (None, "", False):
-                return value
-        return None
-    for key in keys:
-        value = get_field(port_entry, key)
-        if value not in (None, "", False):
-            return value
-    return None
 
 
 def _coerce_vlan_string(value: str) -> tuple[int, ...]:
@@ -128,60 +119,26 @@ def _resolve_vlan_id(value: object, network_vlan_map: dict[str, int] | None = No
 
 def _extract_wan_networkconf_id(port_entry: object) -> str | None:
     """Extract WAN network configuration ID from a port entry."""
-    if isinstance(port_entry, dict):
-        value = port_entry.get("wan_networkconf_id")
-    else:
-        value = get_field(port_entry, "wan_networkconf_id")
-    if isinstance(value, str) and value.strip():
-        return value.strip()
-    return None
+    return RawRecord(port_entry).text("wan_networkconf_id")
 
 
 def _port_info_from_entry(
     port_entry: object, network_vlan_map: dict[str, int] | None = None
 ) -> PortInfo:
-    if isinstance(port_entry, dict):
-        port_idx = port_entry.get("port_idx") or port_entry.get("portIdx")
-        name = port_entry.get("name")
-        ifname = port_entry.get("ifname")
-        speed = port_entry.get("speed")
-        up = port_entry.get("up")
-        aggregation_group = _aggregation_group(port_entry)
-        port_poe = as_bool(port_entry.get("port_poe"))
-        poe_enable = as_bool(port_entry.get("poe_enable"))
-        poe_good = as_bool(port_entry.get("poe_good"))
-        poe_power = _as_float(port_entry.get("poe_power"))
-        native_vlan = port_entry.get("native_vlan")
-        tagged_vlans = port_entry.get("tagged_vlans")
-    else:
-        port_idx = get_field(port_entry, "port_idx") or get_field(port_entry, "portIdx")
-        name = get_field(port_entry, "name")
-        ifname = get_field(port_entry, "ifname")
-        speed = get_field(port_entry, "speed")
-        up = get_field(port_entry, "up")
-        aggregation_group = _aggregation_group(port_entry)
-        port_poe = as_bool(get_field(port_entry, "port_poe"))
-        poe_enable = as_bool(get_field(port_entry, "poe_enable"))
-        poe_good = as_bool(get_field(port_entry, "poe_good"))
-        poe_power = _as_float(get_field(port_entry, "poe_power"))
-        native_vlan = get_field(port_entry, "native_vlan")
-        tagged_vlans = get_field(port_entry, "tagged_vlans")
-    up_bool: bool | None = None
-    if up is not None:
-        up_bool = as_bool(up)
+    record = RawRecord(port_entry)
     return PortInfo(
-        port_idx=_as_int(port_idx),
-        name=str(name) if isinstance(name, str) and name.strip() else None,
-        ifname=str(ifname) if isinstance(ifname, str) and ifname.strip() else None,
-        speed=_as_int(speed),
-        aggregation_group=_as_group_id(aggregation_group),
-        port_poe=port_poe,
-        poe_enable=poe_enable,
-        poe_good=poe_good,
-        poe_power=poe_power,
-        up=up_bool,
-        native_vlan=_resolve_vlan_id(native_vlan, network_vlan_map),
-        tagged_vlans=_coerce_vlan_list(tagged_vlans, network_vlan_map),
+        port_idx=record.integer("port_idx", "portIdx"),
+        name=record.text("name"),
+        ifname=record.text("ifname"),
+        speed=record.integer("speed"),
+        aggregation_group=_as_group_id(_aggregation_group(port_entry)),
+        port_poe=as_bool(record.get("port_poe")),
+        poe_enable=as_bool(record.get("poe_enable")),
+        poe_good=as_bool(record.get("poe_good")),
+        poe_power=_as_float(record.get("poe_power")),
+        up=record.optional_bool("up"),
+        native_vlan=_resolve_vlan_id(record.get("native_vlan"), network_vlan_map),
+        tagged_vlans=_coerce_vlan_list(record.get("tagged_vlans"), network_vlan_map),
         wan_networkconf_id=_extract_wan_networkconf_id(port_entry),
     )
 
@@ -213,15 +170,12 @@ def _poe_ports_from_device(
 
 def _extract_uplink_fields(value: object) -> tuple[object, object, object]:
     """Extract mac, name, and port from uplink data (dict or object)."""
-    if isinstance(value, dict):
-        mac = value.get("uplink_mac") or value.get("uplink_device_mac")
-        name = value.get("uplink_device_name") or value.get("uplink_name")
-        port_raw = value.get("uplink_remote_port") or value.get("port_idx")
-    else:
-        mac = get_field(value, "uplink_mac") or get_field(value, "uplink_device_mac")
-        name = get_field(value, "uplink_device_name") or get_field(value, "uplink_name")
-        port_raw = get_field(value, "uplink_remote_port") or get_field(value, "port_idx")
-    return mac, name, port_raw
+    record = RawRecord(value)
+    return (
+        record.first("uplink_mac", "uplink_device_mac"),
+        record.first("uplink_device_name", "uplink_name"),
+        record.first("uplink_remote_port", "port_idx"),
+    )
 
 
 def _coerce_uplink_string(value: object) -> str | None:
@@ -273,11 +227,25 @@ def _get_model_display_name(device: DeviceSource) -> str | None:
         "shortname",
         "model_name",
     )
-    for key in candidates:
-        value = get_field(device, key)
-        if isinstance(value, str) and value.strip():
-            return value.strip()
-    return None
+    return RawRecord(device).text(*candidates)
+
+
+def _device_display_fields(
+    device: DeviceSource,
+) -> tuple[object | None, object | None, object | None, object | None, object | None]:
+    record = RawRecord(device)
+    return (
+        _get_model_display_name(device) or record.get("model"),
+        record.get("model"),
+        record.first("ip", "ip_address"),
+        record.first("type", "device_type"),
+        record.first("displayable_version", "version"),
+    )
+
+
+def _gateway_mode(device: DeviceSource) -> bool | None:
+    raw_gw_mode = RawRecord(device).get("in_gateway_mode")
+    return raw_gw_mode if isinstance(raw_gw_mode, bool) else None
 
 
 def _get_lldp_info(device: DeviceSource) -> object | None:
@@ -312,18 +280,14 @@ def _coerce_network_table(device: DeviceSource) -> list[dict[str, object]]:
 
 
 def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None = None) -> Device:
-    name = get_field(device, "name")
-    mac = get_field(device, "mac")
+    record = RawRecord(device)
+    name = record.get("name")
+    mac = record.get("mac")
     if not name or not mac:
         raise ValueError("Device missing name or mac")
 
-    model_name = _get_model_display_name(device) or get_field(device, "model")
-    model = get_field(device, "model")
-    ip = first_attr(device, "ip", "ip_address")
-    dev_type = first_attr(device, "type", "device_type")
-    version = first_attr(device, "displayable_version", "version")
-    raw_gw_mode = get_field(device, "in_gateway_mode")
-    in_gateway_mode = raw_gw_mode if isinstance(raw_gw_mode, bool) else None
+    model_name, model, ip, dev_type, version = _device_display_fields(device)
+    in_gateway_mode = _gateway_mode(device)
 
     uplink, last_uplink = _uplink_info(device)
     lldp_entries = _resolve_lldp_info(device, name, uplink, last_uplink)

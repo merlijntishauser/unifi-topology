@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from ._raw import RawRecord, nested_records
 from .classify import (
     classify_client_type,
     classify_device_type,
@@ -11,36 +12,36 @@ from .classify import (
     client_is_unifi,
 )
 from .connection import ConnectionInfo, classify_signal_quality
-from .helpers import first_string_field, get_field, normalize_mac
+from .helpers import get_field, normalize_mac
 from .ports import extract_port_number
 from .topology import ClientPortMap, Device, Edge
 
 
+def _client_nested_records(client: object) -> tuple[RawRecord, ...]:
+    return tuple(nested_records(client, "uplink", "last_uplink"))
+
+
 def client_uplink_mac(client: object) -> str | None:
     """Get the MAC address of the device this client is connected to."""
-    mac = first_string_field(
-        client, "ap_mac", "sw_mac", "uplink_mac", "uplink_device_mac", "last_uplink_mac"
-    )
+    record = RawRecord(client)
+    mac = record.text("ap_mac", "sw_mac", "uplink_mac", "uplink_device_mac", "last_uplink_mac")
     if mac:
         return mac
-    for key in ("uplink", "last_uplink"):
-        nested = get_field(client, key)
-        if isinstance(nested, dict):
-            mac = first_string_field(nested, "uplink_mac", "uplink_device_mac")
-            if mac:
-                return mac
+    for nested in _client_nested_records(client):
+        mac = nested.text("uplink_mac", "uplink_device_mac")
+        if mac:
+            return mac
     return None
 
 
 def _client_port_values(client: object) -> Iterable[object | None]:
     """Yield all possible port values from client data."""
+    record = RawRecord(client)
     for key in ("uplink_remote_port", "sw_port", "ap_port", "port_idx"):
-        yield get_field(client, key)
-    for key in ("uplink", "last_uplink"):
-        nested = get_field(client, key)
-        if isinstance(nested, dict):
-            for nested_key in ("uplink_remote_port", "port_idx"):
-                yield nested.get(nested_key)
+        yield record.get(key)
+    for nested in _client_nested_records(client):
+        for nested_key in ("uplink_remote_port", "port_idx"):
+            yield nested.get(nested_key)
 
 
 def _parse_port_value(value: object | None) -> int | None:
@@ -71,23 +72,27 @@ def _client_is_wired(client: object) -> bool:
 
 def _client_channel(client: object) -> int | None:
     """Get wireless channel for client."""
+    record = RawRecord(client)
     for key in ("channel", "radio_channel", "wifi_channel"):
-        value = get_field(client, key)
-        if isinstance(value, int):
+        value = record.integer(key)
+        if value is not None:
             return value
-        if isinstance(value, str) and value.isdigit():
-            return int(value)
     return None
 
 
 def _client_vlan(client: object) -> int | None:
     """Get VLAN ID for client."""
+    record = RawRecord(client)
     for key in ("vlan", "vlan_id", "vlanId", "vlanid"):
-        value = get_field(client, key)
-        if isinstance(value, int) and value > 0:
+        value = record.integer(key)
+        if value is not None and value > 0:
             return value
-        if isinstance(value, str) and value.isdigit() and int(value) > 0:
-            return int(value)
+    return None
+
+
+def _metric_int(value: object | None) -> int | None:
+    if isinstance(value, int | float):
+        return int(value)
     return None
 
 
@@ -96,17 +101,12 @@ def _extract_connection_info(client: object) -> ConnectionInfo | None:
     if _client_is_wired(client):
         return None
 
-    signal = get_field(client, "signal")
-    noise = get_field(client, "noise")
-    tx_rate = get_field(client, "tx_rate")
-    rx_rate = get_field(client, "rx_rate")
-    satisfaction = get_field(client, "satisfaction")
-
-    signal_dbm = int(signal) if isinstance(signal, int | float) else None
-    noise_dbm = int(noise) if isinstance(noise, int | float) else None
-    tx_rate_mbps = int(tx_rate) if isinstance(tx_rate, int | float) else None
-    rx_rate_mbps = int(rx_rate) if isinstance(rx_rate, int | float) else None
-    satisfaction_val = int(satisfaction) if isinstance(satisfaction, int | float) else None
+    record = RawRecord(client)
+    signal_dbm = _metric_int(record.get("signal"))
+    noise_dbm = _metric_int(record.get("noise"))
+    tx_rate_mbps = _metric_int(record.get("tx_rate"))
+    rx_rate_mbps = _metric_int(record.get("rx_rate"))
+    satisfaction_val = _metric_int(record.get("satisfaction"))
 
     return ConnectionInfo(
         signal_dbm=signal_dbm,
@@ -137,6 +137,31 @@ def client_matches_filters(client: object, *, client_mode: str, only_unifi: bool
     return True
 
 
+def _client_attachment(client: object, device_index: dict[str, str]) -> tuple[str, str] | None:
+    name = client_display_name(client)
+    uplink_mac = client_uplink_mac(client)
+    if not name or not uplink_mac:
+        return None
+    device_name = device_index.get(normalize_mac(uplink_mac))
+    if not device_name:
+        return None
+    return device_name, name
+
+
+def _client_edge_label(device_name: str, client_name: str, client: object) -> str | None:
+    uplink_port = client_uplink_port(client)
+    if uplink_port is None:
+        return None
+    return f"{device_name}: Port {uplink_port} <-> {client_name}"
+
+
+def _client_vlans(client: object) -> tuple[int, ...]:
+    client_vlan = _client_vlan(client)
+    if client_vlan is None:
+        return ()
+    return (client_vlan,)
+
+
 def build_client_edges(
     clients: Iterable[object],
     device_index: dict[str, str],
@@ -151,31 +176,22 @@ def build_client_edges(
     for client in clients:
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
-        name = client_display_name(client)
-        uplink_mac = client_uplink_mac(client)
-        if not name or not uplink_mac:
+        attachment = _client_attachment(client, device_index)
+        if attachment is None:
             continue
-        device_name = device_index.get(normalize_mac(uplink_mac))
-        if not device_name:
-            continue
-        label = None
-        if include_ports:
-            uplink_port = client_uplink_port(client)
-            if uplink_port is not None:
-                label = f"{device_name}: Port {uplink_port} <-> {name}"
+        device_name, name = attachment
         key = (device_name, name)
         if key in seen:
             continue
         is_wireless = not _client_is_wired(client)
         channel = _client_channel(client) if is_wireless else None
-        client_vlan = _client_vlan(client)
-        vlans = (client_vlan,) if client_vlan else ()
+        vlans = _client_vlans(client)
         connection = _extract_connection_info(client)
         edges.append(
             Edge(
                 left=device_name,
                 right=name,
-                label=label,
+                label=_client_edge_label(device_name, name, client) if include_ports else None,
                 wireless=is_wireless,
                 channel=channel,
                 vlans=vlans,
@@ -224,14 +240,11 @@ def build_client_port_map(
     for client in clients:
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
-        name = client_display_name(client)
-        uplink_mac = client_uplink_mac(client)
+        attachment = _client_attachment(client, device_index)
         uplink_port = client_uplink_port(client)
-        if not name or not uplink_mac or uplink_port is None:
+        if attachment is None or uplink_port is None:
             continue
-        device_name = device_index.get(normalize_mac(uplink_mac))
-        if not device_name:
-            continue
+        device_name, name = attachment
         port_map.setdefault(device_name, []).append((uplink_port, name))
     return port_map
 
