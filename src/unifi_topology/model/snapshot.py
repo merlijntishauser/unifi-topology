@@ -9,9 +9,9 @@ from collections.abc import Callable
 from dataclasses import fields, is_dataclass
 from typing import Any, TypeVar
 
+from ._topology_types import Device, Edge, PortInfo, UplinkInfo, WanInfo, WanInterface
 from .connection import ConnectionInfo
 from .lldp import LLDPEntry
-from .topology import Device, Edge, PortInfo, UplinkInfo, WanInfo, WanInterface
 
 T = TypeVar("T")
 _JSON_SCALARS = (str, int, float, bool)

@@ -12,9 +12,9 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+from ._topology_types import Device, Edge
 from .helpers import normalize_mac
 from .snapshot import device_to_dict, edge_to_dict
-from .topology import Device, Edge
 
 
 @dataclass
