@@ -1,16 +1,8 @@
-"""Tests for isometric SVG rendering and layout helpers."""
+"""Tests for core isometric SVG rendering behavior."""
 
 import unifi_topology.render.svg_isometric as svg_iso_module
 import unifi_topology.render.svg_layout as svg_layout_module
 from unifi_topology.model.topology import Edge
-
-
-def test_render_svg_isometric_renders_label_tile():
-    output = svg_iso_module.render_svg_isometric(
-        [Edge("A", "B", label="A: Port 1 <-> B: Port 2")],
-        node_types={"A": "switch", "B": "switch"},
-    )
-    assert 'class="label-tile"' in output
 
 
 def test_tree_layout_indices_cycle_returns_nodes():
@@ -29,14 +21,6 @@ def test_tree_layout_indices_empty_returns_empty():
 def test_render_svg_isometric_handles_no_edges():
     output = svg_iso_module.render_svg_isometric([], node_types={})
     assert output.startswith("<svg")
-
-
-def test_render_svg_isometric_client_label_without_arrow():
-    output = svg_iso_module.render_svg_isometric(
-        [Edge("Switch", "Client", label="Switch: Port 4")],
-        node_types={"Switch": "switch", "Client": "client"},
-    )
-    assert "Switch: Port 4" in output
 
 
 def test_render_svg_isometric_without_icons(monkeypatch):
@@ -73,22 +57,6 @@ def test_render_svg_isometric_poe_icon():
         node_types={"A": "switch", "B": "switch"},
     )
     assert "iso-poe-bolt" in output
-
-
-def test_render_svg_isometric_client_left_label():
-    output = svg_iso_module.render_svg_isometric(
-        [Edge("Client", "Switch", label="Switch: Port 2")],
-        node_types={"Switch": "switch", "Client": "client"},
-    )
-    assert "Switch: Port 2" in output
-
-
-def test_render_svg_isometric_port_prefixes_upstream():
-    output = svg_iso_module.render_svg_isometric(
-        [Edge("Switch", "AP", label="Port 1 <-> Port 2")],
-        node_types={"Switch": "switch", "AP": "ap"},
-    )
-    assert "Switch: Port 1" in output
 
 
 def test_render_svg_isometric_defs_use_iso_node_prefix():
