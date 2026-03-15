@@ -15,14 +15,15 @@ pip install unifi-topology
 ```python
 from unifi_topology import (
     Config,
+    SvgOptions,
+    build_node_type_map,
+    build_topology,
+    extract_wan_info,
     fetch_devices,
     fetch_networks,
     normalize_devices,
-    build_topology,
-    extract_wan_info,
     render_svg,
     resolve_svg_themes,
-    SvgOptions,
 )
 
 # Connect to UniFi controller
@@ -32,13 +33,27 @@ networks = fetch_networks(config)
 
 # Build topology model
 devices = normalize_devices(api_devices)
-result = build_topology(devices, include_ports=True, only_unifi=False)
-wan_info = extract_wan_info(devices, list(networks))
+node_types = build_node_type_map(devices)
+gateways = [name for name, node_type in node_types.items() if node_type == "gateway"]
+topology = build_topology(
+    devices,
+    include_ports=True,
+    only_unifi=False,
+    gateways=gateways,
+)
+gateway = next((device for device in devices if node_types.get(device.name) == "gateway"), None)
+wan_info = extract_wan_info(gateway) if gateway else None
 
 # Render SVG
 theme = resolve_svg_themes(theme_name="unifi")
-options = SvgOptions(include_ports=True)
-svg = render_svg(result.devices, result.edges, theme=theme, options=options, wan_info=wan_info)
+options = SvgOptions()
+svg = render_svg(
+    topology.tree_edges or topology.raw_edges,
+    node_types=node_types,
+    theme=theme,
+    options=options,
+    wan_info=wan_info,
+)
 ```
 
 ## Built-in Themes

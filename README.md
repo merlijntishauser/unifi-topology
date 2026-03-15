@@ -21,14 +21,15 @@ pip install unifi-topology
 ```python
 from unifi_topology import (
     Config,
+    SvgOptions,
+    build_node_type_map,
+    build_topology,
+    extract_wan_info,
     fetch_devices,
     fetch_networks,
     normalize_devices,
-    build_topology,
-    extract_wan_info,
     render_svg,
     resolve_svg_themes,
-    SvgOptions,
 )
 
 # Connect to UniFi controller
@@ -38,13 +39,27 @@ networks = fetch_networks(config)
 
 # Build topology model
 devices = normalize_devices(api_devices)
-result = build_topology(devices, include_ports=True, only_unifi=False)
-wan_info = extract_wan_info(devices, list(networks))
+node_types = build_node_type_map(devices)
+gateways = [name for name, node_type in node_types.items() if node_type == "gateway"]
+topology = build_topology(
+    devices,
+    include_ports=True,
+    only_unifi=False,
+    gateways=gateways,
+)
+gateway = next((device for device in devices if node_types.get(device.name) == "gateway"), None)
+wan_info = extract_wan_info(gateway) if gateway else None
 
 # Render SVG
 theme = resolve_svg_themes(theme_name="unifi")
-options = SvgOptions(include_ports=True)
-svg = render_svg(result.devices, result.edges, theme=theme, options=options, wan_info=wan_info)
+options = SvgOptions()
+svg = render_svg(
+    topology.tree_edges or topology.raw_edges,
+    node_types=node_types,
+    theme=theme,
+    options=options,
+    wan_info=wan_info,
+)
 ```
 
 ## API Overview
@@ -66,15 +81,16 @@ svg = render_svg(result.devices, result.edges, theme=theme, options=options, wan
 - `normalize_firewall_zones(raw)` -- Convert raw zone data to `FirewallZone` objects
 - `normalize_firewall_policies(raw)` -- Convert raw policy data to `FirewallPolicy` objects
 - `normalize_firewall_groups(raw)` -- Convert raw group data to `FirewallGroup` objects
-- `build_topology(devices, ...)` -- Build topology graph (`TopologyResult` with devices + edges)
+- `build_node_type_map(devices, clients=None, ...)` -- Classify node names for rendering
+- `build_topology(devices, *, include_ports, only_unifi, gateways)` -- Build topology graph (`TopologyResult` with `raw_edges` and `tree_edges`)
 - `build_device_inventory(devices)` -- Build device info table (`list[DeviceInfo]`)
-- `extract_wan_info(devices, networks)` -- Extract WAN upstream info
+- `extract_wan_info(device, ...)` -- Extract WAN upstream info for a gateway device
 
 ### Rendering
 
-- `render_svg(devices, edges, theme, options, ...)` -- Orthogonal SVG diagram
-- `render_svg_isometric(devices, edges, theme, options, ...)` -- Isometric 3D-style SVG
-- `render_dual(devices, edges, themes, options, ...)` -- Dual light/dark theme SVG
+- `render_svg(edges, *, node_types, theme, options, ...)` -- Orthogonal SVG diagram
+- `render_svg_isometric(edges, *, node_types, theme, options, ...)` -- Isometric 3D-style SVG
+- `render_dual(edges, *, node_types, theme, options, ...)` -- Physical + VLAN grouped SVG output
 - `resolve_svg_themes(theme_name, theme_file)` -- Load built-in or custom SVG theme
 
 Built-in themes: `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
