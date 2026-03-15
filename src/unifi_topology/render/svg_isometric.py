@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from html import escape as _escape_html
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
+from ._svg_render_common import finish_svg_document, render_at_gateway, start_svg_document
 from .svg_icons import _build_decal_colors, _load_isometric_icons
 from .svg_iso_edges import _render_iso_edges
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
@@ -16,7 +17,7 @@ from .svg_labels import (
     _escape_text,
 )
 from .svg_layout import _build_node_to_group_map, _resolve_group_order
-from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme, _svg_style_block, svg_defs
+from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme
 from .svg_vpn import _render_iso_vpn_tunnels
 from .svg_wan import _vlan_group_colors
 
@@ -527,13 +528,16 @@ def render_svg_isometric(
     out_width = options.width or int(view_width)
     out_height = options.height or int(view_height)
 
-    lines = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{out_width}" height="{out_height}" '
-        f'viewBox="0 0 {view_width} {view_height}">',
-        svg_defs("iso", theme),
-        _svg_style_block(theme, options.font_size, iso=True),
-        f'<rect width="100%" height="100%" fill="{theme.background}"/>',
-    ]
+    lines = start_svg_document(
+        width=view_width,
+        height=view_height,
+        out_width=out_width,
+        out_height=out_height,
+        theme=theme,
+        options=options,
+        defs_prefix="iso",
+        iso=True,
+    )
 
     if options.layout_mode == "grouped" and groups:
         _render_grouped_boundaries(
@@ -577,20 +581,31 @@ def render_svg_isometric(
         theme=theme,
     )
 
-    _maybe_render_wan_upstream(lines, wan_info, node_types, positions, layout, options, theme)
+    render_at_gateway(
+        lines=lines,
+        content=wan_info,
+        node_types=node_types,
+        positions=positions,
+        find_gateway_position=_find_gateway_position,
+        render=lambda doc_lines, info, gateway_pos: _render_iso_wan_upstream(
+            doc_lines, info, gateway_pos, layout, options, theme
+        ),
+    )
+    render_at_gateway(
+        lines=lines,
+        content=vpn_tunnels,
+        node_types=node_types,
+        positions=positions,
+        find_gateway_position=_find_gateway_position,
+        render=lambda doc_lines, tunnels, gateway_pos: _render_iso_vpn_tunnels(
+            doc_lines,
+            tunnels,
+            gateway_pos,
+            layout.tile_width,
+            layout.tile_height,
+            options,
+            theme,
+        ),
+    )
 
-    if vpn_tunnels:
-        gateway_pos = _find_gateway_position(node_types, positions)
-        if gateway_pos:
-            _render_iso_vpn_tunnels(
-                lines,
-                vpn_tunnels,
-                gateway_pos,
-                layout.tile_width,
-                layout.tile_height,
-                options,
-                theme,
-            )
-
-    lines.append("</svg>")
-    return "\n".join(lines) + "\n"
+    return finish_svg_document(lines)

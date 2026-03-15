@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
+from ._svg_render_common import finish_svg_document, render_at_gateway, start_svg_document
 from .svg_edges import _render_svg_edges
 from .svg_icons import (
     _TYPE_COLORS,
@@ -21,7 +22,7 @@ from .svg_layout import (
     _layout_nodes,
     _svg_node_group_attrs,
 )
-from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme, _svg_style_block, svg_defs
+from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme
 from .svg_vpn import _render_vpn_tunnels, _vpn_box_height_estimate
 from .svg_wan import (
     _apply_wan_offset,
@@ -89,13 +90,14 @@ def render_svg(
     out_width = options.width or width
     out_height = options.height or height
 
-    lines = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{out_width}" height="{out_height}" '
-        f'viewBox="0 0 {width} {height}">',
-        svg_defs("", theme),
-        _svg_style_block(theme, options.font_size),
-        f'<rect width="100%" height="100%" fill="{theme.background}"/>',
-    ]
+    lines = start_svg_document(
+        width=width,
+        height=height,
+        out_width=out_width,
+        out_height=out_height,
+        theme=theme,
+        options=options,
+    )
 
     if use_grouped and group_bounds_list:
         _render_group_boundaries(
@@ -115,18 +117,27 @@ def render_svg(
         groups=groups,
     )
 
-    if wan_info:
-        gateway_pos = _find_gateway_position(node_types, positions)
-        if gateway_pos:
-            _render_wan_upstream(lines, wan_info, gateway_pos, options, theme)
-
-    if vpn_tunnels:
-        gateway_pos = _find_gateway_position(node_types, positions)
-        if gateway_pos:
-            _render_vpn_tunnels(lines, vpn_tunnels, gateway_pos, options, theme)
-
-    lines.append("</svg>")
-    return "\n".join(lines) + "\n"
+    render_at_gateway(
+        lines=lines,
+        content=wan_info,
+        node_types=node_types,
+        positions=positions,
+        find_gateway_position=_find_gateway_position,
+        render=lambda doc_lines, info, gateway_pos: _render_wan_upstream(
+            doc_lines, info, gateway_pos, options, theme
+        ),
+    )
+    render_at_gateway(
+        lines=lines,
+        content=vpn_tunnels,
+        node_types=node_types,
+        positions=positions,
+        find_gateway_position=_find_gateway_position,
+        render=lambda doc_lines, tunnels, gateway_pos: _render_vpn_tunnels(
+            doc_lines, tunnels, gateway_pos, options, theme
+        ),
+    )
+    return finish_svg_document(lines)
 
 
 def _render_svg_nodes(
