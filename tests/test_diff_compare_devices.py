@@ -1,18 +1,13 @@
-"""Tests for topology comparison results."""
+"""Tests for topology comparison of devices and summary metadata."""
 
 from __future__ import annotations
 
-from tests.diff_compare_helpers import (
-    sample_client,
-    sample_device,
-    sample_device_2,
-    sample_edge,
-)
+from tests.diff_compare_helpers import sample_device, sample_device_2
 from unifi_topology.model.diff import compare_topologies
-from unifi_topology.model.topology import Device, Edge
+from unifi_topology.model.topology import Device
 
 
-class TestCompareTopologies:
+class TestCompareTopologyDevices:
     def test_empty_topologies(self):
         diff = compare_topologies([], [])
         assert len(diff.events) == 0
@@ -85,78 +80,6 @@ class TestCompareTopologies:
         event = diff.events[0]
         assert event.event_type == "node_changed"
         assert "renamed" in event.description.lower() or "name" in event.details["changes"]
-
-    def test_client_added(self):
-        diff = compare_topologies([], [], old_clients=[], new_clients=[sample_client()])
-        assert len(diff.events) == 1
-        event = diff.events[0]
-        assert event.event_type == "node_added"
-        assert event.entity_type == "client"
-        assert "connected" in event.description
-
-    def test_client_removed(self):
-        diff = compare_topologies([], [], old_clients=[sample_client()], new_clients=[])
-        assert len(diff.events) == 1
-        event = diff.events[0]
-        assert event.event_type == "node_removed"
-        assert event.entity_type == "client"
-        assert "disconnected" in event.description
-
-    def test_client_vlan_changed(self):
-        old_client = sample_client()
-        new_client = dict(old_client)
-        new_client["vlan"] = 20
-        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
-        assert len(diff.events) == 1
-        event = diff.events[0]
-        assert event.event_type == "node_changed"
-        assert event.entity_type == "client"
-        assert "VLAN" in event.description
-        assert event.details["changes"]["vlan"]["old"] == 10
-        assert event.details["changes"]["vlan"]["new"] == 20
-
-    def test_edge_added(self):
-        diff = compare_topologies([], [], old_edges=[], new_edges=[sample_edge()])
-        assert len(diff.events) == 1
-        assert diff.events[0].event_type == "edge_added"
-        assert "added" in diff.events[0].description
-
-    def test_edge_removed(self):
-        diff = compare_topologies([], [], old_edges=[sample_edge()], new_edges=[])
-        assert len(diff.events) == 1
-        assert diff.events[0].event_type == "edge_removed"
-        assert "removed" in diff.events[0].description
-
-    def test_edge_changed_speed(self):
-        old_edge = sample_edge()
-        new_edge = Edge(
-            left=old_edge.left,
-            right=old_edge.right,
-            label=old_edge.label,
-            poe=old_edge.poe,
-            wireless=old_edge.wireless,
-            speed=10000,
-            channel=old_edge.channel,
-            vlans=old_edge.vlans,
-            active_vlans=old_edge.active_vlans,
-            is_trunk=old_edge.is_trunk,
-        )
-        diff = compare_topologies([], [], old_edges=[old_edge], new_edges=[new_edge])
-        assert len(diff.events) == 1
-        assert diff.events[0].event_type == "edge_changed"
-        assert "speed" in diff.events[0].details["changes"]
-
-    def test_multiple_changes(self):
-        diff = compare_topologies(
-            [sample_device()],
-            [sample_device(), sample_device_2()],
-            old_clients=[sample_client()],
-            new_clients=[],
-        )
-        assert len(diff.events) == 2
-        event_types = {event.event_type for event in diff.events}
-        assert "node_added" in event_types
-        assert "node_removed" in event_types
 
     def test_summary_generation(self):
         diff = compare_topologies([], [sample_device(), sample_device_2()])
