@@ -35,16 +35,18 @@ class FakeSession:
         self._responses = list(responses or [])
         self._index = 0
 
-    def post(self, url, *, json=None, verify=True):
-        self.calls.append(("POST", url, {"json": json, "verify": verify}))
+    def post(self, url, *, json=None, verify=True, timeout=None):
+        self.calls.append(("POST", url, {"json": json, "verify": verify, "timeout": timeout}))
         return self._next()
 
-    def get(self, url, *, verify=True):
-        self.calls.append(("GET", url, {"verify": verify}))
+    def get(self, url, *, verify=True, timeout=None):
+        self.calls.append(("GET", url, {"verify": verify, "timeout": timeout}))
         return self._next()
 
-    def put(self, url, *, json=None, headers=None, verify=True):
-        self.calls.append(("PUT", url, {"json": json, "headers": headers, "verify": verify}))
+    def put(self, url, *, json=None, headers=None, verify=True, timeout=None):
+        self.calls.append(
+            ("PUT", url, {"json": json, "headers": headers, "verify": verify, "timeout": timeout})
+        )
         return self._next()
 
     def _next(self):
@@ -53,7 +55,7 @@ class FakeSession:
         return resp
 
 
-def _make_client(monkeypatch, session, *, is_udm_pro=False):
+def _make_client(monkeypatch, session, *, is_udm_pro=False, request_timeout=None):
     """Construct a ``UnifiClient`` with a pre-built fake session."""
     monkeypatch.setattr(requests, "Session", lambda: session)
     return UnifiClient(
@@ -62,6 +64,7 @@ def _make_client(monkeypatch, session, *, is_udm_pro=False):
         password="secret",
         is_udm_pro=is_udm_pro,
         verify_ssl=True,
+        request_timeout=request_timeout,
     )
 
 
@@ -79,7 +82,7 @@ def test_authenticate_udm_pro(monkeypatch):
     assert session.calls[0] == (
         "POST",
         "https://unifi.local/api/auth/login",
-        {"json": {"username": "admin", "password": "secret"}, "verify": True},
+        {"json": {"username": "admin", "password": "secret"}, "verify": True, "timeout": None},
     )
     assert client._api_base == "https://unifi.local/proxy/network"
 
@@ -93,7 +96,7 @@ def test_authenticate_legacy(monkeypatch):
     assert session.calls[0] == (
         "POST",
         "https://unifi.local/api/login",
-        {"json": {"username": "admin", "password": "secret"}, "verify": True},
+        {"json": {"username": "admin", "password": "secret"}, "verify": True, "timeout": None},
     )
     assert client._api_base == "https://unifi.local"
 
@@ -116,7 +119,7 @@ def test_authenticate_unknown_format(monkeypatch):
 
 def test_authenticate_request_failure(monkeypatch):
     class FailSession:
-        def post(self, url, *, json=None, verify=True):
+        def post(self, url, *, json=None, verify=True, timeout=None):
             raise requests.RequestException("connection refused")
 
     monkeypatch.setattr(requests, "Session", lambda: FailSession())
@@ -255,6 +258,24 @@ def test_ssl_warning_suppressed(monkeypatch):
     assert len(calls) == 1
 
 
+def test_authenticate_http_error_does_not_treat_roles_as_success(monkeypatch):
+    error_resp = FakeResponse(status_code=403, json_data={"roles": ["admin"]}, ok=False)
+    session = FakeSession([error_resp])
+    with pytest.raises(UnifiAuthError, match="HTTP 403"):
+        _make_client(monkeypatch, session)
+
+
+def test_request_timeout_is_passed_to_auth_and_get(monkeypatch):
+    auth_resp = FakeResponse(json_data={"meta": {"rc": "ok"}})
+    data_resp = FakeResponse(json_data={"data": [{"mac": "cc"}]})
+    session = FakeSession([auth_resp, data_resp])
+    client = _make_client(monkeypatch, session, request_timeout=5.0)
+
+    client.get_clients("mysite")
+    assert session.calls[0][2]["timeout"] == 5.0
+    assert session.calls[1][2]["timeout"] == 5.0
+
+
 # ------------------------------------------------------------------
 # CSRF token
 # ------------------------------------------------------------------
@@ -332,6 +353,16 @@ def test_put_v2_returns_payload(monkeypatch):
     client = _make_client(monkeypatch, session, is_udm_pro=True)
     result = client._put_v2("/path", {"enabled": False})
     assert result == {"_id": "p1", "enabled": False}
+
+
+def test_put_v2_passes_request_timeout(monkeypatch):
+    auth_resp = FakeResponse(json_data={"isSuperAdmin": True})
+    put_resp = FakeResponse(json_data={"_id": "p1", "enabled": False})
+    session = FakeSession([auth_resp, put_resp])
+    client = _make_client(monkeypatch, session, is_udm_pro=True, request_timeout=7.5)
+
+    client._put_v2("/path", {"enabled": False})
+    assert session.calls[1][2]["timeout"] == 7.5
 
 
 def test_put_v2_non_json_response(monkeypatch):

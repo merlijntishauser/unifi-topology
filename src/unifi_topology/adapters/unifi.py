@@ -109,6 +109,7 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
         password=config.password,
         is_udm_pro=is_udm_pro,
         verify_ssl=config.verify_ssl,
+        request_timeout=_request_timeout_seconds(),
     )
 
 

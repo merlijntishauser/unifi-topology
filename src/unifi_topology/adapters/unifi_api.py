@@ -7,6 +7,7 @@ of code covering the three GET endpoints this project actually uses.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 
 import requests
 
@@ -44,12 +45,14 @@ class UnifiClient:
         *,
         is_udm_pro: bool = False,
         verify_ssl: bool = True,
+        request_timeout: float | None = None,
     ) -> None:
         self._url = url.rstrip("/")
         self._username = username
         self._password = password
         self._is_udm_pro = is_udm_pro
         self._verify_ssl = verify_ssl
+        self._request_timeout = request_timeout if request_timeout and request_timeout > 0 else None
         self._api_base = f"{self._url}/proxy/network" if is_udm_pro else self._url
         self._session = requests.Session()
         self._csrf_token: str | None = None
@@ -65,14 +68,97 @@ class UnifiClient:
     # Authentication
     # ------------------------------------------------------------------
 
+    def _request(
+        self,
+        method: str,
+        url: str,
+        *,
+        payload: dict[str, object] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> requests.Response:
+        request_method = getattr(self._session, method.lower())
+        kwargs: dict[str, object] = {"verify": self._verify_ssl}
+        if payload is not None:
+            kwargs["json"] = payload
+        if headers is not None:
+            kwargs["headers"] = headers
+        if self._request_timeout is not None:
+            kwargs["timeout"] = self._request_timeout
+        return request_method(url, **kwargs)
+
+    def _request_with_reauth(
+        self,
+        method: str,
+        url: str,
+        *,
+        payload: dict[str, object] | None = None,
+        headers_factory: Callable[[], dict[str, str] | None] | None = None,
+    ) -> requests.Response:
+        response = self._request(
+            method,
+            url,
+            payload=payload,
+            headers=headers_factory() if headers_factory else None,
+        )
+        if response.status_code == 401:
+            logger.debug("Got 401 on %s, re-authenticating", method)
+            self._authenticate()
+            response = self._request(
+                method,
+                url,
+                payload=payload,
+                headers=headers_factory() if headers_factory else None,
+            )
+        return response
+
+    @staticmethod
+    def _parse_json(
+        response: requests.Response,
+        *,
+        error_type: type[UnifiError],
+        error_message: str,
+    ) -> object:
+        try:
+            return response.json()
+        except ValueError as exc:
+            raise error_type(error_message) from exc
+
+    @staticmethod
+    def _error_detail(payload: object) -> str | None:
+        if not isinstance(payload, dict):
+            return None
+        for key in ("message", "error", "code", "errorCode"):
+            value = payload.get(key)
+            if value is not None:
+                return str(value)
+        return None
+
+    @staticmethod
+    def _auth_payload_error(payload: object) -> str | None:
+        if isinstance(payload, dict) and "code" in payload and "message" in payload and "meta" not in payload:
+            return f"{payload['code']}: {payload['message']}"
+        return None
+
+    @staticmethod
+    def _auth_succeeded(payload: object) -> bool:
+        meta = payload.get("meta", {}) if isinstance(payload, dict) else {}
+        if isinstance(meta, dict) and meta.get("rc") == "ok":
+            return True
+        return isinstance(payload, dict) and ("isSuperAdmin" in payload or "roles" in payload)
+
+    def _csrf_headers(self) -> dict[str, str]:
+        if not self._csrf_token:
+            return {}
+        return {"X-CSRF-Token": self._csrf_token}
+
     def _authenticate(self) -> None:
         login_path = "/api/auth/login" if self._is_udm_pro else "/api/login"
         login_url = f"{self._url}{login_path}"
         try:
-            response = self._session.post(
+            response = self._request(
+                "POST",
                 login_url,
-                json={"username": self._username, "password": self._password},
-                verify=self._verify_ssl,
+                payload={"username": self._username, "password": self._password},
             )
         except requests.RequestException as exc:
             raise UnifiAuthError(f"Login request failed: {exc}") from exc
@@ -80,24 +166,21 @@ class UnifiClient:
         self._csrf_token = response.headers.get("X-CSRF-Token")
 
     def _validate_auth_response(self, response: requests.Response) -> None:
-        try:
-            data = response.json()
-        except ValueError as exc:
-            raise UnifiAuthError(f"Non-JSON auth response (HTTP {response.status_code})") from exc
-
-        # Error payload: HTTP 200 with {"code": ..., "message": ...}
-        if isinstance(data, dict) and "code" in data and "message" in data and "meta" not in data:
-            raise UnifiAuthError(f"{data['code']}: {data['message']}")
-
-        # Legacy: {"meta": {"rc": "ok"}, ...}
-        meta = data.get("meta", {}) if isinstance(data, dict) else {}
-        if isinstance(meta, dict) and meta.get("rc") == "ok":
+        data = self._parse_json(
+            response,
+            error_type=UnifiAuthError,
+            error_message=f"Non-JSON auth response (HTTP {response.status_code})",
+        )
+        if not response.ok:
+            detail = self._error_detail(data)
+            if detail:
+                raise UnifiAuthError(f"HTTP {response.status_code}: {detail}")
+            raise UnifiAuthError(f"Authentication failed (HTTP {response.status_code})")
+        payload_error = self._auth_payload_error(data)
+        if payload_error is not None:
+            raise UnifiAuthError(payload_error)
+        if self._auth_succeeded(data):
             return
-
-        # UniFi OS: {"isSuperAdmin": true, ...} or {"roles": [...], ...}
-        if isinstance(data, dict) and ("isSuperAdmin" in data or "roles" in data):
-            return
-
         raise UnifiAuthError(f"Unknown auth response format (HTTP {response.status_code})")
 
     # ------------------------------------------------------------------
@@ -106,20 +189,16 @@ class UnifiClient:
 
     def _get(self, path: str) -> list[dict[str, object]]:
         url = f"{self._api_base}{path}"
-        response = self._session.get(url, verify=self._verify_ssl)
-
-        if response.status_code == 401:
-            logger.debug("Got 401, re-authenticating")
-            self._authenticate()
-            response = self._session.get(url, verify=self._verify_ssl)
+        response = self._request_with_reauth("GET", url)
 
         if not response.ok:
             raise UnifiApiError(f"GET {path} failed (HTTP {response.status_code})")
 
-        try:
-            payload = response.json()
-        except ValueError as exc:
-            raise UnifiApiError(f"Non-JSON response for {path}") from exc
+        payload = self._parse_json(
+            response,
+            error_type=UnifiApiError,
+            error_message=f"Non-JSON response for {path}",
+        )
 
         if not isinstance(payload, dict) or "data" not in payload:
             raise UnifiApiError(f"Missing 'data' field in response for {path}")
@@ -133,20 +212,16 @@ class UnifiClient:
         Handles both cases.
         """
         url = f"{self._api_base}{path}"
-        response = self._session.get(url, verify=self._verify_ssl)
-
-        if response.status_code == 401:
-            logger.debug("Got 401, re-authenticating")
-            self._authenticate()
-            response = self._session.get(url, verify=self._verify_ssl)
+        response = self._request_with_reauth("GET", url)
 
         if not response.ok:
             raise UnifiApiError(f"GET {path} failed (HTTP {response.status_code})")
 
-        try:
-            payload = response.json()
-        except ValueError as exc:
-            raise UnifiApiError(f"Non-JSON response for {path}") from exc
+        payload = self._parse_json(
+            response,
+            error_type=UnifiApiError,
+            error_message=f"Non-JSON response for {path}",
+        )
 
         # Handle plain list response
         if isinstance(payload, list):
@@ -195,20 +270,12 @@ class UnifiClient:
     def _put_v2(self, path: str, payload: dict[str, object]) -> dict[str, object]:
         """PUT to a V2/Integration API endpoint."""
         url = f"{self._api_base}{path}"
-        headers: dict[str, str] = {}
-        if self._csrf_token:
-            headers["X-CSRF-Token"] = self._csrf_token
-        response = self._session.put(url, json=payload, headers=headers, verify=self._verify_ssl)
-
-        if response.status_code == 401:
-            logger.debug("Got 401 on PUT, re-authenticating")
-            self._authenticate()
-            headers = {}
-            if self._csrf_token:
-                headers["X-CSRF-Token"] = self._csrf_token
-            response = self._session.put(
-                url, json=payload, headers=headers, verify=self._verify_ssl
-            )
+        response = self._request_with_reauth(
+            "PUT",
+            url,
+            payload=payload,
+            headers_factory=self._csrf_headers,
+        )
 
         if not response.ok:
             try:
@@ -217,10 +284,11 @@ class UnifiClient:
                 detail = response.text
             raise UnifiWriteError(f"PUT {path} failed (HTTP {response.status_code}): {detail}")
 
-        try:
-            result = response.json()
-        except ValueError as exc:
-            raise UnifiWriteError(f"Non-JSON response for PUT {path}") from exc
+        result = self._parse_json(
+            response,
+            error_type=UnifiWriteError,
+            error_message=f"Non-JSON response for PUT {path}",
+        )
 
         if isinstance(result, dict):
             return result
