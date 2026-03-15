@@ -20,3 +20,4 @@ build/
 /.run/
 /.claude/
 /uv.lock
+.playwright-mcp/
