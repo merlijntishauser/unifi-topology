@@ -140,6 +140,95 @@ def render_svg(
     return finish_svg_document(lines)
 
 
+def _append_svg_node_frame(
+    lines: list[str],
+    *,
+    name: str,
+    x: float,
+    y: float,
+    node_type: str,
+    group_attrs: str,
+    options: SvgOptions,
+) -> None:
+    _, stroke = _TYPE_COLORS.get(node_type, _TYPE_COLORS["other"])
+    lines.append(f"<g{group_attrs}>")
+    lines.append(f"<title>{_escape_text(name)}</title>")
+    lines.append(
+        f'<rect x="{x}" y="{y}" width="{options.node_width}" height="{options.node_height}" '
+        'fill="transparent" pointer-events="all" class="node-hitbox"/>'
+    )
+    lines.append(
+        f'<rect x="{x}" y="{y}" width="{options.node_width}" height="{options.node_height}" '
+        f'rx="6" ry="6" fill="url(#node-{node_type})" stroke="{stroke}" stroke-width="1"/>'
+    )
+
+
+def _append_svg_node_icon(
+    lines: list[str],
+    *,
+    x: float,
+    y: float,
+    node_type: str,
+    icons: dict[str, str],
+    options: SvgOptions,
+) -> float:
+    icon_href = icons.get(node_type, icons.get("other"))
+    if not icon_href:
+        return x + 10
+    icon_x = x + 8
+    icon_y = y + (options.node_height - options.icon_size) / 2
+    lines.append(
+        f'<image href="{icon_href}" x="{icon_x}" y="{icon_y}" '
+        f'width="{options.icon_size}" height="{options.icon_size}"/>'
+    )
+    return icon_x + options.icon_size + 6
+
+
+def _node_label_y(y: float, *, has_port_label: bool, options: SvgOptions) -> float:
+    if has_port_label:
+        return y + options.node_height - 6
+    return y + options.node_height / 2 + options.font_size / 2 - 2
+
+
+def _append_svg_node_port_label(
+    lines: list[str],
+    *,
+    port_label: str | None,
+    text_x: float,
+    y: float,
+    options: SvgOptions,
+    theme: SvgTheme,
+) -> None:
+    if not port_label:
+        return
+    font_size = max(options.font_size - 2, 8)
+    line_height = font_size + 2
+    port_y = y + font_size + 4
+    wrapped = _wrap_text(port_label)
+    lines.append(
+        f'<text x="{text_x}" y="{port_y}" class="node-port" '
+        f'text-anchor="start" fill="{theme.text_secondary}" font-size="{font_size}">'
+    )
+    for idx, line in enumerate(wrapped):
+        dy = 0 if idx == 0 else line_height
+        lines.append(f'<tspan x="{text_x}" dy="{dy}">{_escape_text(line)}</tspan>')
+    lines.append("</text>")
+
+
+def _append_svg_node_label(
+    lines: list[str],
+    *,
+    name: str,
+    text_x: float,
+    text_y: float,
+    theme: SvgTheme,
+) -> None:
+    lines.append(
+        f'<text x="{text_x}" y="{text_y}" class="node-label" fill="{theme.text_primary}" '
+        f'text-anchor="start">{_escape_text(name)}</text>'
+    )
+
+
 def _render_svg_nodes(
     lines: list[str],
     positions: dict[str, tuple[float, float]],
@@ -155,53 +244,40 @@ def _render_svg_nodes(
     node_to_group = _build_node_to_group_map(groups) if groups else {}
     for name, (x, y) in positions.items():
         node_type = node_types.get(name, "other")
-        fill, stroke = _TYPE_COLORS.get(node_type, _TYPE_COLORS["other"])
-        fill = f"url(#node-{node_type})"
         group_name = node_to_group.get(name)
         group_attrs = _svg_node_group_attrs(node_data, name, node_type, group_name)
-        lines.append(f"<g{group_attrs}>")
-        lines.append(f"<title>{_escape_text(name)}</title>")
-        lines.append(
-            f'<rect x="{x}" y="{y}" width="{options.node_width}" height="{options.node_height}" '
-            'fill="transparent" pointer-events="all" class="node-hitbox"/>'
+        _append_svg_node_frame(
+            lines,
+            name=name,
+            x=x,
+            y=y,
+            node_type=node_type,
+            group_attrs=group_attrs,
+            options=options,
         )
-        lines.append(
-            f'<rect x="{x}" y="{y}" width="{options.node_width}" height="{options.node_height}" '
-            f'rx="6" ry="6" fill="{fill}" stroke="{stroke}" stroke-width="1"/>'
+        text_x = _append_svg_node_icon(
+            lines,
+            x=x,
+            y=y,
+            node_type=node_type,
+            icons=icons,
+            options=options,
         )
-        icon_href = icons.get(node_type, icons.get("other"))
-        if icon_href:
-            icon_x = x + 8
-            icon_y = y + (options.node_height - options.icon_size) / 2
-            lines.append(
-                f'<image href="{icon_href}" x="{icon_x}" y="{icon_y}" '
-                f'width="{options.icon_size}" height="{options.icon_size}"/>'
-            )
-            text_x = icon_x + options.icon_size + 6
-        else:
-            text_x = x + 10
         port_label = node_port_labels.get(name)
-        if port_label:
-            text_y = y + options.node_height - 6
-        else:
-            text_y = y + options.node_height / 2 + options.font_size / 2 - 2
-        safe_name = _escape_text(name)
-        if port_label:
-            font_size = max(options.font_size - 2, 8)
-            line_height = font_size + 2
-            port_y = y + font_size + 4
-            wrapped = _wrap_text(port_label)
-            lines.append(
-                f'<text x="{text_x}" y="{port_y}" class="node-port" '
-                f'text-anchor="start" fill="{theme.text_secondary}" font-size="{font_size}">'
-            )
-            for idx, line in enumerate(wrapped):
-                dy = 0 if idx == 0 else line_height
-                lines.append(f'<tspan x="{text_x}" dy="{dy}">{_escape_text(line)}</tspan>')
-            lines.append("</text>")
-        lines.append(
-            f'<text x="{text_x}" y="{text_y}" class="node-label" fill="{theme.text_primary}" '
-            f'text-anchor="start">{safe_name}</text>'
+        _append_svg_node_port_label(
+            lines,
+            port_label=port_label,
+            text_x=text_x,
+            y=y,
+            options=options,
+            theme=theme,
+        )
+        _append_svg_node_label(
+            lines,
+            name=name,
+            text_x=text_x,
+            text_y=_node_label_y(y, has_port_label=bool(port_label), options=options),
+            theme=theme,
         )
         lines.append("</g>")
 
