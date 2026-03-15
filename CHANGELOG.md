@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] (2026-03-15)
+
+### Added
+- `fetch_device_stats()` for device CPU, memory, temperature, and PoE metrics
+- `DeviceStats` and `PoePortStats` data models with `normalize_device_stats()` coercion
+
+### Changed
+- Test coverage boosted to 98% across all modules (899 tests)
+
 ## [1.1.1] (2026-03-14)
 
 ### Added
@@ -77,7 +86,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.8...v1.1.0
 [1.0.8]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.5...v1.0.8
