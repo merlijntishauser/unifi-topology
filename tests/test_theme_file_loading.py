@@ -1,4 +1,3 @@
-
 from unifi_topology.render.theme import load_svg_theme
 
 

@@ -77,7 +77,10 @@ def test_fetch_firewall_groups(monkeypatch, tmp_path):
 
 
 def test_fetch_payload_clients_excluded():
-    assert unifi._fetch_payload_clients(_CONFIG, site=None, include_clients=False, use_cache=False) == []
+    assert (
+        unifi._fetch_payload_clients(_CONFIG, site=None, include_clients=False, use_cache=False)
+        == []
+    )
 
 
 def test_fetch_payload_clients_included(monkeypatch, tmp_path):

@@ -22,5 +22,7 @@ class TestNormalizeGroups:
         assert groups[0].members == ("1.1.1.1", "8.8.8.8")
 
     def test_empty_members(self):
-        groups = normalize_firewall_groups([{"_id": "g1", "name": "Empty", "group_type": "port-group"}])
+        groups = normalize_firewall_groups(
+            [{"_id": "g1", "name": "Empty", "group_type": "port-group"}]
+        )
         assert groups[0].members == ()

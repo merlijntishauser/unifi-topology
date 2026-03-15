@@ -11,7 +11,12 @@ from unifi_topology.model.topology import Device
 
 
 def test_build_client_edges_skips_unwired():
-    assert build_client_edges([{"name": "Client", "is_wired": False, "sw_mac": "aa"}], {"aa": "Switch"}) == []
+    assert (
+        build_client_edges(
+            [{"name": "Client", "is_wired": False, "sw_mac": "aa"}], {"aa": "Switch"}
+        )
+        == []
+    )
 
 
 def test_build_client_edges_include_ports_without_port():

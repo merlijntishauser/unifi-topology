@@ -36,12 +36,8 @@ class TestDeviceDescriptions:
         assert "disappeared" in diff.events[0].description
 
     def test_device_changed_uplink_mac(self):
-        old_device = _device(
-            uplink=UplinkInfo(mac="11:11:11:11:11:11", name="Old Gateway", port=1)
-        )
-        new_device = _device(
-            uplink=UplinkInfo(mac="22:22:22:22:22:22", name="New Gateway", port=1)
-        )
+        old_device = _device(uplink=UplinkInfo(mac="11:11:11:11:11:11", name="Old Gateway", port=1))
+        new_device = _device(uplink=UplinkInfo(mac="22:22:22:22:22:22", name="New Gateway", port=1))
         diff = compare_topologies([old_device], [new_device])
         assert len(diff.events) == 1
         assert "uplink changed" in diff.events[0].description
