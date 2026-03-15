@@ -10,6 +10,7 @@ from pathlib import Path
 
 from ..model.vlans import build_vlan_info, normalize_networks
 from . import _cache as _cache_impl
+from . import _fetch as _fetch_impl
 from . import _retry as _retry_impl
 from .config import Config
 from .unifi_api import UnifiAuthError, UnifiClient
@@ -178,37 +179,25 @@ def _fetch_cached(
     cache_key_extra: Sequence[str] = (),
 ) -> Sequence[object]:
     """Generic fetch-with-cache for any UniFi API resource."""
-    site_name = site or config.site
-    ttl_seconds = _cache_ttl_seconds()
-    key_parts = (config.url, site_name, *cache_key_extra)
-    cache_path = _cache_dir() / f"{cache_prefix}_{_cache_key(*key_parts)}.json"
-    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
-    if cache_safe:
-        cached = _load_cache(cache_path, ttl_seconds)
-        if cached is not None:
-            logger.debug("Using cached %s (%d)", operation, len(cached))
-            return cached
-
-    def _make_fetch(client: UnifiClient) -> Callable[[], Sequence[object]]:
-        return api_call(client, site_name)
-
-    try:
-        data = _connect_and_fetch(config, operation, _make_fetch)
-    except Exception as exc:  # noqa: BLE001 - fallback to cache
-        stale_cached, cache_age = _load_cache_with_age(cache_path) if cache_safe else (None, None)
-        if stale_cached is not None:
-            logger.warning(
-                "%s failed; using stale cache (%ds old): %s",
-                operation.capitalize(),
-                int(cache_age or 0),
-                exc,
-            )
-            return stale_cached
-        raise
-    if use_cache:
-        _save_cache(cache_path, serialize(data) if serialize else data)
-    logger.debug("Fetched %d %s", len(data), operation)
-    return data
+    return _fetch_impl.fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix=cache_prefix,
+        operation=operation,
+        api_call=api_call,
+        serialize=serialize,
+        cache_key_extra=cache_key_extra,
+        cache_dir=_cache_dir,
+        cache_key=_cache_key,
+        is_cache_dir_safe=_is_cache_dir_safe,
+        cache_ttl_seconds=_cache_ttl_seconds,
+        load_cache=_load_cache,
+        load_cache_with_age=_load_cache_with_age,
+        save_cache=_save_cache,
+        connect_and_fetch=_connect_and_fetch,
+        logger=logger,
+    )
 
 
 def fetch_devices(

@@ -205,6 +205,19 @@ class UnifiClient:
 
         return payload["data"]
 
+    @staticmethod
+    def _parse_v2_list_payload(path: str, payload: object) -> list[dict[str, object]]:
+        if isinstance(payload, list):
+            return payload
+        if not isinstance(payload, dict):
+            raise UnifiApiError(f"Unexpected response format for {path}")
+        if "data" in payload:
+            return payload["data"]
+        if "errorCode" in payload or "error" in payload:
+            message = payload.get("message") or payload.get("error") or "unknown error"
+            raise UnifiApiError(f"Error response for {path}: {message}")
+        return [payload]
+
     def _get_v2(self, path: str) -> list[dict[str, object]]:
         """GET for V2/Integration API endpoints.
 
@@ -222,24 +235,7 @@ class UnifiClient:
             error_type=UnifiApiError,
             error_message=f"Non-JSON response for {path}",
         )
-
-        # Handle plain list response
-        if isinstance(payload, list):
-            return payload
-
-        # Handle dict with "data" field (classic envelope)
-        if isinstance(payload, dict) and "data" in payload:
-            return payload["data"]
-
-        # Handle dict that is a single object (wrap in list),
-        # but reject payloads that look like error responses.
-        if isinstance(payload, dict):
-            if "errorCode" in payload or "error" in payload:
-                msg = payload.get("message") or payload.get("error") or "unknown error"
-                raise UnifiApiError(f"Error response for {path}: {msg}")
-            return [payload]
-
-        raise UnifiApiError(f"Unexpected response format for {path}")
+        return self._parse_v2_list_payload(path, payload)
 
     def get_devices(self, site: str, *, detailed: bool = False) -> list[dict[str, object]]:
         endpoint = "stat/device" if detailed else "stat/device-basic"
