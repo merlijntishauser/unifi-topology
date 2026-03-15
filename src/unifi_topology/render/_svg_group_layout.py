@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from html import escape as _escape_html
 
 from ..model.topology import Edge
+from ._svg_node_attrs import _svg_node_group_attrs as _svg_node_group_attrs
 from ._svg_tree_layout import _layout_nodes, _layout_nodeset
 from .svg_theme import SvgOptions
 
@@ -161,26 +161,3 @@ def _build_node_to_group_map(groups: dict[str, list[str]]) -> dict[str, str]:
         for node in members:
             result[node] = group_name
     return result
-
-
-def _svg_node_group_attrs(
-    node_data: dict[str, dict[str, str]] | None,
-    name: str,
-    node_type: str,
-    group_name: str | None = None,
-) -> str:
-    attrs: dict[str, str] = {
-        "class": "unm-node",
-        "data-node-id": name,
-        "data-node-type": node_type,
-    }
-    if group_name:
-        attrs["data-group"] = group_name
-    if node_data and (extra := node_data.get(name)):
-        for key, value in extra.items():
-            if key == "class":
-                attrs["class"] = f"{attrs['class']} {value}".strip()
-            else:
-                attrs[key] = value
-    rendered = [f' {key}="{_escape_html(value, quote=True)}"' for key, value in attrs.items()]
-    return "".join(rendered)
