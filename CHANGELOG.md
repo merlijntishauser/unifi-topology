@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Test coverage boosted to 98% across all modules (899 tests)
+- Consolidated fetch functions to use shared `_fetch_cached` helper, improving maintainability index to A
 
 ## [1.1.1] (2026-03-14)
 
