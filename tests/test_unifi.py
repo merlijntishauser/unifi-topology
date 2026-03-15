@@ -662,6 +662,73 @@ def test_toggle_clears_client_cache(monkeypatch, tmp_path):
     assert create_calls["count"] == 2
 
 
+def test_fetch_device_stats_calls_get_devices_detailed(monkeypatch, tmp_path):
+    """fetch_device_stats calls get_devices with detailed=True."""
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    calls: list[tuple[str, bool]] = []
+
+    class Client:
+        def get_devices(self, site, *, detailed=False):
+            calls.append((site, detailed))
+            return [{"mac": "aa", "type": "usw"}]
+
+    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: Client())
+    config = Config(
+        url="https://example", site="default", user="user", password="pass", verify_ssl=True
+    )
+    result = list(unifi.fetch_device_stats(config))
+    assert len(result) == 1
+    assert calls == [("default", True)]
+
+
+def test_fetch_device_stats_default_no_cache(monkeypatch, tmp_path):
+    """fetch_device_stats defaults to use_cache=False and skips cache."""
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    monkeypatch.setenv("UNIFI_CACHE_TTL_SECONDS", "3600")
+
+    config = Config(
+        url="https://example", site="default", user="user", password="pass", verify_ssl=True
+    )
+    cache_path = tmp_path / f"device_stats_{unifi._cache_key(config.url, config.site)}.json"
+    unifi._save_cache(cache_path, [{"mac": "cached"}])
+
+    called = {"count": 0}
+
+    class Client:
+        def get_devices(self, site, *, detailed=False):
+            called["count"] += 1
+            return [{"mac": "fresh"}]
+
+    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: Client())
+    result = list(unifi.fetch_device_stats(config))
+    assert called["count"] == 1
+    device = result[0]
+    assert isinstance(device, dict)
+    assert device["mac"] == "fresh"
+
+
+def test_fetch_device_stats_with_cache_enabled(monkeypatch, tmp_path):
+    """fetch_device_stats uses cache when explicitly enabled."""
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    monkeypatch.setenv("UNIFI_CACHE_TTL_SECONDS", "3600")
+
+    config = Config(
+        url="https://example", site="default", user="user", password="pass", verify_ssl=True
+    )
+    cache_path = tmp_path / f"device_stats_{unifi._cache_key(config.url, config.site)}.json"
+    unifi._save_cache(cache_path, [{"mac": "cached"}])
+
+    def fail_init(*_args, **_kwargs):
+        raise AssertionError("should not fetch when cache is valid")
+
+    monkeypatch.setattr(unifi, "_create_client", fail_init)
+    result = list(unifi.fetch_device_stats(config, use_cache=True))
+    assert len(result) == 1
+    device = result[0]
+    assert isinstance(device, dict)
+    assert device["mac"] == "cached"
+
+
 def test_swap_clears_client_cache(monkeypatch, tmp_path):
     """swap_firewall_policy_order clears the client cache."""
     monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))

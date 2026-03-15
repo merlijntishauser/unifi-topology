@@ -714,6 +714,30 @@ def toggle_firewall_policy(
     invalidate_cache(config, site=site)
 
 
+def fetch_device_stats(
+    config: Config,
+    *,
+    site: str | None = None,
+    use_cache: bool = False,
+) -> Sequence[object]:
+    """Fetch device statistics from the UniFi controller.
+
+    Returns raw device dicts with system-stats fields (CPU, memory,
+    temperature, traffic counters, PoE).  Pass the result to
+    ``normalize_device_stats()`` to get typed ``DeviceStats`` objects.
+
+    Cache is bypassed by default since metrics polling needs fresh data.
+    """
+    return _fetch_cached(
+        config,
+        site=site,
+        use_cache=use_cache,
+        cache_prefix="device_stats",
+        operation="device stats",
+        api_call=lambda client, site_name: lambda: client.get_devices(site_name, detailed=True),
+    )
+
+
 def swap_firewall_policy_order(
     config: Config,
     policy_id_a: str,

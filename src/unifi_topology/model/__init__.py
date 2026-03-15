@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .clients import build_client_edges, build_node_type_map
+from .device_stats import DeviceStats, PoePortStats
+from .device_stats_coerce import normalize_device_stats
 from .edges import build_device_index, build_topology, group_devices_by_type, group_nodes_by_vlan
 from .firewall import FirewallGroup, FirewallPolicy, FirewallZone
 from .firewall_coerce import (
@@ -24,11 +26,13 @@ if TYPE_CHECKING:
 __all__ = [
     "Device",
     "DeviceInfo",
+    "DeviceStats",
     "Edge",
     "FirewallGroup",
     "FirewallPolicy",
     "FirewallZone",
     "MockOptions",
+    "PoePortStats",
     "TopologyResult",
     "VpnTunnel",
     "WanInfo",
@@ -42,6 +46,7 @@ __all__ = [
     "generate_mock_payload",
     "group_devices_by_type",
     "group_nodes_by_vlan",
+    "normalize_device_stats",
     "normalize_devices",
     "normalize_firewall_groups",
     "normalize_firewall_policies",
