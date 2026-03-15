@@ -1,8 +1,6 @@
-"""Tests for topology coercion and device normalization utilities."""
+"""Tests for topology coercion helper utilities."""
 
 from __future__ import annotations
-
-import pytest
 
 from unifi_topology.model.topology_coerce import (
     _aggregation_group,
@@ -14,11 +12,7 @@ from unifi_topology.model.topology_coerce import (
     _parse_uplink,
     _port_info_from_entry,
     _resolve_vlan_id,
-    coerce_device,
-    normalize_devices,
 )
-
-# --- _as_int ---
 
 
 class TestAsInt:
@@ -38,9 +32,6 @@ class TestAsInt:
         assert _as_int(3.14) is None
 
 
-# --- _as_float ---
-
-
 class TestAsFloat:
     def test_returns_float_from_int(self):
         assert _as_float(10) == 10.0
@@ -56,9 +47,6 @@ class TestAsFloat:
 
     def test_none_returns_zero(self):
         assert _as_float(None) == 0.0
-
-
-# --- _as_group_id ---
 
 
 class TestAsGroupId:
@@ -80,9 +68,6 @@ class TestAsGroupId:
 
     def test_other_types_return_none(self):
         assert _as_group_id([1, 2, 3]) is None
-
-
-# --- _aggregation_group ---
 
 
 class TestAggregationGroup:
@@ -114,9 +99,6 @@ class TestAggregationGroup:
                 self.other_field = "value"
 
         assert _aggregation_group(MockPort()) is None
-
-
-# --- _coerce_vlan_list ---
 
 
 class TestCoerceVlanList:
@@ -159,9 +141,6 @@ class TestCoerceVlanList:
         assert _coerce_vlan_list({"not": "a list"}) == ()
 
 
-# --- _resolve_vlan_id ---
-
-
 class TestResolveVlanId:
     def test_int_value(self):
         assert _resolve_vlan_id(100) == 100
@@ -181,9 +160,6 @@ class TestResolveVlanId:
         assert _resolve_vlan_id(None) is None
 
 
-# --- _extract_wan_networkconf_id ---
-
-
 class TestExtractWanNetworkconfId:
     def test_dict_with_value(self):
         assert _extract_wan_networkconf_id({"wan_networkconf_id": "WAN"}) == "WAN"
@@ -200,9 +176,6 @@ class TestExtractWanNetworkconfId:
                 self.wan_networkconf_id = "WAN2"
 
         assert _extract_wan_networkconf_id(MockPort()) == "WAN2"
-
-
-# --- _port_info_from_entry ---
 
 
 class TestPortInfoFromEntry:
@@ -225,7 +198,7 @@ class TestPortInfoFromEntry:
         class MockPort:
             def __init__(self):
                 self.port_idx = 5
-                self.portIdx = None  # Alternate field
+                self.portIdx = None
                 self.name = "SFP"
                 self.ifname = "sfp0"
                 self.speed = 10000
@@ -252,9 +225,6 @@ class TestPortInfoFromEntry:
         port = _port_info_from_entry(entry, network_map)
         assert port.native_vlan == 1
         assert port.tagged_vlans == (20, 30)
-
-
-# --- _parse_uplink ---
 
 
 class TestParseUplink:
@@ -290,73 +260,3 @@ class TestParseUplink:
         uplink = _parse_uplink(MockUplink())
         assert uplink is not None
         assert uplink.mac == "11:22:33:44:55:66"
-
-
-# --- coerce_device ---
-
-
-class TestCoerceDevice:
-    def test_minimal_device(self):
-        raw = {
-            "name": "Test Switch",
-            "mac": "aa:bb:cc:dd:ee:ff",
-            "lldp_info": [],
-        }
-        device = coerce_device(raw)
-        assert device.name == "Test Switch"
-        assert device.mac == "aa:bb:cc:dd:ee:ff"
-
-    def test_missing_name_raises(self):
-        raw = {"mac": "aa:bb:cc:dd:ee:ff", "lldp_info": []}
-        with pytest.raises(ValueError, match="missing name or mac"):
-            coerce_device(raw)
-
-    def test_missing_mac_raises(self):
-        raw = {"name": "Switch", "lldp_info": []}
-        with pytest.raises(ValueError, match="missing name or mac"):
-            coerce_device(raw)
-
-    def test_missing_lldp_with_uplink_uses_fallback(self, caplog):
-        raw = {
-            "name": "Test AP",
-            "mac": "aa:bb:cc:dd:ee:ff",
-            "uplink": {
-                "uplink_mac": "11:22:33:44:55:66",
-                "uplink_device_name": "Switch",
-            },
-        }
-        device = coerce_device(raw)
-        assert device.name == "Test AP"
-        assert "missing LLDP info" in caplog.text
-
-    def test_missing_lldp_without_uplink_raises(self):
-        raw = {"name": "Orphan", "mac": "aa:bb:cc:dd:ee:ff"}
-        with pytest.raises(ValueError, match="missing LLDP info"):
-            coerce_device(raw)
-
-    def test_model_display_name_priority(self):
-        raw = {
-            "name": "Switch",
-            "mac": "aa:bb:cc:dd:ee:ff",
-            "model_in_lts": "USW Pro 24",
-            "model_name": "Generic Switch",
-            "model": "USW-Pro-24",
-            "lldp_info": [],
-        }
-        device = coerce_device(raw)
-        assert device.model_name == "USW Pro 24"
-
-
-# --- normalize_devices ---
-
-
-class TestNormalizeDevices:
-    def test_normalizes_list(self):
-        raw_devices = [
-            {"name": "A", "mac": "00:00:00:00:00:01", "lldp_info": []},
-            {"name": "B", "mac": "00:00:00:00:00:02", "lldp_info": []},
-        ]
-        devices = normalize_devices(raw_devices)
-        assert len(devices) == 2
-        assert devices[0].name == "A"
-        assert devices[1].name == "B"

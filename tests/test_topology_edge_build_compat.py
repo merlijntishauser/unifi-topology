@@ -1,4 +1,4 @@
-"""Compatibility-focused topology tests for edge-building paths."""
+"""Compatibility-focused topology tests for edge discovery and port helpers."""
 
 from __future__ import annotations
 
@@ -6,29 +6,16 @@ from types import SimpleNamespace
 
 import pytest
 
+from tests.topology_edge_helpers import DummyDevice, make_device_with_uplink_no_lldp
 from unifi_topology.model.edges import (
     _port_speed_by_idx,
     _resolve_port_idx_from_lldp,
-    _tree_edges_from_parent,
     _uplink_name,
     build_edges,
-    build_topology,
-    build_tree_edges_by_topology,
 )
 from unifi_topology.model.lldp import LLDPEntry
-from unifi_topology.model.topology import Device, Edge, PortInfo, UplinkInfo
+from unifi_topology.model.topology import Device, PortInfo, UplinkInfo
 from unifi_topology.model.topology_coerce import coerce_device, normalize_devices
-
-
-class DummyDevice:
-    def __init__(self, name, mac, lldp_info, port_table=None):
-        self.name = name
-        self.mac = mac
-        self.lldp_info = lldp_info
-        self.port_table = port_table or []
-        self.model_name = ""
-        self.ip = ""
-        self.type = ""
 
 
 def test_build_edges_deduplicates_links():
@@ -191,18 +178,7 @@ def test_build_edges_sets_speed_from_port():
 
 @pytest.fixture()
 def device_with_uplink_no_lldp():
-    class MissingLldpWithUplink:
-        name = "Device"
-        model_name = ""
-        mac = "aa"
-        ip = ""
-        type = ""
-        lldp_info = None
-        lldp = None
-        uplink = {"uplink_mac": "bb", "uplink_device_name": "Gateway", "uplink_remote_port": 1}
-        port_table = []
-
-    return MissingLldpWithUplink()
+    return make_device_with_uplink_no_lldp()
 
 
 def test_build_edges_uses_uplink_fallback_fixture(device_with_uplink_no_lldp):
@@ -218,10 +194,6 @@ def test_build_edges_uses_uplink_fallback_fixture(device_with_uplink_no_lldp):
     device = coerce_device(device_with_uplink_no_lldp)
     edges = build_edges([gateway, device], include_ports=True)
     assert edges[0].label == "Gateway: Port 1 <-> Device: ?"
-
-
-def test_build_tree_edges_returns_empty_without_gateways():
-    assert build_tree_edges_by_topology([Edge("A", "B")], gateways=[]) == []
 
 
 def test_build_edges_uses_uplink_fallback():
@@ -328,32 +300,6 @@ def test_build_edges_resolves_port_idx_from_ifname():
     assert edges[0].label == "Switch A: Port 2 <-> Switch B: ?"
 
 
-def test_build_tree_edges_no_gateways():
-    assert build_tree_edges_by_topology([], []) == []
-
-
-def test_build_tree_edges_gateway_not_in_adjacency():
-    assert build_tree_edges_by_topology([Edge("A", "B")], ["Missing"]) == []
-
-
-def test_build_topology_returns_edges():
-    lldp = SimpleNamespace(chassis_id="bb", local_port_idx=None, port_id="Port 1", port_desc=None)
-    device = SimpleNamespace(
-        name="Switch",
-        model_name="",
-        model="",
-        mac="aa",
-        ip="",
-        type="switch",
-        lldp_info=[lldp],
-        port_table=[],
-    )
-    result = build_topology(
-        [coerce_device(device)], include_ports=False, only_unifi=False, gateways=[]
-    )
-    assert result.raw_edges
-
-
 def test_resolve_port_idx_matches_port_name():
     lldp = LLDPEntry(chassis_id="bb", port_id="Port 3", local_port_name="Port 3")
     port_table = [
@@ -393,11 +339,6 @@ def test_resolve_port_idx_matches_port_number():
 def test_uplink_name_prefers_name_over_mac():
     uplink = UplinkInfo(mac="aa", name="Core Switch", port=None)
     assert _uplink_name(uplink, {}, only_unifi=True) == "Core Switch"
-
-
-def test_tree_edges_from_parent_missing_original():
-    parent = {"Switch A": "Gateway"}
-    assert _tree_edges_from_parent(parent, {}) == [Edge(left="Gateway", right="Switch A")]
 
 
 def test_port_speed_by_idx_reads_speed():

@@ -1,0 +1,71 @@
+"""Tests for topology device normalization entry points."""
+
+from __future__ import annotations
+
+import pytest
+
+from unifi_topology.model.topology_coerce import coerce_device, normalize_devices
+
+
+class TestCoerceDevice:
+    def test_minimal_device(self):
+        raw = {
+            "name": "Test Switch",
+            "mac": "aa:bb:cc:dd:ee:ff",
+            "lldp_info": [],
+        }
+        device = coerce_device(raw)
+        assert device.name == "Test Switch"
+        assert device.mac == "aa:bb:cc:dd:ee:ff"
+
+    def test_missing_name_raises(self):
+        raw = {"mac": "aa:bb:cc:dd:ee:ff", "lldp_info": []}
+        with pytest.raises(ValueError, match="missing name or mac"):
+            coerce_device(raw)
+
+    def test_missing_mac_raises(self):
+        raw = {"name": "Switch", "lldp_info": []}
+        with pytest.raises(ValueError, match="missing name or mac"):
+            coerce_device(raw)
+
+    def test_missing_lldp_with_uplink_uses_fallback(self, caplog):
+        raw = {
+            "name": "Test AP",
+            "mac": "aa:bb:cc:dd:ee:ff",
+            "uplink": {
+                "uplink_mac": "11:22:33:44:55:66",
+                "uplink_device_name": "Switch",
+            },
+        }
+        device = coerce_device(raw)
+        assert device.name == "Test AP"
+        assert "missing LLDP info" in caplog.text
+
+    def test_missing_lldp_without_uplink_raises(self):
+        raw = {"name": "Orphan", "mac": "aa:bb:cc:dd:ee:ff"}
+        with pytest.raises(ValueError, match="missing LLDP info"):
+            coerce_device(raw)
+
+    def test_model_display_name_priority(self):
+        raw = {
+            "name": "Switch",
+            "mac": "aa:bb:cc:dd:ee:ff",
+            "model_in_lts": "USW Pro 24",
+            "model_name": "Generic Switch",
+            "model": "USW-Pro-24",
+            "lldp_info": [],
+        }
+        device = coerce_device(raw)
+        assert device.model_name == "USW Pro 24"
+
+
+class TestNormalizeDevices:
+    def test_normalizes_list(self):
+        raw_devices = [
+            {"name": "A", "mac": "00:00:00:00:00:01", "lldp_info": []},
+            {"name": "B", "mac": "00:00:00:00:00:02", "lldp_info": []},
+        ]
+        devices = normalize_devices(raw_devices)
+        assert len(devices) == 2
+        assert devices[0].name == "A"
+        assert devices[1].name == "B"
