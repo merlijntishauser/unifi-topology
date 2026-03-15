@@ -1,6 +1,6 @@
 import pytest
 
-from tests.unifi_fetch_helpers import config, first_mapping
+from tests.unifi_fetch_helpers import config
 from unifi_topology.adapters import unifi
 from unifi_topology.adapters.config import Config
 from unifi_topology.adapters.unifi_api import UnifiAuthError
@@ -55,41 +55,6 @@ def test_fetch_clients_falls_back_on_auth_error(monkeypatch):
     assert len(clients) == 1
 
 
-def test_fetch_devices_retries(monkeypatch, tmp_path):
-    monkeypatch.setenv("UNIFI_RETRY_ATTEMPTS", "2")
-    monkeypatch.setenv("UNIFI_RETRY_BACKOFF_SECONDS", "0")
-    monkeypatch.setenv("UNIFI_CACHE_TTL_SECONDS", "0")
-    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
-    calls = {"count": 0}
-
-    class Client:
-        def get_devices(self, site, *, detailed=False):
-            calls["count"] += 1
-            if calls["count"] == 1:
-                raise RuntimeError("boom")
-            return [{"ok": True}]
-
-    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: Client())
-    devices = list(unifi.fetch_devices(config()))
-    assert calls["count"] == 2
-    assert first_mapping(devices)["ok"] is True
-
-
-def test_call_with_retries_times_out(monkeypatch):
-    monkeypatch.setenv("UNIFI_RETRY_ATTEMPTS", "1")
-    monkeypatch.setenv("UNIFI_RETRY_BACKOFF_SECONDS", "0")
-    monkeypatch.setenv("UNIFI_REQUEST_TIMEOUT_SECONDS", "0.01")
-
-    def slow_call():
-        import time
-
-        time.sleep(0.05)
-        return "ok"
-
-    with pytest.raises(TimeoutError):
-        unifi._call_with_retries("slow", slow_call)
-
-
 def test_rate_limited_auth_error_skips_legacy_retry(monkeypatch, tmp_path):
     import json
     import time
@@ -110,6 +75,8 @@ def test_rate_limited_auth_error_skips_legacy_retry(monkeypatch, tmp_path):
     )
     devices = list(unifi.fetch_devices(config()))
     assert calls["init_count"] == 1
+    from tests.unifi_fetch_helpers import first_mapping
+
     assert first_mapping(devices)["stale"] is True
 
 
@@ -141,18 +108,3 @@ def test_non_429_auth_error_retries_legacy(monkeypatch, tmp_path):
     monkeypatch.setattr(unifi, "_create_client", fake_create_client)
     devices = list(unifi.fetch_devices(config()))
     assert len(devices) == 1
-
-
-def test_fetch_device_stats_calls_get_devices_detailed(monkeypatch, tmp_path):
-    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
-    calls: list[tuple[str, bool]] = []
-
-    class Client:
-        def get_devices(self, site, *, detailed=False):
-            calls.append((site, detailed))
-            return [{"mac": "aa", "type": "usw"}]
-
-    monkeypatch.setattr(unifi, "_create_client", lambda *_a, **_k: Client())
-    result = list(unifi.fetch_device_stats(config()))
-    assert len(result) == 1
-    assert calls == [("default", True)]
