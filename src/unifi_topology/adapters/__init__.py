@@ -5,6 +5,7 @@ from .dns import resolve_hostnames
 from .unifi import (
     clear_client_cache,
     fetch_clients,
+    fetch_device_stats,
     fetch_devices,
     fetch_firewall_groups,
     fetch_firewall_policies,
@@ -24,6 +25,7 @@ __all__ = [
     "UnifiWriteError",
     "clear_client_cache",
     "fetch_clients",
+    "fetch_device_stats",
     "fetch_devices",
     "fetch_firewall_groups",
     "fetch_firewall_policies",
