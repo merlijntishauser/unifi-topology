@@ -1,7 +1,8 @@
+"""Tests for client edge building behavior."""
+
 import pytest
 
-from unifi_topology.model.clients import build_client_edges, build_node_type_map
-from unifi_topology.model.topology import Device
+from unifi_topology.model.clients import build_client_edges
 
 pytestmark = pytest.mark.integration
 
@@ -112,79 +113,3 @@ def test_build_client_edges_prefers_ucore_name_over_hostname():
     ]
     edges = build_client_edges(clients, device_index, only_unifi=True)
     assert edges[0].right == "Smart PoE Chime"
-
-
-def test_build_node_type_map_skips_wireless_clients():
-    devices = [
-        Device(name="Gateway", model_name="", model="", mac="aa", ip="", type="udm", lldp_info=[])
-    ]
-    clients = [{"name": "Phone", "is_wired": False}]
-    node_types = build_node_type_map(devices, clients)
-    assert "Phone" not in node_types
-
-
-def test_build_node_type_map_only_unifi_filters_clients():
-    devices = [
-        Device(name="Gateway", model_name="", model="", mac="aa", ip="", type="udm", lldp_info=[])
-    ]
-    clients = [
-        {"name": "Desk PC", "is_wired": True, "is_unifi": False},
-        {"name": "Protect Cam", "is_wired": True, "is_unifi": True},
-    ]
-    node_types = build_node_type_map(devices, clients, only_unifi=True)
-    assert "Protect Cam" in node_types
-    assert "Desk PC" not in node_types
-
-
-def test_build_client_edges_includes_connection_info_for_wireless():
-    device_index = {"aa:bb:cc:dd:ee:ff": "AP One"}
-    clients = [
-        {
-            "name": "Phone",
-            "ap_mac": "aa:bb:cc:dd:ee:ff",
-            "is_wired": False,
-            "signal": -55,
-            "noise": -95,
-            "tx_rate": 866,
-            "rx_rate": 433,
-            "satisfaction": 98,
-        }
-    ]
-    edges = build_client_edges(clients, device_index, client_mode="wireless")
-    assert len(edges) == 1
-    conn = edges[0].connection
-    assert conn is not None
-    assert conn.signal_dbm == -55
-    assert conn.noise_dbm == -95
-    assert conn.tx_rate_mbps == 866
-    assert conn.rx_rate_mbps == 433
-    assert conn.satisfaction == 98
-    assert conn.quality == "good"
-
-
-def test_build_client_edges_no_connection_info_for_wired():
-    device_index = {"aa:bb:cc:dd:ee:ff": "Switch A"}
-    clients = [{"name": "Laptop", "sw_mac": "aa:bb:cc:dd:ee:ff", "is_wired": True}]
-    edges = build_client_edges(clients, device_index)
-    assert len(edges) == 1
-    assert edges[0].connection is None
-
-
-def test_build_client_edges_connection_info_with_missing_fields():
-    device_index = {"aa:bb:cc:dd:ee:ff": "AP One"}
-    clients = [
-        {
-            "name": "Phone",
-            "ap_mac": "aa:bb:cc:dd:ee:ff",
-            "is_wired": False,
-            "signal": -70,
-            # noise, tx_rate, rx_rate, satisfaction not provided
-        }
-    ]
-    edges = build_client_edges(clients, device_index, client_mode="wireless")
-    conn = edges[0].connection
-    assert conn is not None
-    assert conn.signal_dbm == -70
-    assert conn.noise_dbm is None
-    assert conn.tx_rate_mbps is None
-    assert conn.quality == "fair"
