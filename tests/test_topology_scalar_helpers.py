@@ -1,4 +1,4 @@
-"""Tests for topology coercion helper utilities."""
+"""Tests for scalar and VLAN topology coercion helpers."""
 
 from __future__ import annotations
 
@@ -8,9 +8,6 @@ from unifi_topology.model.topology_coerce import (
     _as_group_id,
     _as_int,
     _coerce_vlan_list,
-    _extract_wan_networkconf_id,
-    _parse_uplink,
-    _port_info_from_entry,
     _resolve_vlan_id,
 )
 
@@ -158,105 +155,3 @@ class TestResolveVlanId:
 
     def test_none_returns_none(self):
         assert _resolve_vlan_id(None) is None
-
-
-class TestExtractWanNetworkconfId:
-    def test_dict_with_value(self):
-        assert _extract_wan_networkconf_id({"wan_networkconf_id": "WAN"}) == "WAN"
-
-    def test_dict_with_empty_value(self):
-        assert _extract_wan_networkconf_id({"wan_networkconf_id": "  "}) is None
-
-    def test_dict_without_field(self):
-        assert _extract_wan_networkconf_id({}) is None
-
-    def test_non_dict_object_with_attribute(self):
-        class MockPort:
-            def __init__(self):
-                self.wan_networkconf_id = "WAN2"
-
-        assert _extract_wan_networkconf_id(MockPort()) == "WAN2"
-
-
-class TestPortInfoFromEntry:
-    def test_dict_port_entry(self):
-        entry = {
-            "port_idx": 1,
-            "name": "Port 1",
-            "ifname": "eth0",
-            "speed": 1000,
-            "port_poe": True,
-            "poe_power": 15.5,
-        }
-        port = _port_info_from_entry(entry)
-        assert port.port_idx == 1
-        assert port.name == "Port 1"
-        assert port.speed == 1000
-        assert port.port_poe is True
-
-    def test_non_dict_port_entry(self):
-        class MockPort:
-            def __init__(self):
-                self.port_idx = 5
-                self.portIdx = None
-                self.name = "SFP"
-                self.ifname = "sfp0"
-                self.speed = 10000
-                self.aggregation_group = None
-                self.port_poe = False
-                self.poe_enable = False
-                self.poe_good = False
-                self.poe_power = 0.0
-                self.native_vlan = 10
-                self.tagged_vlans = (20, 30)
-
-        port = _port_info_from_entry(MockPort())
-        assert port.port_idx == 5
-        assert port.name == "SFP"
-        assert port.speed == 10000
-
-    def test_with_network_vlan_map(self):
-        entry = {
-            "port_idx": 1,
-            "native_vlan": "network_lan",
-            "tagged_vlans": ["network_guest", "network_iot"],
-        }
-        network_map = {"network_lan": 1, "network_guest": 20, "network_iot": 30}
-        port = _port_info_from_entry(entry, network_map)
-        assert port.native_vlan == 1
-        assert port.tagged_vlans == (20, 30)
-
-
-class TestParseUplink:
-    def test_none_returns_none(self):
-        assert _parse_uplink(None) is None
-
-    def test_dict_with_fields(self):
-        uplink = _parse_uplink(
-            {
-                "uplink_mac": "aa:bb:cc:dd:ee:ff",
-                "uplink_device_name": "Core Switch",
-                "uplink_remote_port": 24,
-            }
-        )
-        assert uplink is not None
-        assert uplink.mac == "aa:bb:cc:dd:ee:ff"
-        assert uplink.name == "Core Switch"
-        assert uplink.port == 24
-
-    def test_all_none_returns_none(self):
-        assert _parse_uplink({}) is None
-
-    def test_non_dict_with_fields(self):
-        class MockUplink:
-            def __init__(self):
-                self.uplink_mac = "11:22:33:44:55:66"
-                self.uplink_device_mac = None
-                self.uplink_device_name = "Switch"
-                self.uplink_name = None
-                self.uplink_remote_port = 10
-                self.port_idx = None
-
-        uplink = _parse_uplink(MockUplink())
-        assert uplink is not None
-        assert uplink.mac == "11:22:33:44:55:66"

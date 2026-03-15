@@ -1,84 +1,15 @@
-"""Tests for edge topology, grouping, and VLAN helpers."""
+"""Tests for edge VLAN enrichment and grouping helpers."""
 
 from __future__ import annotations
 
+from tests.edge_discovery_helpers import make_device
 from unifi_topology.model.edges import (
     _primary_vlan_for_node,
-    build_topology,
-    build_tree_edges_by_topology,
     enrich_edges_with_active_vlans,
     group_devices_by_type,
     group_nodes_by_vlan,
 )
-from unifi_topology.model.lldp import LLDPEntry
-from unifi_topology.model.topology import Device, Edge, PortInfo, UplinkInfo
-
-
-def _make_device(
-    name: str,
-    mac: str,
-    *,
-    device_type: str = "switch",
-    lldp_info: list[LLDPEntry] | None = None,
-    port_table: list[PortInfo] | None = None,
-    poe_ports: dict[int, bool] | None = None,
-    uplink: UplinkInfo | None = None,
-    last_uplink: UplinkInfo | None = None,
-) -> Device:
-    return Device(
-        name=name,
-        model_name="",
-        model="",
-        mac=mac,
-        ip="",
-        type=device_type,
-        lldp_info=lldp_info or [],
-        port_table=port_table or [],
-        poe_ports=poe_ports or {},
-        uplink=uplink,
-        last_uplink=last_uplink,
-    )
-
-
-def test_build_tree_edges_simple_chain():
-    edges = [Edge("Gateway", "Switch"), Edge("Switch", "AP")]
-    result = build_tree_edges_by_topology(edges, ["Gateway"])
-    assert len(result) == 2
-    left_right = [(edge.left, edge.right) for edge in result]
-    assert ("Gateway", "Switch") in left_right
-    assert ("Switch", "AP") in left_right
-
-
-def test_build_tree_edges_preserves_edge_properties():
-    edges = [
-        Edge(
-            "Gateway",
-            "Switch",
-            label="Port 1 <-> Port 2",
-            poe=True,
-            speed=1000,
-            vlans=(10, 20),
-            is_trunk=True,
-        )
-    ]
-    result = build_tree_edges_by_topology(edges, ["Gateway"])
-    assert len(result) == 1
-    assert result[0].left == "Gateway"
-    assert result[0].right == "Switch"
-    assert result[0].label == "Port 1 <-> Port 2"
-    assert result[0].poe is True
-    assert result[0].speed == 1000
-    assert result[0].vlans == (10, 20)
-    assert result[0].is_trunk is True
-
-
-def test_build_tree_edges_gateway_not_in_edges():
-    assert build_tree_edges_by_topology([Edge("A", "B")], ["Missing"]) == []
-
-
-def test_build_tree_edges_multiple_gateways():
-    edges = [Edge("GW1", "Switch"), Edge("GW2", "AP")]
-    assert len(build_tree_edges_by_topology(edges, ["GW1", "GW2"])) == 2
+from unifi_topology.model.topology import Edge
 
 
 def test_enrich_edges_with_active_vlans_basic():
@@ -128,10 +59,10 @@ def test_enrich_edges_preserves_other_fields():
 
 
 def test_group_devices_by_type_all_types():
-    gw = _make_device("GW", "aa", device_type="gateway")
-    sw = _make_device("SW", "bb", device_type="usw")
-    ap = _make_device("AP", "cc", device_type="uap")
-    other = _make_device("Cam", "dd", device_type="camera")
+    gw = make_device("GW", "aa", device_type="gateway")
+    sw = make_device("SW", "bb", device_type="usw")
+    ap = make_device("AP", "cc", device_type="uap")
+    other = make_device("Cam", "dd", device_type="camera")
     groups = group_devices_by_type([gw, sw, ap, other])
     assert "GW" in groups["gateway"]
     assert "SW" in groups["switch"]
@@ -231,29 +162,3 @@ def test_group_nodes_by_vlan_empty_edges():
     assert groups == {}
     assert order == []
     assert vlan_ids == {}
-
-
-def test_build_topology_with_gateways():
-    gateway = _make_device("Gateway", "aa", device_type="gateway")
-    switch = _make_device("Switch", "bb", lldp_info=[LLDPEntry("aa", "Port 1")])
-    result = build_topology(
-        [gateway, switch],
-        include_ports=True,
-        only_unifi=True,
-        gateways=["Gateway"],
-    )
-    assert len(result.raw_edges) == 1
-    assert len(result.tree_edges) == 1
-
-
-def test_build_topology_without_gateways():
-    gateway = _make_device("Gateway", "aa", device_type="gateway")
-    switch = _make_device("Switch", "bb", lldp_info=[LLDPEntry("aa", "Port 1")])
-    result = build_topology(
-        [gateway, switch],
-        include_ports=False,
-        only_unifi=True,
-        gateways=[],
-    )
-    assert len(result.raw_edges) == 1
-    assert result.tree_edges == []
