@@ -7,11 +7,22 @@ from collections.abc import Iterable
 from .helpers import as_bool, as_list, first_attr
 
 
+def _positive_vlan_id(value: int) -> int | None:
+    return value if value > 0 else None
+
+
+def _string_vlan_id(value: str) -> int | None:
+    stripped = value.strip()
+    if not stripped.isdigit():
+        return None
+    return _positive_vlan_id(int(stripped))
+
+
 def _as_vlan_id(value: object | None) -> int | None:
     if isinstance(value, int):
-        return value if value > 0 else None
+        return _positive_vlan_id(value)
     if isinstance(value, str):
-        return int(value) if value.isdigit() and int(value) > 0 else None
+        return _string_vlan_id(value)
     return None
 
 

@@ -9,6 +9,12 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 
+def _iterable_list(value: object) -> list[object] | None:
+    if isinstance(value, Iterable) and not isinstance(value, str | bytes):
+        return list(value)
+    return None
+
+
 def as_list(value: object | None) -> list[object]:
     """Coerce *value* to a list, handling dicts, iterables, and None."""
     if value is None:
@@ -17,11 +23,7 @@ def as_list(value: object | None) -> list[object]:
         return value
     if isinstance(value, dict):
         return [value]
-    if isinstance(value, str | bytes):
-        return []
-    if isinstance(value, Iterable):
-        return list(value)
-    return []
+    return _iterable_list(value) or []
 
 
 def as_bool(value: object | None) -> bool:
@@ -42,11 +44,15 @@ def as_int(value: object | None, default: int = 0) -> int:
     if isinstance(value, float):
         return int(value)
     if isinstance(value, str):
-        try:
-            return int(value.strip())
-        except ValueError:
-            return default
+        return _parse_int_string(value, default)
     return default
+
+
+def _parse_int_string(value: str, default: int) -> int:
+    try:
+        return int(value.strip())
+    except ValueError:
+        return default
 
 
 def first_attr(obj: object, *names: str) -> object | None:

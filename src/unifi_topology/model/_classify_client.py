@@ -67,16 +67,26 @@ def _classify_unifi_product_line(ucore: dict[str, object]) -> str | None:
     return None
 
 
+def _classify_unifi_model_value(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    value_lower = value.lower()
+    if any(token in value_lower for token in _UNIFI_MODEL_CAMERA_TOKENS):
+        return "camera"
+    if _is_phone_model(value_lower):
+        return "phone"
+    return None
+
+
+def _is_phone_model(value_lower: str) -> bool:
+    return "talk" in value_lower or "phone" in value_lower
+
+
 def _classify_unifi_model(ucore: dict[str, object]) -> str | None:
     for key in ("product_shortname", "computed_model", "product_model"):
-        value = ucore.get(key)
-        if not isinstance(value, str):
-            continue
-        value_lower = value.lower()
-        if any(token in value_lower for token in _UNIFI_MODEL_CAMERA_TOKENS):
-            return "camera"
-        if "talk" in value_lower or "phone" in value_lower:
-            return "phone"
+        category = _classify_unifi_model_value(ucore.get(key))
+        if category:
+            return category
     return None
 
 
@@ -124,11 +134,22 @@ def _ucore_has_device_info(ucore: dict[str, object]) -> bool:
     managed = ucore.get("managed")
     if isinstance(managed, bool) and managed:
         return True
-    for key in ("product_line", "product_shortname", "name", "computed_model", "product_model"):
-        value = ucore.get(key)
-        if isinstance(value, str) and value.strip():
-            return True
-    return False
+    return any(
+        isinstance(ucore.get(key), str) and str(ucore.get(key)).strip()
+        for key in ("product_line", "product_shortname", "name", "computed_model", "product_model")
+    )
+
+
+def _client_has_ucore_device_info(client: object) -> bool:
+    ucore = _client_ucore_info(client)
+    return bool(ucore and _ucore_has_device_info(ucore))
+
+
+def _vendor_is_unifi(vendor: str | None) -> bool:
+    if not vendor:
+        return False
+    normalized = vendor.lower()
+    return "ubiquiti" in normalized or "unifi" in normalized
 
 
 def client_is_unifi(client: object) -> bool:
@@ -136,14 +157,30 @@ def client_is_unifi(client: object) -> bool:
     flag = _client_unifi_flag(client)
     if flag is not None:
         return flag
-    ucore = _client_ucore_info(client)
-    if ucore and _ucore_has_device_info(ucore):
+    if _client_has_ucore_device_info(client):
         return True
+    return _vendor_is_unifi(_client_vendor(client))
+
+
+def _classify_client_from_ucore(client: object) -> str | None:
+    ucore = _client_ucore_info(client)
+    if not ucore:
+        return None
+    return _classify_by_unifi_info(ucore)
+
+
+def _classify_client_from_name(client: object) -> str | None:
+    name = client_display_name(client)
+    if not name:
+        return None
+    return _classify_by_name(name)
+
+
+def _classify_client_from_vendor(client: object) -> str | None:
     vendor = _client_vendor(client)
     if not vendor:
-        return False
-    normalized = vendor.lower()
-    return "ubiquiti" in normalized or "unifi" in normalized
+        return None
+    return _classify_by_vendor(vendor)
 
 
 def classify_client_type(client: object) -> str:
@@ -156,21 +193,12 @@ def classify_client_type(client: object) -> str:
 
     Returns one of: camera, tv, phone, printer, nas, speaker, game_console, iot, client
     """
-    ucore = _client_ucore_info(client)
-    if ucore:
-        category = _classify_by_unifi_info(ucore)
-        if category:
-            return category
-
-    name = client_display_name(client)
-    if name:
-        category = _classify_by_name(name)
-        if category:
-            return category
-
-    vendor = _client_vendor(client)
-    if vendor:
-        category = _classify_by_vendor(vendor)
+    for classifier in (
+        _classify_client_from_ucore,
+        _classify_client_from_name,
+        _classify_client_from_vendor,
+    ):
+        category = classifier(client)
         if category:
             return category
 

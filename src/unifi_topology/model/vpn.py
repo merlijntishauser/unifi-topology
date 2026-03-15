@@ -8,6 +8,10 @@ from .classify import classify_device_type
 from .topology import Device, VpnTunnel
 
 
+def _site_vpn_entries(device: Device) -> list[dict[str, Any]]:
+    return [entry for entry in device.network_table if entry.get("purpose") == "site-vpn"]
+
+
 def _parse_remote_subnets(entry: dict[str, Any]) -> tuple[str, ...]:
     """Extract remote VPN subnets as a tuple of strings."""
     raw = entry.get("remote_vpn_subnets")
@@ -25,6 +29,18 @@ def _parse_bool_string(value: object) -> bool:
     return False
 
 
+def _vpn_tunnel(entry: dict[str, Any], *, gateway_mac: str) -> VpnTunnel:
+    return VpnTunnel(
+        name=str(entry.get("name", "")),
+        vpn_type=str(entry.get("vpn_type", "")),
+        remote_subnets=_parse_remote_subnets(entry),
+        ifname=entry.get("ifname") if isinstance(entry.get("ifname"), str) else None,
+        enabled=_parse_bool_string(entry.get("enabled", True)),
+        up=_parse_bool_string(entry.get("up", False)),
+        gateway_mac=gateway_mac,
+    )
+
+
 def extract_vpn_tunnels(device: Device) -> list[VpnTunnel]:
     """Extract VPN tunnel information from a gateway device.
 
@@ -38,20 +54,4 @@ def extract_vpn_tunnels(device: Device) -> list[VpnTunnel]:
         return []
     if not device.network_table:
         return []
-
-    tunnels: list[VpnTunnel] = []
-    for entry in device.network_table:
-        if entry.get("purpose") != "site-vpn":
-            continue
-        tunnels.append(
-            VpnTunnel(
-                name=str(entry.get("name", "")),
-                vpn_type=str(entry.get("vpn_type", "")),
-                remote_subnets=_parse_remote_subnets(entry),
-                ifname=entry.get("ifname") if isinstance(entry.get("ifname"), str) else None,
-                enabled=_parse_bool_string(entry.get("enabled", True)),
-                up=_parse_bool_string(entry.get("up", False)),
-                gateway_mac=device.mac,
-            )
-        )
-    return tunnels
+    return [_vpn_tunnel(entry, gateway_mac=device.mac) for entry in _site_vpn_entries(device)]

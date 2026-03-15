@@ -103,25 +103,49 @@ def _build_edge_map(edges: Iterable[Edge]) -> dict[frozenset[str], Edge]:
     return {frozenset({edge.left, edge.right}): edge for edge in edges}
 
 
-def _tree_parents(adjacency: dict[str, set[str]], gateways: list[str]) -> dict[str, str]:
-    """BFS to find parent for each node in tree."""
+def _seed_tree_queue(
+    adjacency: dict[str, set[str]],
+    gateways: list[str],
+) -> tuple[set[str], deque[str]]:
     visited: set[str] = set()
-    parent: dict[str, str] = {}
     queue: deque[str] = deque()
-
     for gateway in gateways:
         if gateway in adjacency:
             visited.add(gateway)
             queue.append(gateway)
+    return visited, queue
+
+
+def _visit_tree_neighbor(
+    neighbor: str,
+    *,
+    current: str,
+    visited: set[str],
+    parent: dict[str, str],
+    queue: deque[str],
+) -> None:
+    if neighbor in visited:
+        return
+    visited.add(neighbor)
+    parent[neighbor] = current
+    queue.append(neighbor)
+
+
+def _tree_parents(adjacency: dict[str, set[str]], gateways: list[str]) -> dict[str, str]:
+    """BFS to find parent for each node in tree."""
+    visited, queue = _seed_tree_queue(adjacency, gateways)
+    parent: dict[str, str] = {}
 
     while queue:
         current = queue.popleft()
         for neighbor in sorted(adjacency.get(current, set())):
-            if neighbor in visited:
-                continue
-            visited.add(neighbor)
-            parent[neighbor] = current
-            queue.append(neighbor)
+            _visit_tree_neighbor(
+                neighbor,
+                current=current,
+                visited=visited,
+                parent=parent,
+                queue=queue,
+            )
     return parent
 
 
@@ -213,15 +237,55 @@ def _primary_vlan_for_node(
 
     Uses active_vlans first, falls back to vlans, picks lowest VLAN ID.
     """
+    vlans = _node_vlans(node, edges)
+    return min(vlans) if vlans else None
+
+
+def _node_vlans(node: str, edges: list[Edge]) -> set[int]:
     vlans: set[int] = set()
     for edge in edges:
         if edge.left != node and edge.right != node:
             continue
-        if edge.active_vlans:
-            vlans.update(edge.active_vlans)
-        elif edge.vlans:
-            vlans.update(edge.vlans)
-    return min(vlans) if vlans else None
+        vlans.update(edge.active_vlans or edge.vlans)
+    return vlans
+
+
+def _all_edge_nodes(edges: list[Edge]) -> set[str]:
+    nodes: set[str] = set()
+    for edge in edges:
+        nodes.add(edge.left)
+        nodes.add(edge.right)
+    return nodes
+
+
+def _partition_nodes_by_vlan(
+    nodes: set[str],
+    edges: list[Edge],
+) -> tuple[dict[int, list[str]], list[str]]:
+    vlan_groups: dict[int, list[str]] = {}
+    unassigned: list[str] = []
+    for node in sorted(nodes):
+        vlan_id = _primary_vlan_for_node(node, edges)
+        if vlan_id is None:
+            unassigned.append(node)
+            continue
+        vlan_groups.setdefault(vlan_id, []).append(node)
+    return vlan_groups, unassigned
+
+
+def _named_vlan_groups(
+    vlan_groups: dict[int, list[str]],
+    vlan_names: dict[int, str],
+) -> tuple[dict[str, list[str]], list[str], dict[str, int]]:
+    groups: dict[str, list[str]] = {}
+    group_vlan_ids: dict[str, int] = {}
+    group_order: list[str] = []
+    for vlan_id in sorted(vlan_groups):
+        name = vlan_names.get(vlan_id, f"VLAN {vlan_id}")
+        groups[name] = vlan_groups[vlan_id]
+        group_vlan_ids[name] = vlan_id
+        group_order.append(name)
+    return groups, group_order, group_vlan_ids
 
 
 def group_nodes_by_vlan(
@@ -234,32 +298,8 @@ def group_nodes_by_vlan(
     to node list, group_order sorts by VLAN ID ascending with "Unassigned" last,
     and group_vlan_ids maps group name to its VLAN ID.
     """
-    vlan_names = vlan_names or {}
-    nodes: set[str] = set()
-    for edge in edges:
-        nodes.add(edge.left)
-        nodes.add(edge.right)
-
-    vlan_groups: dict[int, list[str]] = {}
-    unassigned: list[str] = []
-
-    for node in sorted(nodes):
-        vlan_id = _primary_vlan_for_node(node, edges)
-        if vlan_id is None:
-            unassigned.append(node)
-        else:
-            vlan_groups.setdefault(vlan_id, []).append(node)
-
-    groups: dict[str, list[str]] = {}
-    group_vlan_ids: dict[str, int] = {}
-    group_order: list[str] = []
-
-    for vlan_id in sorted(vlan_groups):
-        name = vlan_names.get(vlan_id, f"VLAN {vlan_id}")
-        groups[name] = vlan_groups[vlan_id]
-        group_vlan_ids[name] = vlan_id
-        group_order.append(name)
-
+    vlan_groups, unassigned = _partition_nodes_by_vlan(_all_edge_nodes(edges), edges)
+    groups, group_order, group_vlan_ids = _named_vlan_groups(vlan_groups, vlan_names or {})
     if unassigned:
         groups["Unassigned"] = unassigned
         group_order.append("Unassigned")
