@@ -1,22 +1,17 @@
-"""Tests for SVG label utilities."""
+"""Tests for generic SVG label text utilities."""
 
 from __future__ import annotations
 
-from unifi_topology.model.topology import WanInfo, WanInterface
 from unifi_topology.render.svg_labels import (
-    _build_wan_label_lines,
     _compact_edge_label,
     _escape_text,
     _extract_device_name,
     _extract_port_text,
     _format_port_label_lines,
-    _format_wan_speed,
     _label_metrics,
     _shorten_prefix,
     _wrap_text,
 )
-
-# --- _escape_text ---
 
 
 class TestEscapeText:
@@ -36,9 +31,6 @@ class TestEscapeText:
         assert _escape_text("plain text") == "plain text"
 
 
-# --- _extract_port_text ---
-
-
 class TestExtractPortText:
     def test_extracts_port_after_colon(self):
         assert _extract_port_text("Switch: Port 24") == "Port 24"
@@ -53,9 +45,6 @@ class TestExtractPortText:
         assert _extract_port_text("Device: port 5") == "port 5"
 
 
-# --- _extract_device_name ---
-
-
 class TestExtractDeviceName:
     def test_extracts_name_before_colon(self):
         assert _extract_device_name("Switch: Port 24") == "Switch"
@@ -68,9 +57,6 @@ class TestExtractDeviceName:
 
     def test_strips_whitespace(self):
         assert _extract_device_name("  Switch  : Port 24") == "Switch"
-
-
-# --- _compact_edge_label ---
 
 
 class TestCompactEdgeLabel:
@@ -91,11 +77,7 @@ class TestCompactEdgeLabel:
     def test_swaps_order_when_names_match_nodes(self):
         label = "Switch: Port 1 <-> AP: Port 0"
         result = _compact_edge_label(label, left_node="AP", right_node="Switch")
-        # Should swap to match node order
         assert "Port 0" in result or "Port 1" in result
-
-
-# --- _format_port_label_lines ---
 
 
 class TestFormatPortLabelLines:
@@ -118,7 +100,6 @@ class TestFormatPortLabelLines:
             prefix="uplink",
             max_chars=20,
         )
-        # Should truncate to max_chars
         assert all(len(line) <= 20 for line in lines)
 
     def test_prefix_used_in_label(self):
@@ -126,8 +107,6 @@ class TestFormatPortLabelLines:
         assert "switch" in lines[0]
 
     def test_bidirectional_second_line_uses_local(self):
-        """Second line of bidirectional label is the node's own port, so
-        it should use 'local' as prefix, not the upstream device name."""
         lines = _format_port_label_lines(
             "Switch A: Port 4 <-> Switch B: Port 8",
             prefix="Switch A",
@@ -138,13 +117,9 @@ class TestFormatPortLabelLines:
         assert lines[1].startswith("local:")
 
     def test_unidirectional_uses_prefix_not_local(self):
-        """Unidirectional label should use the upstream device name, not 'local'."""
         lines = _format_port_label_lines("Port 5", prefix="Switch TV Kast", max_chars=30)
         assert "Switch TV Kast" in lines[0]
         assert "local" not in lines[0].lower()
-
-
-# --- _wrap_text ---
 
 
 class TestWrapText:
@@ -168,9 +143,6 @@ class TestWrapText:
         assert _wrap_text(text, max_len=len(text)) == [text]
 
 
-# --- _shorten_prefix ---
-
-
 class TestShortenPrefix:
     def test_no_change_under_limit(self):
         assert _shorten_prefix("AP Living", max_words=2) == "AP Living"
@@ -182,19 +154,16 @@ class TestShortenPrefix:
         assert _shorten_prefix("Switch", max_words=2) == "Switch"
 
 
-# --- _label_metrics ---
-
-
 class TestLabelMetrics:
     def test_empty_lines(self):
         width, height = _label_metrics([], font_size=12)
-        assert width == 12  # padding only
-        assert height == 6  # padding only
+        assert width == 12
+        assert height == 6
 
     def test_single_line(self):
         width, height = _label_metrics(["Test"], font_size=12)
-        assert width > 12  # text + padding
-        assert height > 6  # text + padding
+        assert width > 12
+        assert height > 6
 
     def test_multiple_lines_increase_height(self):
         _, height1 = _label_metrics(["A"], font_size=12)
@@ -205,85 +174,3 @@ class TestLabelMetrics:
         width1, _ = _label_metrics(["A"], font_size=12)
         width2, _ = _label_metrics(["AAAAAAAAAA"], font_size=12)
         assert width2 > width1
-
-
-# --- _format_wan_speed ---
-
-
-class TestFormatWanSpeed:
-    def test_none_returns_none(self):
-        assert _format_wan_speed(None) is None
-
-    def test_zero_returns_none(self):
-        assert _format_wan_speed(0) is None
-
-    def test_megabit_format(self):
-        assert _format_wan_speed(100) == "100MbE"
-
-    def test_gigabit_format(self):
-        assert _format_wan_speed(1000) == "1GbE"
-
-    def test_ten_gigabit_format(self):
-        assert _format_wan_speed(10000) == "10GbE"
-
-    def test_fractional_gigabit(self):
-        assert _format_wan_speed(2500) == "2.5GbE"
-
-
-# --- _build_wan_label_lines ---
-
-
-class TestBuildWanLabelLines:
-    def test_single_wan_basic(self):
-        wan = WanInterface(port_idx=1, link_speed=1000, ip_address="1.2.3.4", enabled=True)
-        info = WanInfo(wan1=wan, wan2=None)
-        lines = _build_wan_label_lines(info)
-        assert len(lines) >= 1
-        assert "WAN1" in lines[0] or any("1GbE" in line for line in lines)
-
-    def test_single_wan_with_label(self):
-        wan = WanInterface(
-            port_idx=1,
-            link_speed=1000,
-            ip_address="1.2.3.4",
-            enabled=True,
-            label="KPN Fiber",
-        )
-        info = WanInfo(wan1=wan, wan2=None)
-        lines = _build_wan_label_lines(info)
-        assert any("KPN Fiber" in line for line in lines)
-
-    def test_single_wan_with_isp_speed(self):
-        wan = WanInterface(
-            port_idx=1,
-            link_speed=1000,
-            ip_address="1.2.3.4",
-            enabled=True,
-            isp_speed="500/500",
-        )
-        info = WanInfo(wan1=wan, wan2=None)
-        lines = _build_wan_label_lines(info)
-        assert any("ISP 500/500" in line for line in lines)
-
-    def test_dual_wan(self):
-        wan1 = WanInterface(port_idx=1, link_speed=1000, ip_address="1.2.3.4", enabled=True)
-        wan2 = WanInterface(port_idx=9, link_speed=100, ip_address=None, enabled=True)
-        info = WanInfo(wan1=wan1, wan2=wan2)
-        lines = _build_wan_label_lines(info)
-        assert any("WAN1" in line for line in lines)
-        assert any("WAN2" in line for line in lines)
-
-    def test_dual_wan_with_disabled_wan2(self):
-        wan1 = WanInterface(port_idx=1, link_speed=1000, ip_address="1.2.3.4", enabled=True)
-        wan2 = WanInterface(
-            port_idx=9, link_speed=None, ip_address=None, enabled=False, label="Backup"
-        )
-        info = WanInfo(wan1=wan1, wan2=wan2)
-        lines = _build_wan_label_lines(info)
-        assert any("disabled" in line for line in lines)
-
-    def test_ip_address_included(self):
-        wan = WanInterface(port_idx=1, link_speed=1000, ip_address="203.0.113.1", enabled=True)
-        info = WanInfo(wan1=wan, wan2=None)
-        lines = _build_wan_label_lines(info)
-        assert any("203.0.113.1" in line for line in lines)
