@@ -5,6 +5,7 @@ Provides to_dict/from_dict conversions for persistence and transmission.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import fields, is_dataclass
 from typing import Any, TypeVar
 
@@ -13,20 +14,55 @@ from .lldp import LLDPEntry
 from .topology import Device, Edge, PortInfo, UplinkInfo, WanInfo, WanInterface
 
 T = TypeVar("T")
+_JSON_SCALARS = (str, int, float, bool)
+_CLIENT_RELEVANT_KEYS = frozenset(
+    {
+        "mac",
+        "name",
+        "hostname",
+        "ip",
+        "vlan",
+        "vlan_id",
+        "is_wired",
+        "is_unifi",
+        "is_unifi_device",
+        "ap_mac",
+        "sw_mac",
+        "uplink_mac",
+        "uplink_device_mac",
+        "sw_port",
+        "uplink_remote_port",
+        "channel",
+        "signal",
+        "noise",
+        "tx_rate",
+        "rx_rate",
+        "satisfaction",
+        "oui",
+        "vendor",
+        "unifi_device_info_from_ucore",
+    }
+)
+
+
+def _serialize_sequence(values: tuple[Any, ...] | list[Any]) -> list[Any]:
+    return [_serialize_value(value) for value in values]
+
+
+def _serialize_mapping(values: dict[Any, Any]) -> dict[Any, Any]:
+    return {key: _serialize_value(value) for key, value in values.items()}
 
 
 def _serialize_value(value: Any) -> Any:
     """Recursively serialize a value to JSON-compatible form."""
     if value is None:
         return None
-    if isinstance(value, str | int | float | bool):
+    if isinstance(value, _JSON_SCALARS):
         return value
-    if isinstance(value, tuple):
-        return list(_serialize_value(v) for v in value)
-    if isinstance(value, list):
-        return [_serialize_value(v) for v in value]
+    if isinstance(value, tuple | list):
+        return _serialize_sequence(value)
     if isinstance(value, dict):
-        return {k: _serialize_value(v) for k, v in value.items()}
+        return _serialize_mapping(value)
     if is_dataclass(value) and not isinstance(value, type):
         return _dataclass_to_dict(value)
     return str(value)
@@ -39,6 +75,82 @@ def _dataclass_to_dict(obj: Any) -> dict[str, Any]:
         value = getattr(obj, field.name)
         result[field.name] = _serialize_value(value)
     return result
+
+
+def _optional_to_dict[T](
+    value: T | None,
+    serializer: Callable[[T], dict[str, Any]],
+) -> dict[str, Any] | None:
+    if value is None:
+        return None
+    return serializer(value)
+
+
+def _optional_from_dict[T](
+    data: dict[str, Any],
+    key: str,
+    loader: Callable[[dict[str, Any]], T],
+) -> T | None:
+    value = data.get(key)
+    if not isinstance(value, dict):
+        return None
+    return loader(value)
+
+
+def _typed_list[T](
+    data: dict[str, Any],
+    key: str,
+    loader: Callable[[dict[str, Any]], T],
+) -> list[T]:
+    values = data.get(key, [])
+    if not isinstance(values, list):
+        return []
+    return [loader(value) for value in values if isinstance(value, dict)]
+
+
+def _poe_ports_to_dict(poe_ports: dict[int, bool]) -> dict[str, bool]:
+    return {str(key): value for key, value in poe_ports.items()}
+
+
+def _poe_ports_from_dict(data: dict[str, Any]) -> dict[int, bool]:
+    values = data.get("poe_ports", {})
+    if not isinstance(values, dict):
+        return {}
+    result: dict[int, bool] = {}
+    for key, value in values.items():
+        try:
+            result[int(key)] = bool(value)
+        except (TypeError, ValueError):
+            continue
+    return result
+
+
+def _network_table_from_dict(data: dict[str, Any]) -> list[dict[str, Any]]:
+    network_table = data.get("network_table", [])
+    if not isinstance(network_table, list):
+        return []
+    return [entry for entry in network_table if isinstance(entry, dict)]
+
+
+def _device_base_dict(device: Device) -> dict[str, Any]:
+    return {
+        "name": device.name,
+        "model_name": device.model_name,
+        "model": device.model,
+        "mac": device.mac,
+        "ip": device.ip,
+        "type": device.type,
+        "lldp_info": [lldp_entry_to_dict(entry) for entry in device.lldp_info],
+        "port_table": [port_info_to_dict(port) for port in device.port_table],
+        "poe_ports": _poe_ports_to_dict(device.poe_ports),
+        "uplink": _optional_to_dict(device.uplink, uplink_info_to_dict),
+        "last_uplink": _optional_to_dict(device.last_uplink, uplink_info_to_dict),
+        "version": device.version,
+    }
+
+
+def _edge_connection_to_dict(edge: Edge) -> dict[str, Any] | None:
+    return _optional_to_dict(edge.connection, connection_info_to_dict)
 
 
 # --- PortInfo ---
@@ -129,27 +241,18 @@ def wan_interface_from_dict(data: dict[str, Any]) -> WanInterface:
 
 def wan_info_to_dict(wan_info: WanInfo) -> dict[str, Any]:
     """Serialize a WanInfo to a dictionary."""
-    result: dict[str, Any] = {}
-    if wan_info.wan1:
-        result["wan1"] = wan_interface_to_dict(wan_info.wan1)
-    else:
-        result["wan1"] = None
-    if wan_info.wan2:
-        result["wan2"] = wan_interface_to_dict(wan_info.wan2)
-    else:
-        result["wan2"] = None
-    return result
+    return {
+        "wan1": _optional_to_dict(wan_info.wan1, wan_interface_to_dict),
+        "wan2": _optional_to_dict(wan_info.wan2, wan_interface_to_dict),
+    }
 
 
 def wan_info_from_dict(data: dict[str, Any]) -> WanInfo:
     """Deserialize a WanInfo from a dictionary."""
-    wan1 = None
-    wan2 = None
-    if data.get("wan1"):
-        wan1 = wan_interface_from_dict(data["wan1"])
-    if data.get("wan2"):
-        wan2 = wan_interface_from_dict(data["wan2"])
-    return WanInfo(wan1=wan1, wan2=wan2)
+    return WanInfo(
+        wan1=_optional_from_dict(data, "wan1", wan_interface_from_dict),
+        wan2=_optional_from_dict(data, "wan2", wan_interface_from_dict),
+    )
 
 
 # --- Device ---
@@ -157,20 +260,7 @@ def wan_info_from_dict(data: dict[str, Any]) -> WanInfo:
 
 def device_to_dict(device: Device) -> dict[str, Any]:
     """Serialize a Device to a dictionary."""
-    result: dict[str, Any] = {
-        "name": device.name,
-        "model_name": device.model_name,
-        "model": device.model,
-        "mac": device.mac,
-        "ip": device.ip,
-        "type": device.type,
-        "lldp_info": [lldp_entry_to_dict(e) for e in device.lldp_info],
-        "port_table": [port_info_to_dict(p) for p in device.port_table],
-        "poe_ports": {str(k): v for k, v in device.poe_ports.items()},
-        "uplink": uplink_info_to_dict(device.uplink) if device.uplink else None,
-        "last_uplink": uplink_info_to_dict(device.last_uplink) if device.last_uplink else None,
-        "version": device.version,
-    }
+    result = _device_base_dict(device)
     if device.network_table:
         result["network_table"] = device.network_table
     return result
@@ -178,12 +268,6 @@ def device_to_dict(device: Device) -> dict[str, Any]:
 
 def device_from_dict(data: dict[str, Any]) -> Device:
     """Deserialize a Device from a dictionary."""
-    lldp_info = [lldp_entry_from_dict(e) for e in data.get("lldp_info", [])]
-    port_table = [port_info_from_dict(p) for p in data.get("port_table", [])]
-    poe_ports = {int(k): v for k, v in data.get("poe_ports", {}).items()}
-    uplink = uplink_info_from_dict(data["uplink"]) if data.get("uplink") else None
-    last_uplink = uplink_info_from_dict(data["last_uplink"]) if data.get("last_uplink") else None
-    network_table = data.get("network_table", [])
     return Device(
         name=data.get("name", ""),
         model_name=data.get("model_name", ""),
@@ -191,13 +275,13 @@ def device_from_dict(data: dict[str, Any]) -> Device:
         mac=data.get("mac", ""),
         ip=data.get("ip", ""),
         type=data.get("type", ""),
-        lldp_info=lldp_info,
-        port_table=port_table,
-        poe_ports=poe_ports,
-        uplink=uplink,
-        last_uplink=last_uplink,
+        lldp_info=_typed_list(data, "lldp_info", lldp_entry_from_dict),
+        port_table=_typed_list(data, "port_table", port_info_from_dict),
+        poe_ports=_poe_ports_from_dict(data),
+        uplink=_optional_from_dict(data, "uplink", uplink_info_from_dict),
+        last_uplink=_optional_from_dict(data, "last_uplink", uplink_info_from_dict),
         version=data.get("version", ""),
-        network_table=network_table if isinstance(network_table, list) else [],
+        network_table=_network_table_from_dict(data),
     )
 
 
@@ -237,15 +321,12 @@ def edge_to_dict(edge: Edge) -> dict[str, Any]:
         "vlans": list(edge.vlans),
         "active_vlans": list(edge.active_vlans),
         "is_trunk": edge.is_trunk,
-        "connection": connection_info_to_dict(edge.connection) if edge.connection else None,
+        "connection": _edge_connection_to_dict(edge),
     }
 
 
 def edge_from_dict(data: dict[str, Any]) -> Edge:
     """Deserialize an Edge from a dictionary."""
-    connection = None
-    if data.get("connection"):
-        connection = connection_info_from_dict(data["connection"])
     return Edge(
         left=data.get("left", ""),
         right=data.get("right", ""),
@@ -257,7 +338,7 @@ def edge_from_dict(data: dict[str, Any]) -> Edge:
         vlans=tuple(data.get("vlans", [])),
         active_vlans=tuple(data.get("active_vlans", [])),
         is_trunk=data.get("is_trunk", False),
-        connection=connection,
+        connection=_optional_from_dict(data, "connection", connection_info_from_dict),
     )
 
 
@@ -266,33 +347,7 @@ def edge_from_dict(data: dict[str, Any]) -> Edge:
 
 def client_to_dict(client: dict[str, Any]) -> dict[str, Any]:
     """Serialize a client dict, keeping only relevant fields."""
-    relevant_keys = {
-        "mac",
-        "name",
-        "hostname",
-        "ip",
-        "vlan",
-        "vlan_id",
-        "is_wired",
-        "is_unifi",
-        "is_unifi_device",
-        "ap_mac",
-        "sw_mac",
-        "uplink_mac",
-        "uplink_device_mac",
-        "sw_port",
-        "uplink_remote_port",
-        "channel",
-        "signal",
-        "noise",
-        "tx_rate",
-        "rx_rate",
-        "satisfaction",
-        "oui",
-        "vendor",
-        "unifi_device_info_from_ucore",
-    }
-    return {k: v for k, v in client.items() if k in relevant_keys}
+    return {key: value for key, value in client.items() if key in _CLIENT_RELEVANT_KEYS}
 
 
 def client_from_dict(data: dict[str, Any]) -> dict[str, Any]:
