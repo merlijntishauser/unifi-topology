@@ -5,8 +5,9 @@ from __future__ import annotations
 import logging
 from collections import deque
 from collections.abc import Iterable
+from dataclasses import replace
 
-from . import _edge_discovery
+from . import _edge_build, _edge_discovery, _edge_ports
 from .classify import classify_device_type
 from .topology import (
     Device,
@@ -21,19 +22,19 @@ from .topology import (
 logger = logging.getLogger(__name__)
 
 build_device_index = _build_device_index
-_lldp_candidates = _edge_discovery._lldp_candidates
-_match_port_by_name = _edge_discovery._match_port_by_name
-_match_port_by_number = _edge_discovery._match_port_by_number
-_resolve_port_idx_from_lldp = _edge_discovery._resolve_port_idx_from_lldp
-_find_port_by_idx = _edge_discovery._find_port_by_idx
-_port_speed_by_idx = _edge_discovery._port_speed_by_idx
-_port_vlans_by_idx = _edge_discovery._port_vlans_by_idx
-_populate_port_maps = _edge_discovery._populate_port_maps
+_lldp_candidates = _edge_ports._lldp_candidates
+_match_port_by_name = _edge_ports._match_port_by_name
+_match_port_by_number = _edge_ports._match_port_by_number
+_resolve_port_idx_from_lldp = _edge_ports._resolve_port_idx_from_lldp
+_find_port_by_idx = _edge_ports._find_port_by_idx
+_port_speed_by_idx = _edge_ports._port_speed_by_idx
+_port_vlans_by_idx = _edge_ports._port_vlans_by_idx
+_populate_port_maps = _edge_ports._populate_port_maps
 _collect_lldp_links = _edge_discovery._collect_lldp_links
 _uplink_name = _edge_discovery._uplink_name
 _maybe_add_uplink_link = _edge_discovery._maybe_add_uplink_link
 _collect_uplink_links = _edge_discovery._collect_uplink_links
-_build_ordered_edges = _edge_discovery._build_ordered_edges
+_build_ordered_edges = _edge_build._build_ordered_edges
 
 
 def _discover_links(
@@ -135,20 +136,7 @@ def _tree_edges_from_parent(
         if original is None:
             tree_edges.append(Edge(left=parent_name, right=child))
         else:
-            tree_edges.append(
-                Edge(
-                    left=parent_name,
-                    right=child,
-                    label=original.label,
-                    poe=original.poe,
-                    wireless=original.wireless,
-                    speed=original.speed,
-                    channel=original.channel,
-                    vlans=original.vlans,
-                    active_vlans=original.active_vlans,
-                    is_trunk=original.is_trunk,
-                )
-            )
+            tree_edges.append(replace(original, left=parent_name, right=child))
     return tree_edges
 
 
@@ -179,20 +167,7 @@ def enrich_edges_with_active_vlans(
         right_active = device_active_vlans.get(edge.right, set())
         combined_active = left_active | right_active
         active_vlans = tuple(sorted(set(edge.vlans) & combined_active))
-        enriched.append(
-            Edge(
-                left=edge.left,
-                right=edge.right,
-                label=edge.label,
-                poe=edge.poe,
-                wireless=edge.wireless,
-                speed=edge.speed,
-                channel=edge.channel,
-                vlans=edge.vlans,
-                active_vlans=active_vlans,
-                is_trunk=edge.is_trunk,
-            )
-        )
+        enriched.append(replace(edge, active_vlans=active_vlans))
     return enriched
 
 
