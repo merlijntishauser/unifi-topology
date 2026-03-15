@@ -38,6 +38,34 @@ def test_serialize_port_entry_reads_aggregation_group():
     assert data["aggregation_group"] == "agg2"
 
 
+def test_serialize_device_preserves_state_and_stats():
+    device = {
+        "mac": "aa:bb:cc:dd:ee:ff",
+        "name": "Switch",
+        "model": "USW-24",
+        "type": "usw",
+        "state": 1,
+        "uptime": 86400,
+        "num_sta": 5,
+        "system-stats": {"cpu": "12.5", "mem": "38.2"},
+        "general_temperature": 42,
+        "tx_bytes": 1000,
+        "rx_bytes": 2000,
+        "total_max_power": 95.0,
+        "stat": {"tx_bytes": 999},
+    }
+    result = unifi._serialize_device_for_cache(device)
+    assert result["state"] == 1
+    assert result["uptime"] == 86400
+    assert result["num_sta"] == 5
+    assert result["system-stats"] == {"cpu": "12.5", "mem": "38.2"}
+    assert result["general_temperature"] == 42
+    assert result["tx_bytes"] == 1000
+    assert result["rx_bytes"] == 2000
+    assert result["total_max_power"] == 95.0
+    assert result["stat"] == {"tx_bytes": 999}
+
+
 def test_is_rate_limited_detects_429():
     assert unifi._is_rate_limited(Exception("HTTP 429 Too Many Requests"))
     assert not unifi._is_rate_limited(Exception("Invalid credentials"))

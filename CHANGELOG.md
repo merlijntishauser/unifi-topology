@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expanded API contract coverage so README-style usage and top-level exports/signatures are validated in CI
 
 ### Fixed
+- Cache serializer now preserves `state`, `uptime`, `num_sta`, `system-stats`, temperature, traffic counters, and PoE budget fields (fixes #20)
 - Corrected README and documentation examples to match the current stable library contract and rendering workflow
 
 ## [1.2.0] (2026-03-15)
