@@ -91,10 +91,9 @@ class TopologyDiff:
     ) -> TopologyDiff:
         """Return filtered diff with only matching events."""
         filtered = [
-            e
-            for e in self.events
-            if (event_types is None or e.event_type in event_types)
-            and (entity_types is None or e.entity_type in entity_types)
+            event
+            for event in self.events
+            if _event_matches(event, event_types=event_types, entity_types=entity_types)
         ]
         return TopologyDiff(
             events=filtered,
@@ -102,6 +101,19 @@ class TopologyDiff:
             new_timestamp=self.new_timestamp,
             summary=_build_summary(filtered),
         )
+
+
+def _event_matches(
+    event: TopologyChangeEvent,
+    *,
+    event_types: set[str] | None,
+    entity_types: set[str] | None,
+) -> bool:
+    if event_types is not None and event.event_type not in event_types:
+        return False
+    if entity_types is not None and event.entity_type not in entity_types:
+        return False
+    return True
 
 
 def _pluralize(count: int, singular: str) -> str:
@@ -162,15 +174,31 @@ def _device_properties(device: Device) -> dict[str, Any]:
     }
 
 
+def _client_name_value(client: dict[str, Any]) -> Any:
+    return client.get("name") or client.get("hostname")
+
+
+def _client_vlan_value(client: dict[str, Any]) -> Any:
+    return client.get("vlan") or client.get("vlan_id")
+
+
+def _client_uplink_mac_value(client: dict[str, Any]) -> Any:
+    return client.get("ap_mac") or client.get("sw_mac") or client.get("uplink_mac")
+
+
+def _client_uplink_port_value(client: dict[str, Any]) -> Any:
+    return client.get("sw_port") or client.get("uplink_remote_port")
+
+
 def _client_properties(client: dict[str, Any]) -> dict[str, Any]:
     """Extract comparable properties from a client."""
     return {
-        "name": client.get("name") or client.get("hostname"),
+        "name": _client_name_value(client),
         "ip": client.get("ip"),
-        "vlan": client.get("vlan") or client.get("vlan_id"),
+        "vlan": _client_vlan_value(client),
         "is_wired": client.get("is_wired"),
-        "uplink_mac": (client.get("ap_mac") or client.get("sw_mac") or client.get("uplink_mac")),
-        "uplink_port": client.get("sw_port") or client.get("uplink_remote_port"),
+        "uplink_mac": _client_uplink_mac_value(client),
+        "uplink_port": _client_uplink_port_value(client),
         "channel": client.get("channel"),
         "signal": client.get("signal"),
         "satisfaction": client.get("satisfaction"),
@@ -296,20 +324,27 @@ def _describe_device_removed(device: Device) -> str:
     return f"Device '{device.name}' disappeared from network"
 
 
+def _device_single_change_description(
+    device: Device,
+    change: tuple[str, Any, Any],
+) -> str:
+    key, old_val, new_val = change
+    if key == "ip":
+        return f"Device '{device.name}' IP changed from {old_val} to {new_val}"
+    if key == "name":
+        return f"Device renamed from '{old_val}' to '{new_val}'"
+    if key == "uplink_mac":
+        return f"Device '{device.name}' uplink changed"
+    if key == "uplink_port":
+        return f"Device '{device.name}' moved to port {new_val}"
+    return f"Device '{device.name}' {key} changed"
+
+
 def _describe_device_changed(device: Device, changes: dict[str, dict[str, Any]]) -> str:
     """Generate description for device changed event."""
     change = _single_change(changes)
     if change is not None:
-        key, old_val, new_val = change
-        if key == "ip":
-            return f"Device '{device.name}' IP changed from {old_val} to {new_val}"
-        if key == "name":
-            return f"Device renamed from '{old_val}' to '{new_val}'"
-        if key == "uplink_mac":
-            return f"Device '{device.name}' uplink changed"
-        if key == "uplink_port":
-            return f"Device '{device.name}' moved to port {new_val}"
-        return f"Device '{device.name}' {key} changed"
+        return _device_single_change_description(device, change)
     return f"Device '{device.name}' changed ({len(changes)} properties)"
 
 
@@ -330,21 +365,28 @@ def _describe_client_removed(client: dict[str, Any]) -> str:
     return f"Client '{_client_display_name(client)}' disconnected"
 
 
+def _client_single_change_description(
+    name: str,
+    change: tuple[str, Any, Any],
+) -> str:
+    key, old_val, new_val = change
+    if key == "vlan":
+        return f"Client '{name}' changed VLAN from {old_val} to {new_val}"
+    if key == "ip":
+        return f"Client '{name}' IP changed from {old_val} to {new_val}"
+    if key == "uplink_mac":
+        return f"Client '{name}' moved to different device"
+    if key == "uplink_port":
+        return f"Client '{name}' moved to port {new_val}"
+    return f"Client '{name}' {key} changed"
+
+
 def _describe_client_changed(client: dict[str, Any], changes: dict[str, dict[str, Any]]) -> str:
     """Generate description for client changed event."""
     name = _client_display_name(client)
     change = _single_change(changes)
     if change is not None:
-        key, old_val, new_val = change
-        if key == "vlan":
-            return f"Client '{name}' changed VLAN from {old_val} to {new_val}"
-        if key == "ip":
-            return f"Client '{name}' IP changed from {old_val} to {new_val}"
-        if key == "uplink_mac":
-            return f"Client '{name}' moved to different device"
-        if key == "uplink_port":
-            return f"Client '{name}' moved to port {new_val}"
-        return f"Client '{name}' {key} changed"
+        return _client_single_change_description(name, change)
     return f"Client '{name}' changed ({len(changes)} properties)"
 
 

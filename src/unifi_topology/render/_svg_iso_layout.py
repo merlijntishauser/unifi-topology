@@ -72,12 +72,8 @@ def _position_extents(
 ) -> tuple[float, float, float, float]:
     if not positions:
         return 0.0, 0.0, 0.0, 0.0
-    return (
-        min(x for x, _ in positions.values()),
-        min(y for _, y in positions.values()),
-        max(x for x, _ in positions.values()),
-        max(y for _, y in positions.values()),
-    )
+    xs, ys = zip(*positions.values())
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def _iso_offsets(
@@ -157,16 +153,21 @@ def _iso_grid_extents(
 ) -> tuple[int, int, int, int] | None:
     if not grid_positions:
         return None
-    min_gx = min(gx for gx, _ in grid_positions.values())
-    max_gx = max(gx for gx, _ in grid_positions.values())
-    min_gy = min(gy for _, gy in grid_positions.values())
-    max_gy = max(gy for _, gy in grid_positions.values())
+    gxs, gys = zip(*grid_positions.values())
     return (
-        int(math.floor(min_gx)) - _ISO_GRID_EXTENT_PAD,
-        int(math.ceil(max_gx)) + _ISO_GRID_EXTENT_PAD,
-        int(math.floor(min_gy)) - _ISO_GRID_EXTENT_PAD,
-        int(math.ceil(max_gy)) + _ISO_GRID_EXTENT_PAD,
+        _grid_extent_start(min(gxs)),
+        _grid_extent_end(max(gxs)),
+        _grid_extent_start(min(gys)),
+        _grid_extent_end(max(gys)),
     )
+
+
+def _grid_extent_start(value: float) -> int:
+    return int(math.floor(value)) - _ISO_GRID_EXTENT_PAD
+
+
+def _grid_extent_end(value: float) -> int:
+    return int(math.ceil(value)) + _ISO_GRID_EXTENT_PAD
 
 
 def _iso_grid_line(
