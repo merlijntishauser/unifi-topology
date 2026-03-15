@@ -6,323 +6,49 @@ import logging
 from collections import deque
 from collections.abc import Iterable
 
+from . import _edge_discovery
 from .classify import classify_device_type
-from .helpers import normalize_mac
-from .labels import compose_port_label, order_edge_names
-from .lldp import LLDPEntry, local_port_label
-from .ports import extract_port_number
 from .topology import (
     Device,
     Edge,
-    PoeMap,
-    PortInfo,
     PortMap,
-    SpeedMap,
     TopologyResult,
-    UplinkInfo,
-    VlanMap,
+)
+from .topology import (
+    build_device_index as _build_device_index,
 )
 
 logger = logging.getLogger(__name__)
 
-
-def build_device_index(devices: Iterable[Device]) -> dict[str, str]:
-    """Build MAC to name index for devices."""
-    index: dict[str, str] = {}
-    for device in devices:
-        index[normalize_mac(device.mac)] = device.name
-    return index
-
-
-def _lldp_candidates(entry: LLDPEntry) -> list[str]:
-    """Get candidate port identifiers from LLDP entry."""
-    candidates: list[str] = []
-    if entry.local_port_name:
-        candidates.append(entry.local_port_name)
-    if entry.port_id:
-        candidates.append(entry.port_id)
-    return candidates
+build_device_index = _build_device_index
+_lldp_candidates = _edge_discovery._lldp_candidates
+_match_port_by_name = _edge_discovery._match_port_by_name
+_match_port_by_number = _edge_discovery._match_port_by_number
+_resolve_port_idx_from_lldp = _edge_discovery._resolve_port_idx_from_lldp
+_find_port_by_idx = _edge_discovery._find_port_by_idx
+_port_speed_by_idx = _edge_discovery._port_speed_by_idx
+_port_vlans_by_idx = _edge_discovery._port_vlans_by_idx
+_populate_port_maps = _edge_discovery._populate_port_maps
+_collect_lldp_links = _edge_discovery._collect_lldp_links
+_uplink_name = _edge_discovery._uplink_name
+_maybe_add_uplink_link = _edge_discovery._maybe_add_uplink_link
+_collect_uplink_links = _edge_discovery._collect_uplink_links
+_build_ordered_edges = _edge_discovery._build_ordered_edges
 
 
-def _match_port_by_name(candidates: list[str], port_table: list[PortInfo]) -> int | None:
-    """Match port by name/ifname."""
-    for candidate in candidates:
-        normalized = candidate.strip().lower()
-        for port in port_table:
-            if port.ifname and port.ifname.strip().lower() == normalized:
-                return port.port_idx
-            if port.name and port.name.strip().lower() == normalized:
-                return port.port_idx
-    return None
-
-
-def _match_port_by_number(candidates: list[str], port_table: list[PortInfo]) -> int | None:
-    """Match port by extracted number."""
-    for candidate in candidates:
-        number = extract_port_number(candidate)
-        if number is None:
-            continue
-        for port in port_table:
-            if port.port_idx == number:
-                return port.port_idx
-    return None
-
-
-def _resolve_port_idx_from_lldp(lldp_entry: LLDPEntry, port_table: list[PortInfo]) -> int | None:
-    """Resolve port index from LLDP entry."""
-    if lldp_entry.local_port_idx is not None:
-        return lldp_entry.local_port_idx
-    candidates = _lldp_candidates(lldp_entry)
-    matched = _match_port_by_name(candidates, port_table)
-    if matched is not None:
-        return matched
-    return _match_port_by_number(candidates, port_table)
-
-
-def _find_port_by_idx(port_table: list[PortInfo], port_idx: int) -> PortInfo | None:
-    """Find port entry by index."""
-    for port in port_table:
-        if port.port_idx == port_idx:
-            return port
-    return None
-
-
-def _port_speed_by_idx(port_table: list[PortInfo], port_idx: int) -> int | None:
-    """Get port speed by index."""
-    port = _find_port_by_idx(port_table, port_idx)
-    return port.speed if port else None
-
-
-def _port_vlans_by_idx(port_table: list[PortInfo], port_idx: int) -> tuple[int, ...]:
-    """Get all VLANs configured on a port (native + tagged)."""
-    port = _find_port_by_idx(port_table, port_idx)
-    if not port:
-        return ()
-    vlans: list[int] = []
-    if port.native_vlan is not None:
-        vlans.append(port.native_vlan)
-    vlans.extend(port.tagged_vlans)
-    return tuple(sorted(set(vlans)))
-
-
-def _populate_port_maps(
-    device_name: str,
-    peer_name: str,
-    port_idx: int,
-    poe_ports: dict[int, bool],
-    port_table: list[PortInfo],
-    poe_map: PoeMap,
-    speed_map: SpeedMap,
-    vlan_map: VlanMap,
-) -> None:
-    """Populate PoE, speed, and VLAN maps for an edge."""
-    if port_idx in poe_ports:
-        poe_map[(device_name, peer_name)] = poe_ports[port_idx]
-    port_speed = _port_speed_by_idx(port_table, port_idx)
-    if port_speed is not None:
-        speed_map[(device_name, peer_name)] = port_speed
-    port_vlans = _port_vlans_by_idx(port_table, port_idx)
-    if port_vlans:
-        vlan_map[(device_name, peer_name)] = port_vlans
-
-
-def _collect_lldp_links(
-    devices: list[Device],
-    index: dict[str, str],
-    port_map: PortMap,
-    poe_map: PoeMap,
-    speed_map: SpeedMap,
-    vlan_map: VlanMap,
-    raw_links: list[tuple[str, str]],
-    seen: set[frozenset[str]],
-    *,
-    only_unifi: bool,
-) -> set[str]:
-    """Collect edges from LLDP data."""
-    devices_with_lldp_edges: set[str] = set()
-    for device in devices:
-        poe_ports = device.poe_ports
-        for lldp_entry in sorted(
-            device.lldp_info,
-            key=lambda item: (
-                normalize_mac(item.chassis_id),
-                str(item.port_id or ""),
-                str(item.port_desc or ""),
-            ),
-        ):
-            peer_mac = normalize_mac(lldp_entry.chassis_id)
-            peer_name = index.get(peer_mac)
-            if peer_name is None:
-                if only_unifi:
-                    continue
-                peer_name = lldp_entry.chassis_id
-
-            resolved_port_idx = _resolve_port_idx_from_lldp(lldp_entry, device.port_table)
-            entry_for_label = (
-                LLDPEntry(
-                    chassis_id=lldp_entry.chassis_id,
-                    port_id=lldp_entry.port_id,
-                    port_desc=lldp_entry.port_desc,
-                    local_port_name=lldp_entry.local_port_name,
-                    local_port_idx=resolved_port_idx,
-                )
-                if resolved_port_idx is not None
-                else lldp_entry
-            )
-            label = local_port_label(entry_for_label)
-            if label:
-                port_map[(device.name, peer_name)] = label
-            if resolved_port_idx is not None:
-                _populate_port_maps(
-                    device.name,
-                    peer_name,
-                    resolved_port_idx,
-                    poe_ports,
-                    device.port_table,
-                    poe_map,
-                    speed_map,
-                    vlan_map,
-                )
-
-            key = frozenset({device.name, peer_name})
-            if key in seen:
-                continue
-
-            raw_links.append((device.name, peer_name))
-            seen.add(key)
-            devices_with_lldp_edges.add(device.name)
-    return devices_with_lldp_edges
-
-
-def _uplink_name(
-    uplink: UplinkInfo | None,
-    index: dict[str, str],
-    *,
-    only_unifi: bool,
-) -> str | None:
-    """Get upstream device name from uplink info."""
-    if not uplink:
-        return None
-    if uplink.mac:
-        resolved = index.get(normalize_mac(uplink.mac))
-        if resolved:
-            return resolved
-    if uplink.name:
-        return uplink.name
-    if not only_unifi and uplink.mac:
-        return uplink.mac
-    return None
-
-
-def _maybe_add_uplink_link(
-    device: Device,
-    upstream_name: str,
-    *,
-    uplink: UplinkInfo | None,
-    port_map: PortMap,
-    raw_links: list[tuple[str, str]],
-    seen: set[frozenset[str]],
-    include_ports: bool,
-) -> None:
-    """Add uplink-based edge if not already seen."""
-    key = frozenset({device.name, upstream_name})
-    if key in seen:
-        return
-    if uplink and uplink.port is not None:
-        if include_ports:
-            port_map[(upstream_name, device.name)] = f"Port {uplink.port}"
-    raw_links.append((upstream_name, device.name))
-    seen.add(key)
-
-
-def _collect_uplink_links(
-    devices: list[Device],
-    devices_with_lldp_edges: set[str],
-    index: dict[str, str],
-    device_by_name: dict[str, Device],
-    port_map: PortMap,
-    raw_links: list[tuple[str, str]],
-    seen: set[frozenset[str]],
+def _discover_links(
+    devices: Iterable[Device],
     *,
     include_ports: bool,
     only_unifi: bool,
-) -> None:
-    """Collect edges from uplink data (fallback for devices without LLDP)."""
-    for device in devices:
-        if device.name in devices_with_lldp_edges:
-            continue
-        uplink = device.uplink or device.last_uplink
-        upstream_name = _uplink_name(uplink, index, only_unifi=only_unifi)
-        if not upstream_name:
-            continue
-        if only_unifi and upstream_name not in device_by_name:
-            continue
-        _maybe_add_uplink_link(
-            device,
-            upstream_name,
-            uplink=uplink,
-            port_map=port_map,
-            raw_links=raw_links,
-            seen=seen,
-            include_ports=include_ports,
-        )
-
-
-def _build_ordered_edges(
-    raw_links: list[tuple[str, str]],
-    port_map: PortMap,
-    poe_map: PoeMap,
-    speed_map: SpeedMap,
-    vlan_map: VlanMap,
-    device_by_name: dict[str, Device],
-    *,
-    include_ports: bool,
-) -> list[Edge]:
-    """Build ordered Edge objects from raw links."""
-    type_rank = {"gateway": 0, "switch": 1, "ap": 2, "other": 3}
-
-    def _rank_for_name(name: str) -> int:
-        device = device_by_name.get(name)
-        if not device:
-            return 3
-        return type_rank.get(classify_device_type(device), 3)
-
-    edges: list[Edge] = []
-    for source_name, target_name in raw_links:
-        left_name = source_name
-        right_name = target_name
-        if include_ports:
-            left_name, right_name = order_edge_names(
-                left_name,
-                right_name,
-                port_map,
-                _rank_for_name,
-            )
-        poe = poe_map.get((left_name, right_name), False) or poe_map.get(
-            (right_name, left_name), False
-        )
-        # Use None-aware lookup to handle speed=0 correctly
-        speed = speed_map.get((left_name, right_name))
-        if speed is None:
-            speed = speed_map.get((right_name, left_name))
-        label = compose_port_label(left_name, right_name, port_map) if include_ports else None
-        vlans_lr = vlan_map.get((left_name, right_name), ())
-        vlans_rl = vlan_map.get((right_name, left_name), ())
-        vlans = tuple(sorted(set(vlans_lr) | set(vlans_rl)))
-        is_trunk = len(vlans) > 1
-        edges.append(
-            Edge(
-                left=left_name,
-                right=right_name,
-                label=label,
-                poe=poe,
-                speed=speed,
-                vlans=vlans,
-                active_vlans=(),
-                is_trunk=is_trunk,
-            )
-        )
-    return edges
+) -> tuple[_edge_discovery.EdgeInputs, _edge_discovery.EdgeDiscoveryResult]:
+    inputs = _edge_discovery.prepare_edge_inputs(devices)
+    discovery = _edge_discovery.discover_edge_links(
+        inputs,
+        include_ports=include_ports,
+        only_unifi=only_unifi,
+    )
+    return inputs, discovery
 
 
 def build_edges(
@@ -332,45 +58,18 @@ def build_edges(
     only_unifi: bool = True,
 ) -> list[Edge]:
     """Build edges between devices from LLDP and uplink data."""
-    ordered_devices = sorted(devices, key=lambda item: (item.name.lower(), item.mac.lower()))
-    index = build_device_index(ordered_devices)
-    device_by_name = {device.name: device for device in ordered_devices}
-    raw_links: list[tuple[str, str]] = []
-    seen: set[frozenset[str]] = set()
-    port_map: PortMap = {}
-    poe_map: PoeMap = {}
-    speed_map: SpeedMap = {}
-    vlan_map: VlanMap = {}
-
-    devices_with_lldp_edges = _collect_lldp_links(
-        ordered_devices,
-        index,
-        port_map,
-        poe_map,
-        speed_map,
-        vlan_map,
-        raw_links,
-        seen,
-        only_unifi=only_unifi,
-    )
-    _collect_uplink_links(
-        ordered_devices,
-        devices_with_lldp_edges,
-        index,
-        device_by_name,
-        port_map,
-        raw_links,
-        seen,
+    inputs, discovery = _discover_links(
+        devices,
         include_ports=include_ports,
         only_unifi=only_unifi,
     )
     edges = _build_ordered_edges(
-        raw_links,
-        port_map,
-        poe_map,
-        speed_map,
-        vlan_map,
-        device_by_name,
+        discovery.raw_links,
+        discovery.port_map,
+        discovery.poe_map,
+        discovery.speed_map,
+        discovery.vlan_map,
+        inputs.device_by_name,
         include_ports=include_ports,
     )
 
@@ -381,39 +80,12 @@ def build_edges(
 
 def build_port_map(devices: Iterable[Device], *, only_unifi: bool = True) -> PortMap:
     """Build port label map from device data."""
-    ordered_devices = sorted(devices, key=lambda item: (item.name.lower(), item.mac.lower()))
-    index = build_device_index(ordered_devices)
-    device_by_name = {device.name: device for device in ordered_devices}
-    raw_links: list[tuple[str, str]] = []
-    seen: set[frozenset[str]] = set()
-    port_map: PortMap = {}
-    poe_map: PoeMap = {}
-    speed_map: SpeedMap = {}
-    vlan_map: VlanMap = {}
-
-    devices_with_lldp_edges = _collect_lldp_links(
-        ordered_devices,
-        index,
-        port_map,
-        poe_map,
-        speed_map,
-        vlan_map,
-        raw_links,
-        seen,
-        only_unifi=only_unifi,
-    )
-    _collect_uplink_links(
-        ordered_devices,
-        devices_with_lldp_edges,
-        index,
-        device_by_name,
-        port_map,
-        raw_links,
-        seen,
+    _, discovery = _discover_links(
+        devices,
         include_ports=True,
         only_unifi=only_unifi,
     )
-    return port_map
+    return discovery.port_map
 
 
 def _build_adjacency(edges: Iterable[Edge]) -> dict[str, set[str]]:
