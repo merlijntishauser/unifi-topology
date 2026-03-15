@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from .device_stats import DeviceStats, PoePortStats
+from .model_lookup import lookup_model_name
 
 _TYPE_MAP: dict[str, str] = {
     "ugw": "gateway",
@@ -84,6 +85,17 @@ def _build_poe_ports(raw: dict[str, Any]) -> list[PoePortStats]:
     return ports
 
 
+def _resolve_model_name(raw: dict[str, Any]) -> str:
+    """Return model_name from the API, or fall back to the lookup table."""
+    name = str(raw.get("model_name", ""))
+    if name:
+        return name
+    model = str(raw.get("model", ""))
+    if model:
+        return lookup_model_name(model)
+    return ""
+
+
 def _normalize_type(raw_type: str) -> str:
     """Normalize device type string."""
     return _TYPE_MAP.get(raw_type, raw_type)
@@ -116,7 +128,7 @@ def _build_device_stats(raw: dict[str, Any]) -> DeviceStats:
         mac=str(raw.get("mac", "")),
         name=str(raw.get("name", "")),
         model=str(raw.get("model", "")),
-        model_name=str(raw.get("model_name", "")),
+        model_name=_resolve_model_name(raw),
         type=_normalize_type(str(raw.get("type", ""))),
         uptime=_as_int(raw.get("uptime", 0)),
         cpu=_as_float(system_stats.get("cpu", 0.0)),

@@ -1,5 +1,5 @@
 .PHONY: venv install lint format typecheck complexity audit test test-unit test-integration test-contract \
-        coverage ci version-bump docs docs-serve help
+        coverage ci version-bump docs docs-serve scrape-models help
 
 VENV = .venv/bin
 PYTHON ?= python
@@ -81,6 +81,10 @@ docs:
 docs-serve:
 	$(VENV)/mkdocs serve
 
+# Data
+scrape-models:
+	$(VENV)/python scripts/scrape_models.py
+
 # Release
 version-bump:
 	@scripts/version_bump.sh
@@ -103,4 +107,5 @@ help:
 	@echo "  ci          - Run all CI checks"
 	@echo "  docs        - Build documentation"
 	@echo "  docs-serve  - Serve documentation locally"
+	@echo "  scrape-models - Refresh model lookup data from the official Ubiquiti store"
 	@echo "  version-bump - Bump version, commit, tag, and push"

@@ -1,0 +1,569 @@
+{
+  "_meta": {
+    "source": "https://store.ui.com",
+    "scraped_at": "2026-03-15T22:14:27.718968+00:00",
+    "description": "UniFi device model codes to friendly names, scraped from the official Ubiquiti store."
+  },
+  "models": {
+    "CK-Enterprise": {
+      "name": "CloudKey Enterprise",
+      "url": "https://store.ui.com/us/en/products/cloud-key-enterprise"
+    },
+    "E7": {
+      "name": "Access Point E7",
+      "url": "https://store.ui.com/us/en/products/e7"
+    },
+    "E7-Audience-Indoor": {
+      "name": "Access Point E7 Audience Indoor",
+      "url": "https://store.ui.com/us/en/products/e7-audience-indoor"
+    },
+    "E7-Audience-US": {
+      "name": "Access Point E7 Audience",
+      "url": "https://store.ui.com/us/en/products/e7-audience-us"
+    },
+    "E7-Campus-Indoor": {
+      "name": "Access Point E7 Campus Indoor",
+      "url": "https://store.ui.com/us/en/products/e7-campus-indoor"
+    },
+    "E7-Campus-US": {
+      "name": "Access Point E7 Campus",
+      "url": "https://store.ui.com/us/en/products/e7-campus-us"
+    },
+    "ECS-24-PoE": {
+      "name": "Switch Enterprise Campus 24 PoE",
+      "url": "https://store.ui.com/us/en/products/ecs-24-poe"
+    },
+    "ECS-24S-PoE": {
+      "name": "Switch Enterprise Campus 24S PoE",
+      "url": "https://store.ui.com/us/en/products/ecs-24s-poe"
+    },
+    "ECS-48-PoE": {
+      "name": "Switch Enterprise Campus 48 PoE",
+      "url": "https://store.ui.com/us/en/products/ecs-48-poe"
+    },
+    "ECS-48S-PoE": {
+      "name": "Switch Enterprise Campus 48S PoE",
+      "url": "https://store.ui.com/us/en/products/ecs-48s-poe"
+    },
+    "ECS-Aggregation": {
+      "name": "Switch Enterprise Campus Aggregation",
+      "url": "https://store.ui.com/us/en/products/ecs-aggregation"
+    },
+    "EFG": {
+      "name": "Enterprise Fortress Gateway",
+      "url": "https://store.ui.com/us/en/products/efg"
+    },
+    "Official UniFi Hosting": {
+      "name": "Official UniFi Hosting",
+      "url": "https://store.ui.com/us/en/products/unifi-hosting"
+    },
+    "U-LTE": {
+      "name": "UniFi LTE Backup",
+      "url": "https://store.ui.com/us/en/products/u-lte"
+    },
+    "U-LTE-Backup Pro": {
+      "name": "UniFi LTE Backup Pro",
+      "url": "https://store.ui.com/us/en/products/u-lte-backup-pro"
+    },
+    "U5G-Max": {
+      "name": "UniFi 5G Max",
+      "url": "https://store.ui.com/us/en/products/u5g-max"
+    },
+    "U5G-Max-Outdoor": {
+      "name": "UniFi 5G Max Outdoor",
+      "url": "https://store.ui.com/us/en/products/u5g-max-outdoor"
+    },
+    "U6-Enterprise": {
+      "name": "Access Point U6 Enterprise",
+      "url": "https://store.ui.com/us/en/products/u6-enterprise"
+    },
+    "U6-Enterprise-IW": {
+      "name": "Access Point U6 Enterprise In-Wall",
+      "url": "https://store.ui.com/us/en/products/u6-enterprise-iw"
+    },
+    "U6-Extender-US": {
+      "name": "Access Point U6 Extender",
+      "url": "https://store.ui.com/us/en/products/u6-extender"
+    },
+    "U6-IW": {
+      "name": "Access Point U6 In-Wall",
+      "url": "https://store.ui.com/us/en/products/u6-iw"
+    },
+    "U6-Mesh": {
+      "name": "Access Point U6 Mesh",
+      "url": "https://store.ui.com/us/en/products/u6-mesh"
+    },
+    "U6-Mesh-Pro": {
+      "name": "Access Point U6 Mesh Pro",
+      "url": "https://store.ui.com/us/en/products/u6-mesh-pro"
+    },
+    "U6-PLUS": {
+      "name": "Access Point U6 Plus",
+      "url": "https://store.ui.com/us/en/products/u6-plus"
+    },
+    "U6-Pro": {
+      "name": "Access Point U6 Pro",
+      "url": "https://store.ui.com/us/en/products/u6-pro"
+    },
+    "U7-IW": {
+      "name": "Access Point U7 In-Wall",
+      "url": "https://store.ui.com/us/en/products/u7-iw"
+    },
+    "U7-LR": {
+      "name": "Access Point U7 Long-Range",
+      "url": "https://store.ui.com/us/en/products/u7-lr"
+    },
+    "U7-Lite": {
+      "name": "Access Point U7 Lite",
+      "url": "https://store.ui.com/us/en/products/u7-lite"
+    },
+    "U7-Mesh": {
+      "name": "Access Point U7 Mesh",
+      "url": "https://store.ui.com/us/en/products/u7-mesh"
+    },
+    "U7-Outdoor": {
+      "name": "Access Point U7 Outdoor",
+      "url": "https://store.ui.com/us/en/products/u7-outdoor"
+    },
+    "U7-Pro": {
+      "name": "Access Point U7 Pro",
+      "url": "https://store.ui.com/us/en/products/u7-pro"
+    },
+    "U7-Pro-Max": {
+      "name": "Access Point U7 Pro Max",
+      "url": "https://store.ui.com/us/en/products/u7-pro-max"
+    },
+    "U7-Pro-Outdoor-US": {
+      "name": "Access Point U7 Pro Outdoor",
+      "url": "https://store.ui.com/us/en/products/u7-pro-outdoor-us"
+    },
+    "U7-Pro-Wall": {
+      "name": "Access Point U7 Pro Wall",
+      "url": "https://store.ui.com/us/en/products/u7-pro-wall"
+    },
+    "U7-Pro-XG": {
+      "name": "Access Point U7 Pro XG",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg"
+    },
+    "U7-Pro-XG-Wall": {
+      "name": "Access Point U7 Pro XG Wall",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg-wall"
+    },
+    "U7-Pro-XGS": {
+      "name": "Access Point U7 Pro XGS",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xgs"
+    },
+    "UACC-Flex-Utility-Pro": {
+      "name": "Flex Utility Pro",
+      "url": "https://store.ui.com/us/en/products/uacc-flex-utility-pro"
+    },
+    "UAP-AC-M": {
+      "name": "Access Point AC Mesh",
+      "url": "https://store.ui.com/us/en/products/uap-ac-mesh"
+    },
+    "UAP-AC-PRO": {
+      "name": "Access Point AC Pro",
+      "url": "https://store.ui.com/us/en/products/uap-ac-pro"
+    },
+    "UBB": {
+      "name": "Building-to-Building Bridge",
+      "url": "https://store.ui.com/us/en/products/ubb"
+    },
+    "UBB-XG": {
+      "name": "Building-to-Building Bridge XG",
+      "url": "https://store.ui.com/us/en/products/ubb-xg"
+    },
+    "UC-Cast-Lite": {
+      "name": "Display Cast Lite",
+      "url": "https://store.ui.com/us/en/products/uc-cast-lite"
+    },
+    "UC-Cast-Pro": {
+      "name": "Display Cast Pro",
+      "url": "https://store.ui.com/us/en/products/uc-cast-pro"
+    },
+    "UC-Display": {
+      "name": "Connect Display",
+      "url": "https://store.ui.com/us/en/products/uc-display21"
+    },
+    "UC-EV-Station-Lite": {
+      "name": "EV Station Lite",
+      "url": "https://store.ui.com/us/en/products/uc-ev-station-lite"
+    },
+    "UC-EV-Station-Pro": {
+      "name": "EV Station Pro",
+      "url": "https://store.ui.com/us/en/products/uc-ev-station-pro"
+    },
+    "UCG-Fiber": {
+      "name": "Cloud Gateway Fiber",
+      "url": "https://store.ui.com/us/en/products/ucg-fiber"
+    },
+    "UCG-Industrial": {
+      "name": "Cloud Gateway Industrial",
+      "url": "https://store.ui.com/us/en/products/ucg-industrial"
+    },
+    "UCG-Max": {
+      "name": "Cloud Gateway Max",
+      "url": "https://store.ui.com/us/en/products/ucg-max"
+    },
+    "UCG-Max-NS": {
+      "name": "Cloud Gateway Max NS",
+      "url": "https://store.ui.com/us/en/products/ucg-max-ns"
+    },
+    "UCG-Ultra": {
+      "name": "Cloud Gateway Ultra",
+      "url": "https://store.ui.com/us/en/products/ucg-ultra"
+    },
+    "UCK-G2-SSD": {
+      "name": "CloudKey+ SSD",
+      "url": "https://store.ui.com/us/en/products/uck-g2-ssd"
+    },
+    "UDB": {
+      "name": "UniFi Device Bridge",
+      "url": "https://store.ui.com/us/en/products/udb"
+    },
+    "UDB-IoT": {
+      "name": "Device Bridge IoT",
+      "url": "https://store.ui.com/us/en/products/udb-iot"
+    },
+    "UDB-Pro": {
+      "name": "Device Bridge Pro",
+      "url": "https://store.ui.com/us/en/products/udb-pro"
+    },
+    "UDB-Pro-Sector": {
+      "name": "Device Bridge Pro Sector",
+      "url": "https://store.ui.com/us/en/products/udb-pro-sector"
+    },
+    "UDB-Switch": {
+      "name": "Device Bridge Switch",
+      "url": "https://store.ui.com/us/en/products/udb-switch"
+    },
+    "UDM-Pro": {
+      "name": "Dream Machine Pro",
+      "url": "https://store.ui.com/us/en/products/udm-pro"
+    },
+    "UDM-Pro-Max": {
+      "name": "Dream Machine Pro Max",
+      "url": "https://store.ui.com/us/en/products/udm-pro-max"
+    },
+    "UDM-SE": {
+      "name": "Dream Machine Special Edition",
+      "url": "https://store.ui.com/us/en/products/udm-se"
+    },
+    "UDR-5G-Max": {
+      "name": "Dream Router 5G Max",
+      "url": "https://store.ui.com/us/en/products/udr-5g-max"
+    },
+    "UDR7": {
+      "name": "Dream Router 7",
+      "url": "https://store.ui.com/us/en/products/udr7"
+    },
+    "UDW": {
+      "name": "Dream Wall",
+      "url": "https://store.ui.com/us/en/products/udw"
+    },
+    "UK-Ultra": {
+      "name": "Swiss Army Knife",
+      "url": "https://store.ui.com/us/en/products/uk-ultra"
+    },
+    "UMR-Industrial": {
+      "name": "Mobile Router Industrial",
+      "url": "https://store.ui.com/us/en/products/umr-industrial-us"
+    },
+    "UMR-US": {
+      "name": "UniFi Mobile Router",
+      "url": "https://store.ui.com/us/en/products/umr-us"
+    },
+    "UMR-Ultra-US": {
+      "name": "Mobile Router Ultra",
+      "url": "https://store.ui.com/us/en/products/umr-ultra-us"
+    },
+    "UNAS-2": {
+      "name": "UNAS 2",
+      "url": "https://store.ui.com/us/en/products/unas-2"
+    },
+    "UNAS-4": {
+      "name": "UNAS 4",
+      "url": "https://store.ui.com/us/en/products/unas-4"
+    },
+    "UNAS-Pro": {
+      "name": "UNAS Pro",
+      "url": "https://store.ui.com/us/en/products/unas-pro"
+    },
+    "UNAS-Pro-4": {
+      "name": "UNAS Pro 4",
+      "url": "https://store.ui.com/us/en/products/unas-pro-4"
+    },
+    "UNAS-Pro-8": {
+      "name": "UNAS Pro 8",
+      "url": "https://store.ui.com/us/en/products/unas-pro-8"
+    },
+    "UPL-Amp": {
+      "name": "UniFi PowerAmp",
+      "url": "https://store.ui.com/us/en/products/upl-amp"
+    },
+    "UPL-Port": {
+      "name": "PoE Audio Port",
+      "url": "https://store.ui.com/us/en/products/upl-port"
+    },
+    "UPS-2U-US": {
+      "name": "UniFi UPS 2U",
+      "url": "https://store.ui.com/us/en/products/ups-2u-us"
+    },
+    "UPS-Tower-US": {
+      "name": "UniFi UPS Tower",
+      "url": "https://store.ui.com/us/en/products/ups-tower-us"
+    },
+    "USP-PDU-HD": {
+      "name": "Power Distribution Hi-Density",
+      "url": "https://store.ui.com/us/en/products/usp-pdu-hd"
+    },
+    "USP-PDU-Pro": {
+      "name": "Power Distribution Pro",
+      "url": "https://store.ui.com/us/en/products/usp-pdu-pro"
+    },
+    "USP-RPS": {
+      "name": "Redundant Power",
+      "url": "https://store.ui.com/us/en/products/usp-rps"
+    },
+    "USW-16-POE": {
+      "name": "Switch 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-16-poe"
+    },
+    "USW-24": {
+      "name": "Switch 24",
+      "url": "https://store.ui.com/us/en/products/usw-24"
+    },
+    "USW-24-POE": {
+      "name": "Switch 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-24-poe"
+    },
+    "USW-48": {
+      "name": "Switch 48",
+      "url": "https://store.ui.com/us/en/products/usw-48"
+    },
+    "USW-48-POE": {
+      "name": "Switch 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-48-poe"
+    },
+    "USW-Aggregation": {
+      "name": "Switch Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-aggregation"
+    },
+    "USW-Enterprise-24-PoE": {
+      "name": "Switch Enterprise 24 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe"
+    },
+    "USW-Enterprise-48-PoE": {
+      "name": "Switch Enterprise 48 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe"
+    },
+    "USW-Enterprise-8-PoE": {
+      "name": "Switch Enterprise 8 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe"
+    },
+    "USW-Flex": {
+      "name": "Switch Flex",
+      "url": "https://store.ui.com/us/en/products/usw-flex"
+    },
+    "USW-Flex-2.5G-5": {
+      "name": "Switch Flex Mini 2.5G",
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-5"
+    },
+    "USW-Flex-2.5G-8": {
+      "name": "Switch Flex 2.5G",
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8"
+    },
+    "USW-Flex-2.5G-8-PoE": {
+      "name": "Switch Flex 2.5G PoE",
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8-poe"
+    },
+    "USW-Flex-Mini": {
+      "name": "Switch Flex Mini",
+      "url": "https://store.ui.com/us/en/products/usw-flex-mini"
+    },
+    "USW-Flex-Utility": {
+      "name": "Switch Flex Utility",
+      "url": "https://store.ui.com/us/en/products/usw-flexutility"
+    },
+    "USW-Flex-XG": {
+      "name": "Switch Flex XG",
+      "url": "https://store.ui.com/us/en/products/usw-flex-xg"
+    },
+    "USW-Lite-16-PoE": {
+      "name": "Switch Lite 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-lite-16-poe"
+    },
+    "USW-Lite-8-PoE": {
+      "name": "Switch Lite 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-lite-8-poe"
+    },
+    "USW-Mission-Critical": {
+      "name": "UPS PoE Switch Mission Critical",
+      "url": "https://store.ui.com/us/en/products/usw-mission-critical"
+    },
+    "USW-Pro-24": {
+      "name": "Switch Pro 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-24"
+    },
+    "USW-Pro-24-POE": {
+      "name": "Switch Pro 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-24-poe"
+    },
+    "USW-Pro-48": {
+      "name": "Switch Pro 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-48"
+    },
+    "USW-Pro-48-POE": {
+      "name": "Switch Pro 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-48-poe"
+    },
+    "USW-Pro-8-PoE": {
+      "name": "Switch Pro 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe"
+    },
+    "USW-Pro-Aggregation": {
+      "name": "Switch Hi-Capacity Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-pro-aggregation"
+    },
+    "USW-Pro-HD-24": {
+      "name": "Switch Pro HD 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24"
+    },
+    "USW-Pro-HD-24-PoE": {
+      "name": "Switch Pro HD 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24-poe"
+    },
+    "USW-Pro-Max-16": {
+      "name": "Switch Pro Max 16",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16"
+    },
+    "USW-Pro-Max-16-PoE": {
+      "name": "Switch Pro Max 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe"
+    },
+    "USW-Pro-Max-24": {
+      "name": "Switch Pro Max 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24"
+    },
+    "USW-Pro-Max-24-PoE": {
+      "name": "Switch Pro Max 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe"
+    },
+    "USW-Pro-Max-48": {
+      "name": "Switch Pro Max 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48"
+    },
+    "USW-Pro-Max-48-PoE": {
+      "name": "Switch Pro Max 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe"
+    },
+    "USW-Pro-XG-10-PoE": {
+      "name": "Switch Pro XG 10 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-10-poe"
+    },
+    "USW-Pro-XG-24": {
+      "name": "Switch Pro XG 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24"
+    },
+    "USW-Pro-XG-24-PoE": {
+      "name": "Switch Pro XG 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24-poe"
+    },
+    "USW-Pro-XG-48": {
+      "name": "Switch Pro XG 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48"
+    },
+    "USW-Pro-XG-48-PoE": {
+      "name": "Switch Pro XG 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48-poe"
+    },
+    "USW-Pro-XG-8-PoE": {
+      "name": "Switch Pro XG 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-8-poe"
+    },
+    "USW-Pro-XG-Aggregation": {
+      "name": "Switch Pro XG Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation"
+    },
+    "USW-Ultra": {
+      "name": "Switch Ultra",
+      "url": "https://store.ui.com/us/en/products/usw-ultra"
+    },
+    "USW-Ultra-210W": {
+      "name": "Switch Ultra 210W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-210w"
+    },
+    "USW-Ultra-60W": {
+      "name": "Switch Ultra 60W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-60w"
+    },
+    "USW-WAN": {
+      "name": "UniFi WAN Switch",
+      "url": "https://store.ui.com/us/en/products/usw-wan"
+    },
+    "USW-WAN-RJ45": {
+      "name": "UniFi WAN Switch RJ45",
+      "url": "https://store.ui.com/us/en/products/usw-wan-rj45"
+    },
+    "UT-ATA": {
+      "name": "Analog Telephone Adapter",
+      "url": "https://store.ui.com/us/en/products/ut-ata"
+    },
+    "UT-G3-Handset": {
+      "name": "G3 Wireless Handset",
+      "url": "https://store.ui.com/us/en/products/ut-g3-handset"
+    },
+    "UTP-G3-Touch-Enterprise": {
+      "name": "Phone G3 Touch Enterprise",
+      "url": "https://store.ui.com/us/en/products/utp-g3-touch-enterprise"
+    },
+    "UTP-G3-Touch-Pro": {
+      "name": "Phone G3 Touch Pro",
+      "url": "https://store.ui.com/us/en/products/utp-g3-touch-pro"
+    },
+    "UTP-G3-Touch-Wall": {
+      "name": "Phone G3 Touch Wall",
+      "url": "https://store.ui.com/us/en/products/utp-g3-touch-wall"
+    },
+    "UTP-Touch-US": {
+      "name": "Phone G2 Touch",
+      "url": "https://store.ui.com/us/en/products/utp-touch"
+    },
+    "UTP-TouchMax-US": {
+      "name": "Phone G2 Touch Max",
+      "url": "https://store.ui.com/us/en/products/utp-touchmax-u"
+    },
+    "UTR": {
+      "name": "UniFi Travel Router",
+      "url": "https://store.ui.com/us/en/products/utr"
+    },
+    "UWB-XG": {
+      "name": "WiFi BaseStation XG",
+      "url": "https://store.ui.com/us/en/products/uwb-xg"
+    },
+    "UX7": {
+      "name": "UniFi Express 7",
+      "url": "https://store.ui.com/us/en/products/ux7"
+    },
+    "UXG-Enterprise": {
+      "name": "Gateway Enterprise",
+      "url": "https://store.ui.com/us/en/products/uxg-enterprise"
+    },
+    "UXG-Fiber": {
+      "name": "Gateway Fiber",
+      "url": "https://store.ui.com/us/en/products/uxg-fiber"
+    },
+    "UXG-Lite": {
+      "name": "Gateway Lite",
+      "url": "https://store.ui.com/us/en/products/uxg-lite"
+    },
+    "UXG-Max": {
+      "name": "Gateway Max",
+      "url": "https://store.ui.com/us/en/products/uxg-max"
+    },
+    "UXG-Pro": {
+      "name": "Gateway Pro",
+      "url": "https://store.ui.com/us/en/products/uxg-pro"
+    }
+  }
+}

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Model name lookup table scraped from the official Ubiquiti store (`lookup_model_name`, `lookup_model_url`)
+- `normalize_device_stats` now resolves `model_name` from the lookup table when the API omits it (fixes #21)
+- `make scrape-models` target and `scripts/scrape_models.py` scraper for refreshing the bundled model data
+
 ## [1.2.1] (2026-03-15)
 
 ### Added
