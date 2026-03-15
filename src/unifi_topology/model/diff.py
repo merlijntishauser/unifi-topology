@@ -192,6 +192,15 @@ def _compare_properties(
     return changes
 
 
+def _single_change(
+    changes: dict[str, dict[str, Any]],
+) -> tuple[str, Any, Any] | None:
+    if len(changes) != 1:
+        return None
+    key, values = next(iter(changes.items()))
+    return key, values.get("old"), values.get("new")
+
+
 @dataclass(frozen=True)
 class EntityCompareSpec[T]:
     """Specification for comparing a particular entity type."""
@@ -289,10 +298,9 @@ def _describe_device_removed(device: Device) -> str:
 
 def _describe_device_changed(device: Device, changes: dict[str, dict[str, Any]]) -> str:
     """Generate description for device changed event."""
-    if len(changes) == 1:
-        key = list(changes.keys())[0]
-        old_val = changes[key]["old"]
-        new_val = changes[key]["new"]
+    change = _single_change(changes)
+    if change is not None:
+        key, old_val, new_val = change
         if key == "ip":
             return f"Device '{device.name}' IP changed from {old_val} to {new_val}"
         if key == "name":
@@ -305,9 +313,13 @@ def _describe_device_changed(device: Device, changes: dict[str, dict[str, Any]])
     return f"Device '{device.name}' changed ({len(changes)} properties)"
 
 
+def _client_display_name(client: dict[str, Any]) -> str:
+    return client.get("name") or client.get("hostname") or client.get("mac", "unknown")
+
+
 def _describe_client_added(client: dict[str, Any]) -> str:
     """Generate description for client added event."""
-    name = client.get("name") or client.get("hostname") or client.get("mac", "unknown")
+    name = _client_display_name(client)
     is_wired = client.get("is_wired", True)
     conn_type = "wired" if is_wired else "WiFi"
     return f"Client '{name}' connected via {conn_type}"
@@ -315,17 +327,15 @@ def _describe_client_added(client: dict[str, Any]) -> str:
 
 def _describe_client_removed(client: dict[str, Any]) -> str:
     """Generate description for client removed event."""
-    name = client.get("name") or client.get("hostname") or client.get("mac", "unknown")
-    return f"Client '{name}' disconnected"
+    return f"Client '{_client_display_name(client)}' disconnected"
 
 
 def _describe_client_changed(client: dict[str, Any], changes: dict[str, dict[str, Any]]) -> str:
     """Generate description for client changed event."""
-    name = client.get("name") or client.get("hostname") or client.get("mac", "unknown")
-    if len(changes) == 1:
-        key = list(changes.keys())[0]
-        old_val = changes[key]["old"]
-        new_val = changes[key]["new"]
+    name = _client_display_name(client)
+    change = _single_change(changes)
+    if change is not None:
+        key, old_val, new_val = change
         if key == "vlan":
             return f"Client '{name}' changed VLAN from {old_val} to {new_val}"
         if key == "ip":
@@ -372,16 +382,14 @@ def _describe_edge_removed(edge: Edge) -> str:
 
 def _describe_edge_changed(edge: Edge, changes: dict[str, dict[str, Any]]) -> str:
     """Generate description for edge changed event."""
-    if len(changes) == 1:
-        key = list(changes.keys())[0]
+    change = _single_change(changes)
+    if change is not None:
+        key, old_val, new_val = change
         if key == "speed":
-            old_val = changes[key]["old"]
-            new_val = changes[key]["new"]
             return (
                 f"Connection {edge.left} <-> {edge.right} speed changed from {old_val} to {new_val}"
             )
         if key == "poe":
-            new_val = changes[key]["new"]
             poe_state = "enabled" if new_val else "disabled"
             return f"Connection {edge.left} <-> {edge.right} PoE {poe_state}"
     return f"Connection {edge.left} <-> {edge.right} changed"
@@ -397,6 +405,18 @@ def _client_key(client: dict[str, Any]) -> Hashable | None:
 
 def _client_name(client: dict[str, Any]) -> str | None:
     return client.get("name") or client.get("hostname")
+
+
+def _compare_optional_entities[T](
+    old_items: list[T] | None,
+    new_items: list[T] | None,
+    spec: EntityCompareSpec[T],
+    events: list[TopologyChangeEvent],
+    timestamp: str,
+) -> None:
+    if old_items is None or new_items is None:
+        return
+    _compare_entities(old_items, new_items, spec, events, timestamp)
 
 
 _DEVICE_SPEC: EntityCompareSpec[Device] = EntityCompareSpec(
@@ -475,12 +495,8 @@ def compare_topologies(
     timestamp = new_timestamp or datetime.now(UTC).isoformat()
 
     _compare_entities(old_devices, new_devices, _DEVICE_SPEC, events, timestamp)
-
-    if old_clients is not None and new_clients is not None:
-        _compare_entities(old_clients, new_clients, _CLIENT_SPEC, events, timestamp)
-
-    if old_edges is not None and new_edges is not None:
-        _compare_entities(old_edges, new_edges, _EDGE_SPEC, events, timestamp)
+    _compare_optional_entities(old_clients, new_clients, _CLIENT_SPEC, events, timestamp)
+    _compare_optional_entities(old_edges, new_edges, _EDGE_SPEC, events, timestamp)
 
     return TopologyDiff(
         events=events,
