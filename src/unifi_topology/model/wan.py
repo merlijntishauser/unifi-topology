@@ -91,11 +91,13 @@ def _should_include_wan2(
     """Determine if WAN2 should be included in the output."""
     if not port:
         return False
-    has_assignment = port.wan_networkconf_id is not None
     has_cli_config = label is not None or isp_speed is not None
+    return bool(port.wan_networkconf_id) or has_cli_config or _wan_port_is_active(port)
+
+
+def _wan_port_is_active(port: PortInfo) -> bool:
     speed = _normalize_wan_speed(port.speed)
-    is_active = speed is not None and speed > 0
-    return has_assignment or has_cli_config or is_active
+    return speed is not None and speed > 0
 
 
 def _resolve_wan2_enabled(
@@ -112,6 +114,49 @@ def _resolve_wan2_enabled(
         return True
     if wan_enabled_map and "wan2" in wan_enabled_map:
         return wan_enabled_map["wan2"]
+    return None
+
+
+def _extract_wan1(
+    device: Device,
+    *,
+    wan1_label: str | None,
+    wan1_isp_speed: str | None,
+) -> WanInterface | None:
+    wan1_port = _find_wan1_port(device.port_table)
+    if wan1_port is None:
+        return None
+    return _build_wan_interface(wan1_port, 1, device.ip, wan1_label, wan1_isp_speed)
+
+
+def _extract_wan2(
+    device: Device,
+    *,
+    wan2_label: str | None,
+    wan2_isp_speed: str | None,
+    wan_enabled_map: dict[str, bool] | None,
+    wan2_disabled: str,
+) -> WanInterface | None:
+    wan2_port = _find_wan2_port(device.port_table)
+    if not _should_include_wan2(wan2_port, wan2_label, wan2_isp_speed):
+        return None
+    enabled_override = _resolve_wan2_enabled(wan2_disabled, wan_enabled_map)
+    return _build_wan_interface(
+        wan2_port,  # type: ignore[arg-type]
+        9,
+        None,
+        wan2_label,
+        wan2_isp_speed,
+        enabled_override=enabled_override,
+    )
+
+
+def _wan_info_or_none(
+    wan1: WanInterface | None,
+    wan2: WanInterface | None,
+) -> WanInfo | None:
+    if wan1 or wan2:
+        return WanInfo(wan1=wan1, wan2=wan2)
     return None
 
 
@@ -141,24 +186,12 @@ def extract_wan_info(
     if not device.port_table:
         return None
 
-    wan1_port = _find_wan1_port(device.port_table)
-    wan1 = None
-    if wan1_port:
-        wan1 = _build_wan_interface(wan1_port, 1, device.ip, wan1_label, wan1_isp_speed)
-
-    wan2_port = _find_wan2_port(device.port_table)
-    wan2 = None
-    if _should_include_wan2(wan2_port, wan2_label, wan2_isp_speed):
-        wan2_enabled = _resolve_wan2_enabled(wan2_disabled, wan_enabled_map)
-        wan2 = _build_wan_interface(
-            wan2_port,  # type: ignore[arg-type]
-            9,
-            None,
-            wan2_label,
-            wan2_isp_speed,
-            enabled_override=wan2_enabled,
-        )
-
-    if wan1 or wan2:
-        return WanInfo(wan1=wan1, wan2=wan2)
-    return None
+    wan1 = _extract_wan1(device, wan1_label=wan1_label, wan1_isp_speed=wan1_isp_speed)
+    wan2 = _extract_wan2(
+        device,
+        wan2_label=wan2_label,
+        wan2_isp_speed=wan2_isp_speed,
+        wan_enabled_map=wan_enabled_map,
+        wan2_disabled=wan2_disabled,
+    )
+    return _wan_info_or_none(wan1, wan2)

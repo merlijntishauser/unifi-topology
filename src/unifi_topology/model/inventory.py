@@ -98,6 +98,52 @@ def _client_firmware(client: object) -> str:
     return ""
 
 
+def _client_ip(client: object) -> str:
+    ip = get_field(client, "ip")
+    return ip if isinstance(ip, str) else ""
+
+
+def _client_mac(client: object) -> str:
+    mac = get_field(client, "mac")
+    return mac if isinstance(mac, str) else ""
+
+
+def _client_hostname(
+    ip: str,
+    hostnames: dict[str, str] | None,
+) -> str | None:
+    return hostnames.get(ip) if hostnames and ip else None
+
+
+def _client_inventory_identity(
+    client: object,
+    hostnames: dict[str, str] | None,
+) -> tuple[str, str, str, str | None]:
+    name = client_display_name(client) or ""
+    ip_str = _client_ip(client)
+    mac_str = _client_mac(client)
+    hostname = _client_hostname(ip_str, hostnames)
+    return name, ip_str, mac_str, hostname
+
+
+def _client_inventory_item(
+    client: object,
+    hostnames: dict[str, str] | None,
+) -> DeviceInfo | None:
+    name, ip_str, mac_str, hostname = _client_inventory_identity(client, hostnames)
+    if not name:
+        return None
+    return DeviceInfo(
+        name=name,
+        device_type=classify_client_type(client),
+        model_name=_client_model(client),
+        ip=ip_str,
+        hostname=hostname,
+        mac=mac_str,
+        firmware=_client_firmware(client),
+    )
+
+
 def build_client_inventory(
     clients: Sequence[object],
     hostnames: dict[str, str] | None = None,
@@ -115,24 +161,8 @@ def build_client_inventory(
     for client in clients:
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
-        name = client_display_name(client) or ""
-        if not name:
-            continue
-        ip = get_field(client, "ip")
-        ip_str = ip if isinstance(ip, str) else ""
-        mac = get_field(client, "mac")
-        mac_str = mac if isinstance(mac, str) else ""
-        hostname = hostnames.get(ip_str) if hostnames and ip_str else None
-        inventory.append(
-            DeviceInfo(
-                name=name,
-                device_type=classify_client_type(client),
-                model_name=_client_model(client),
-                ip=ip_str,
-                hostname=hostname,
-                mac=mac_str,
-                firmware=_client_firmware(client),
-            )
-        )
+        item = _client_inventory_item(client, hostnames)
+        if item is not None:
+            inventory.append(item)
     inventory.sort(key=lambda d: _ip_sort_key(d.ip))
     return inventory
