@@ -116,6 +116,7 @@ def _build_device_stats(raw: dict[str, Any]) -> DeviceStats:
         mac=str(raw.get("mac", "")),
         name=str(raw.get("name", "")),
         model=str(raw.get("model", "")),
+        model_name=str(raw.get("model_name", "")),
         type=_normalize_type(str(raw.get("type", ""))),
         uptime=_as_int(raw.get("uptime", 0)),
         cpu=_as_float(system_stats.get("cpu", 0.0)),

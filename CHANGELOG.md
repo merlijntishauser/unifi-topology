@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.1] (2026-03-15)
 
 ### Added
+- `model_name` field on `DeviceStats` for friendly device names (fixes #19)
 - Release notes and API notes documenting `1.2.1` compatibility expectations and release verification
 
 ### Changed

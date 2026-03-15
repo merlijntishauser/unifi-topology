@@ -25,6 +25,7 @@ class DeviceStats:
     uptime: int  # seconds
     cpu: float  # percentage 0-100
     mem: float  # percentage 0-100
+    model_name: str = ""
     temperature: float | None = None  # celsius
     tx_bytes: int = 0
     rx_bytes: int = 0

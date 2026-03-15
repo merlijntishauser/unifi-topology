@@ -14,6 +14,7 @@ class TestNormalizeDeviceStatsBasics:
                 "mac": "aa:bb:cc:dd:ee:ff",
                 "name": "Core Switch",
                 "model": "USW-Enterprise-24-PoE",
+                "model_name": "UniFi Enterprise Switch 24 PoE",
                 "type": "usw",
                 "uptime": 172800,
                 "system-stats": {"cpu": "12.5", "mem": "38.2"},
@@ -47,6 +48,7 @@ class TestNormalizeDeviceStatsBasics:
         assert dev.mac == "aa:bb:cc:dd:ee:ff"
         assert dev.name == "Core Switch"
         assert dev.model == "USW-Enterprise-24-PoE"
+        assert dev.model_name == "UniFi Enterprise Switch 24 PoE"
         assert dev.type == "switch"
         assert dev.uptime == 172800
         assert dev.cpu == 12.5
@@ -72,6 +74,7 @@ class TestNormalizeDeviceStatsBasics:
         assert dev.mac == "11:22:33:44:55:66"
         assert dev.name == ""
         assert dev.model == ""
+        assert dev.model_name == ""
         assert dev.type == ""
         assert dev.uptime == 0
         assert dev.cpu == 0.0
