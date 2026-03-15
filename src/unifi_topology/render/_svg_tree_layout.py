@@ -126,10 +126,7 @@ def _child_indices(
     children: dict[str, list[str]],
     state: _LayoutState,
 ) -> list[float]:
-    return [
-        _child_position(child, level, children, state)
-        for child in children.get(node, [])
-    ]
+    return [_child_position(child, level, children, state) for child in children.get(node, [])]
 
 
 def _assign_position(node: str, child_indices: list[float], state: _LayoutState) -> float:

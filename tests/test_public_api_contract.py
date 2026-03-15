@@ -76,9 +76,7 @@ def test_public_topology_signature_stays_compatible():
         "gateways",
     ]
     assert parameters[0].kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert all(
-        parameter.kind is inspect.Parameter.KEYWORD_ONLY for parameter in parameters[1:]
-    )
+    assert all(parameter.kind is inspect.Parameter.KEYWORD_ONLY for parameter in parameters[1:])
 
 
 def test_public_render_signatures_stay_compatible():

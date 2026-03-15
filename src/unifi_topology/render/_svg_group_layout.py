@@ -132,7 +132,9 @@ def _layout_grouped_nodes(
         positions, width, height = _layout_single_group(edges, group_nodes, node_types, options)
         offset_positions = _offset_positions(positions, current_x - options.padding, 0)
         all_positions.update(offset_positions)
-        group_bounds_list.append(_compute_group_bounds(group_name, offset_positions, options, current_x))
+        group_bounds_list.append(
+            _compute_group_bounds(group_name, offset_positions, options, current_x)
+        )
         current_x += width + options.group_gap
         max_height = max(max_height, height)
 

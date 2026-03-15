@@ -139,7 +139,9 @@ def _expand_viewbox_for_wan(
     options: SvgOptions,
 ) -> tuple[float, float]:
     """Expand viewBox dimensions to fit the WAN upstream box if needed."""
-    gateway_name = next((name for name, node_type in node_types.items() if node_type == "gateway"), None)
+    gateway_name = next(
+        (name for name, node_type in node_types.items() if node_type == "gateway"), None
+    )
     if not gateway_name or gateway_name not in positions:
         return width, height
 

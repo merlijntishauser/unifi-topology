@@ -183,8 +183,7 @@ def _iso_grid_line(
     x2 += layout.padding
     y2 += layout.padding
     return (
-        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        f'stroke="{grid_color}" stroke-width="0.6"/>'
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{grid_color}" stroke-width="0.6"/>'
     )
 
 
@@ -200,11 +199,15 @@ def _iso_grid_lines(
     grid_lines: list[str] = []
     for gx in range(gx_start, gx_end + 1):
         grid_lines.append(
-            _iso_grid_line(layout, (float(gx), float(gy_start)), (float(gx), float(gy_end)), grid_color)
+            _iso_grid_line(
+                layout, (float(gx), float(gy_start)), (float(gx), float(gy_end)), grid_color
+            )
         )
     for gy in range(gy_start, gy_end + 1):
         grid_lines.append(
-            _iso_grid_line(layout, (float(gx_start), float(gy)), (float(gx_end), float(gy)), grid_color)
+            _iso_grid_line(
+                layout, (float(gx_start), float(gy)), (float(gx_end), float(gy)), grid_color
+            )
         )
     return grid_lines
 

@@ -144,9 +144,7 @@ def _iso_front_face_label_position(
 
     center_x = (top_left[0] + top_right[0] + bottom_right[0] + bottom_left[0]) / 4
     center_y = (top_left[1] + top_right[1] + bottom_right[1] + bottom_left[1]) / 4
-    angle = math.degrees(
-        math.atan2(top_right[1] - top_left[1], top_right[0] - top_left[0])
-    )
+    angle = math.degrees(math.atan2(top_right[1] - top_left[1], top_right[0] - top_left[0]))
     label_x = center_x - tile_height * 0.01
     label_y = center_y + font_size * 0.5 + tile_height * 0.04 - 6
     return label_x, label_y, angle

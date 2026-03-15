@@ -40,7 +40,9 @@ def _compute_iso_group_bounds(
 
     for group_name in ordered_groups:
         group_grid = {
-            node: pos for node, pos in grid_positions.items() if node_to_group.get(node) == group_name
+            node: pos
+            for node, pos in grid_positions.items()
+            if node_to_group.get(node) == group_name
         }
         if not group_grid:
             continue

@@ -73,7 +73,9 @@ def _build_ordered_edges(
             Edge(
                 left=left_name,
                 right=right_name,
-                label=compose_port_label(left_name, right_name, port_map) if include_ports else None,
+                label=compose_port_label(left_name, right_name, port_map)
+                if include_ports
+                else None,
                 poe=_edge_poe(left_name, right_name, poe_map),
                 speed=_edge_speed(left_name, right_name, speed_map),
                 vlans=vlans,

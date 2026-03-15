@@ -34,10 +34,7 @@ def _merge_node_attrs(
 
 
 def _render_node_attrs(attrs: dict[str, str]) -> str:
-    return "".join(
-        f' {key}="{_escape_html(value, quote=True)}"'
-        for key, value in attrs.items()
-    )
+    return "".join(f' {key}="{_escape_html(value, quote=True)}"' for key, value in attrs.items())
 
 
 def _svg_node_group_attrs(

@@ -38,7 +38,9 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
         action=_resolve_action(entry),
         source_zone_id=source_zone,
         destination_zone_id=dest_zone,
-        protocol=_firewall_nested._as_str(first_attr(entry, "protocol", "ip_protocol"), default="all"),
+        protocol=_firewall_nested._as_str(
+            first_attr(entry, "protocol", "ip_protocol"), default="all"
+        ),
         port_ranges=_policy_tuple_field(
             entry,
             flat_keys=("port_ranges", "ports", "dst_port"),
@@ -66,7 +68,9 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
         source_network_id=_firewall_nested._network_id_from_nested(entry, "source"),
         destination_mac_addresses=_firewall_nested._mac_addresses_from_nested(entry, "destination"),
         destination_network_id=_firewall_nested._network_id_from_nested(entry, "destination"),
-        source_port_group_id=_firewall_nested._group_id_from_nested(entry, "source", "port_group_id"),
+        source_port_group_id=_firewall_nested._group_id_from_nested(
+            entry, "source", "port_group_id"
+        ),
         destination_port_group_id=_firewall_nested._group_id_from_nested(
             entry,
             "destination",
@@ -133,7 +137,9 @@ def normalize_firewall_groups(raw: Iterable[object]) -> list[FirewallGroup]:
                 id=group_id,
                 name=_firewall_nested._as_str(first_attr(entry, "name", "group_name")),
                 group_type=_firewall_nested._as_str(first_attr(entry, "group_type", "type")),
-                members=_firewall_nested._as_tuple_str(first_attr(entry, "group_members", "members")),
+                members=_firewall_nested._as_tuple_str(
+                    first_attr(entry, "group_members", "members")
+                ),
             )
         )
     return groups

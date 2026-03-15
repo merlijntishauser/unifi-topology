@@ -206,7 +206,12 @@ class UnifiClient:
 
     @staticmethod
     def _auth_payload_error(payload: object) -> str | None:
-        if isinstance(payload, dict) and "code" in payload and "message" in payload and "meta" not in payload:
+        if (
+            isinstance(payload, dict)
+            and "code" in payload
+            and "message" in payload
+            and "meta" not in payload
+        ):
             return f"{payload['code']}: {payload['message']}"
         return None
 
