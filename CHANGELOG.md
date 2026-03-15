@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] (2026-03-15)
+
+### Added
+- Release notes and API notes documenting `1.2.1` compatibility expectations and release verification
+
+### Changed
+- Tightened source complexity enforcement to `A/A/A` and completed the internal adapter, model, and render refactor behind stable public exports
+- Reorganized the test suite into focused modules and reduced every `tests/test_*.py` file to `100` lines or fewer for lower navigation cost
+- Expanded API contract coverage so README-style usage and top-level exports/signatures are validated in CI
+
+### Fixed
+- Corrected README and documentation examples to match the current stable library contract and rendering workflow
+
 ## [1.2.0] (2026-03-15)
 
 ### Added
@@ -87,7 +100,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.0.8...v1.1.0

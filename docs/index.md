@@ -60,6 +60,10 @@ svg = render_svg(
 
 `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
 
+## Release Notes
+
+See the [release notes](release-notes.md) for compatibility notes, verification status, and upgrade guidance for the latest patch release.
+
 ## Related Projects
 
 - **CLI tool**: [unifi-network-maps](https://github.com/merlijntishauser/unifi-network-maps)
