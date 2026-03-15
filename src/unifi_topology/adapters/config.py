@@ -20,6 +20,26 @@ def _parse_bool(value: str | None, default: bool = True) -> bool:
     return default
 
 
+def _load_env_file(env_file: str | Path) -> None:
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        raise ValueError("python-dotenv required for --env-file") from None
+    env_path = resolve_env_file(env_file)
+    load_dotenv(dotenv_path=env_path)
+
+
+def _env_string(name: str, default: str = "") -> str:
+    return os.environ.get(name, default).strip()
+
+
+def _required_env(name: str) -> str:
+    value = _env_string(name)
+    if not value:
+        raise ValueError(f"{name} is required")
+    return value
+
+
 @dataclass(frozen=True)
 class Config:
     url: str
@@ -31,23 +51,11 @@ class Config:
     @classmethod
     def from_env(cls, *, env_file: str | Path | None = None) -> Config:
         if env_file:
-            try:
-                from dotenv import load_dotenv
-            except ImportError:
-                raise ValueError("python-dotenv required for --env-file") from None
-            env_path = resolve_env_file(env_file)
-            load_dotenv(dotenv_path=env_path)
-        url = os.environ.get("UNIFI_URL", "").strip()
-        site = os.environ.get("UNIFI_SITE", "default").strip()
-        user = os.environ.get("UNIFI_USER", "").strip()
-        password = os.environ.get("UNIFI_PASS", "").strip()
+            _load_env_file(env_file)
+        url = _required_env("UNIFI_URL")
+        site = _env_string("UNIFI_SITE", "default")
+        user = _required_env("UNIFI_USER")
+        password = _required_env("UNIFI_PASS")
         verify_ssl = _parse_bool(os.environ.get("UNIFI_VERIFY_SSL"), default=True)
-
-        if not url:
-            raise ValueError("UNIFI_URL is required")
-        if not user:
-            raise ValueError("UNIFI_USER is required")
-        if not password:
-            raise ValueError("UNIFI_PASS is required")
 
         return cls(url=url, site=site, user=user, password=password, verify_ssl=verify_ssl)

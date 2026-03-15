@@ -5,6 +5,30 @@ from __future__ import annotations
 from ..model.inventory import DeviceInfo
 
 
+def _inventory_table_columns(include_hostname: bool) -> tuple[str, str]:
+    if include_hostname:
+        return (
+            "| Name | Type | Model | IP | Hostname | MAC | Firmware |",
+            "|------|------|-------|----|----------|-----|----------|",
+        )
+    return (
+        "| Name | Type | Model | IP | MAC | Firmware |",
+        "|------|------|-------|----|-----|----------|",
+    )
+
+
+def _inventory_row(device: DeviceInfo, *, include_hostname: bool) -> str:
+    if include_hostname:
+        return (
+            f"| {device.name} | {device.device_type} | {device.model_name} | {device.ip}"
+            f" | {device.hostname or ''} | {device.mac} | {device.firmware} |"
+        )
+    return (
+        f"| {device.name} | {device.device_type} | {device.model_name} | {device.ip}"
+        f" | {device.mac} | {device.firmware} |"
+    )
+
+
 def render_device_inventory_table(
     inventory: list[DeviceInfo],
     *,
@@ -17,20 +41,6 @@ def render_device_inventory_table(
     if not inventory:
         return ""
 
-    if include_hostname:
-        header = "| Name | Type | Model | IP | Hostname | MAC | Firmware |"
-        separator = "|------|------|-------|----|----------|-----|----------|"
-        rows = [
-            f"| {d.name} | {d.device_type} | {d.model_name} | {d.ip}"
-            f" | {d.hostname or ''} | {d.mac} | {d.firmware} |"
-            for d in inventory
-        ]
-    else:
-        header = "| Name | Type | Model | IP | MAC | Firmware |"
-        separator = "|------|------|-------|----|-----|----------|"
-        rows = [
-            f"| {d.name} | {d.device_type} | {d.model_name} | {d.ip} | {d.mac} | {d.firmware} |"
-            for d in inventory
-        ]
-
+    header, separator = _inventory_table_columns(include_hostname)
+    rows = [_inventory_row(device, include_hostname=include_hostname) for device in inventory]
     return "\n".join([header, separator, *rows]) + "\n"

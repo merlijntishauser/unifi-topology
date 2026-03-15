@@ -28,9 +28,9 @@ complexity:
 	@echo "=== Maintainability Index (B or lower) ==="
 	@$(VENV)/radon mi src/unifi_topology -s -nb
 	@echo ""
-	@echo "=== Threshold Checks (max function: 12, max module avg: B, overall avg: A) ==="
-	$(VENV)/xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
-	@./scripts/check_complexity.sh 12
+	@echo "=== Threshold Checks (max function: 10, max module avg: A, overall avg: A) ==="
+	$(VENV)/xenon src/unifi_topology --max-absolute B --max-modules A --max-average A
+	@./scripts/check_complexity.sh 10
 
 audit:
 	$(VENV)/pip-audit
@@ -63,8 +63,8 @@ ci:
 	$(VENV)/pyright
 	@echo ""
 	@echo "=== Complexity ==="
-	$(VENV)/xenon src/unifi_topology --max-absolute C --max-modules B --max-average A
-	@./scripts/check_complexity.sh 12
+	$(VENV)/xenon src/unifi_topology --max-absolute B --max-modules A --max-average A
+	@./scripts/check_complexity.sh 10
 	@echo ""
 	@echo "=== Dependency Audit ==="
 	$(VENV)/pip-audit

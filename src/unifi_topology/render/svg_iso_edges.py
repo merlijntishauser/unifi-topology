@@ -305,27 +305,68 @@ def _record_iso_edge_label(
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
 ) -> None:
-    if not edge.label:
+    original_label = edge.label
+    if not original_label:
         return
-    label_text = _compact_edge_label(edge.label, left_node=edge.left, right_node=edge.right)
+    label_text = _compact_edge_label(original_label, left_node=edge.left, right_node=edge.right)
+    client_attachment = _iso_client_attachment(edge, node_types)
+    if client_attachment is not None:
+        _record_iso_client_edge_label(
+            original_label,
+            label_text,
+            client_attachment,
+            node_port_labels,
+            node_port_prefix,
+        )
+        return
+    _record_iso_device_edge_label(
+        edge,
+        original_label,
+        label_text,
+        node_types.get(edge.right, "other"),
+        node_port_labels,
+        node_port_prefix,
+    )
+
+
+def _iso_client_attachment(
+    edge: Edge,
+    node_types: dict[str, str],
+) -> tuple[str, str] | None:
     left_type = node_types.get(edge.left, "other")
     right_type = node_types.get(edge.right, "other")
-    client_node = None
-    upstream_node = None
     if left_type == "client" and right_type != "client":
-        client_node = edge.left
-        upstream_node = edge.right
-    elif right_type == "client" and left_type != "client":
-        client_node = edge.right
-        upstream_node = edge.left
-    if client_node and upstream_node:
-        if "<->" not in label_text:
-            upstream_part = edge.label.split("<->", 1)[0].strip()
-            port_text = _extract_port_text(upstream_part) or label_text
-            node_port_labels.setdefault(client_node, f"{upstream_node}: {port_text}")
-            node_port_prefix.setdefault(client_node, _shorten_prefix(upstream_node))
+        return edge.left, edge.right
+    if right_type == "client" and left_type != "client":
+        return edge.right, edge.left
+    return None
+
+
+def _record_iso_client_edge_label(
+    original_label: str,
+    label_text: str,
+    client_attachment: tuple[str, str],
+    node_port_labels: dict[str, str],
+    node_port_prefix: dict[str, str],
+) -> None:
+    client_node, upstream_node = client_attachment
+    if "<->" in label_text:
         return
-    upstream_part = edge.label.split("<->", 1)[0].strip()
+    upstream_part = original_label.split("<->", 1)[0].strip()
+    port_text = _extract_port_text(upstream_part) or label_text
+    node_port_labels.setdefault(client_node, f"{upstream_node}: {port_text}")
+    node_port_prefix.setdefault(client_node, _shorten_prefix(upstream_node))
+
+
+def _record_iso_device_edge_label(
+    edge: Edge,
+    original_label: str,
+    label_text: str,
+    right_type: str,
+    node_port_labels: dict[str, str],
+    node_port_prefix: dict[str, str],
+) -> None:
+    upstream_part = original_label.split("<->", 1)[0].strip()
     upstream_name = _extract_device_name(upstream_part) or edge.left
     if label_text.lower().startswith("port "):
         label_text = f"{upstream_name} {label_text}"

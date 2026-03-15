@@ -139,12 +139,7 @@ def _format_wan_interface_line(
     """Format a single WAN interface line."""
     status = "(active)" if wan.enabled else "(disabled)"
     label = wan.label or prefix
-    speed_parts = []
-    if include_speed and wan.link_speed and wan.enabled:
-        speed_parts.append(f"Link {_format_wan_speed(wan.link_speed)}")
-    if wan.isp_speed:
-        speed_parts.append(f"ISP {wan.isp_speed}")
-    speed_str = " / ".join(speed_parts) if speed_parts else ""
+    speed_str = _format_wan_speed_line(wan, include_speed=include_speed)
 
     if not wan.enabled and prefix == "WAN2":
         return f"{prefix}: {label} (disabled)"
@@ -158,39 +153,47 @@ def _format_wan_interface_line(
     return label
 
 
+def _format_wan_speed_line(
+    wan: WanInterface,
+    *,
+    include_speed: bool,
+) -> str:
+    speed_parts: list[str] = []
+    if include_speed and wan.link_speed and wan.enabled:
+        speed_parts.append(f"Link {_format_wan_speed(wan.link_speed)}")
+    if wan.isp_speed:
+        speed_parts.append(f"ISP {wan.isp_speed}")
+    return " / ".join(speed_parts)
+
+
+def _build_single_wan_label_lines(wan: WanInterface) -> list[str]:
+    label_lines = [wan.label or "WAN1"]
+    speed_line = _format_wan_speed_line(wan, include_speed=True)
+    if speed_line:
+        label_lines.append(speed_line)
+    if wan.ip_address:
+        label_lines.append(wan.ip_address)
+    return label_lines
+
+
+def _build_dual_wan_label_lines(wan_info: WanInfo) -> list[str]:
+    label_lines: list[str] = []
+    if wan_info.wan1:
+        label_lines.append(_format_wan_interface_line(wan_info.wan1, "WAN1", is_dual=True))
+    if wan_info.wan2:
+        label_lines.append(_format_wan_interface_line(wan_info.wan2, "WAN2", is_dual=True))
+    if wan_info.wan1 and wan_info.wan1.ip_address:
+        label_lines.append(wan_info.wan1.ip_address)
+    return label_lines
+
+
 def _build_wan_label_lines(wan_info: WanInfo) -> list[str]:
     """Build label lines for WAN display."""
-    label_lines: list[str] = []
-    is_dual = wan_info.wan2 is not None
-
-    if wan_info.wan1:
-        wan1 = wan_info.wan1
-        if is_dual:
-            label_lines.append(
-                _format_wan_interface_line(wan1, "WAN1", is_dual=True, include_speed=True)
-            )
-        else:
-            # Single WAN format: multi-line
-            label_lines.append(wan1.label or "WAN1")
-            speed_parts = []
-            if wan1.link_speed:
-                speed_parts.append(f"Link {_format_wan_speed(wan1.link_speed)}")
-            if wan1.isp_speed:
-                speed_parts.append(f"ISP {wan1.isp_speed}")
-            if speed_parts:
-                label_lines.append(" / ".join(speed_parts))
-            if wan1.ip_address:
-                label_lines.append(wan1.ip_address)
-
-    if wan_info.wan2:
-        label_lines.append(
-            _format_wan_interface_line(wan_info.wan2, "WAN2", is_dual=True, include_speed=True)
-        )
-        # Add IP from WAN1 for dual WAN display
-        if wan_info.wan1 and wan_info.wan1.ip_address:
-            label_lines.append(wan_info.wan1.ip_address)
-
-    return label_lines
+    if wan_info.wan2 is not None:
+        return _build_dual_wan_label_lines(wan_info)
+    if wan_info.wan1 is None:
+        return []
+    return _build_single_wan_label_lines(wan_info.wan1)
 
 
 def _build_vpn_label_lines(tunnels: list[VpnTunnel]) -> list[str]:

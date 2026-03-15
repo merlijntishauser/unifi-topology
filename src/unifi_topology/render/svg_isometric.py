@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from html import escape as _escape_html
 
@@ -68,15 +69,11 @@ def _iso_layout(options: SvgOptions) -> IsoLayout:
     )
 
 
-def _iso_layout_positions(
-    edges: list[Edge],
-    node_types: dict[str, str],
-    options: SvgOptions,
-) -> IsoLayoutPositions:
-    from .svg_layout import _tree_layout_indices
-
-    layout = _iso_layout(options)
-    positions_index, levels = _tree_layout_indices(edges, node_types)
+def _project_iso_positions(
+    layout: IsoLayout,
+    positions_index: Mapping[str, float],
+    levels: Mapping[str, int],
+) -> tuple[dict[str, tuple[float, float]], dict[str, tuple[float, float]]]:
     grid_positions: dict[str, tuple[float, float]] = {}
     positions: dict[str, tuple[float, float]] = {}
     for name, idx in positions_index.items():
@@ -84,21 +81,49 @@ def _iso_layout_positions(
         gx = round(idx * layout.grid_spacing_x)
         gy = round(float(level) * layout.grid_spacing_y)
         grid_positions[name] = (float(gx), float(gy))
-        iso_x, iso_y = _iso_project_center(layout, float(gx), float(gy))
-        positions[name] = (iso_x, iso_y)
-    if positions:
-        min_x = min(x for x, _ in positions.values())
-        min_y = min(y for _, y in positions.values())
-        max_x = max(x for x, _ in positions.values())
-        max_y = max(y for _, y in positions.values())
-    else:
-        min_x = min_y = 0.0
-        max_x = max_y = 0.0
-    offset_x = -min_x + layout.padding + _ISO_NW_PADDING
-    offset_y = -min_y + layout.padding + layout.tile_y_offset + _ISO_NW_PADDING
-    for name, (x, y) in positions.items():
-        positions[name] = (x + offset_x, y + offset_y)
-    # Expand viewport to show more of the grid
+        positions[name] = _iso_project_center(layout, float(gx), float(gy))
+    return grid_positions, positions
+
+
+def _position_extents(
+    positions: dict[str, tuple[float, float]],
+) -> tuple[float, float, float, float]:
+    if not positions:
+        return 0.0, 0.0, 0.0, 0.0
+    return (
+        min(x for x, _ in positions.values()),
+        min(y for _, y in positions.values()),
+        max(x for x, _ in positions.values()),
+        max(y for _, y in positions.values()),
+    )
+
+
+def _iso_offsets(
+    layout: IsoLayout,
+    min_x: float,
+    min_y: float,
+) -> tuple[float, float]:
+    return (
+        -min_x + layout.padding + _ISO_NW_PADDING,
+        -min_y + layout.padding + layout.tile_y_offset + _ISO_NW_PADDING,
+    )
+
+
+def _apply_iso_offsets(
+    positions: dict[str, tuple[float, float]],
+    offset_x: float,
+    offset_y: float,
+) -> dict[str, tuple[float, float]]:
+    return {name: (x + offset_x, y + offset_y) for name, (x, y) in positions.items()}
+
+
+def _iso_viewport_size(
+    layout: IsoLayout,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
+) -> tuple[float, float]:
     viewport_expand = _ISO_VIEWPORT_EXPAND
     width = (
         max_x
@@ -119,14 +144,65 @@ def _iso_layout_positions(
         + viewport_expand
         + _ISO_NW_PADDING
     )
+    return width, height
+
+
+def _iso_layout_positions(
+    edges: list[Edge],
+    node_types: dict[str, str],
+    options: SvgOptions,
+) -> IsoLayoutPositions:
+    from .svg_layout import _tree_layout_indices
+
+    layout = _iso_layout(options)
+    positions_index, levels = _tree_layout_indices(edges, node_types)
+    grid_positions, positions = _project_iso_positions(layout, positions_index, levels)
+    min_x, min_y, max_x, max_y = _position_extents(positions)
+    offset_x, offset_y = _iso_offsets(layout, min_x, min_y)
+    width, height = _iso_viewport_size(layout, min_x, min_y, max_x, max_y)
     return IsoLayoutPositions(
         layout=layout,
         grid_positions=grid_positions,
-        positions=positions,
+        positions=_apply_iso_offsets(positions, offset_x, offset_y),
         width=width,
         height=height,
         offset_x=offset_x,
         offset_y=offset_y,
+    )
+
+
+def _iso_grid_extents(
+    grid_positions: dict[str, tuple[float, float]],
+) -> tuple[int, int, int, int] | None:
+    if not grid_positions:
+        return None
+    min_gx = min(gx for gx, _ in grid_positions.values())
+    max_gx = max(gx for gx, _ in grid_positions.values())
+    min_gy = min(gy for _, gy in grid_positions.values())
+    max_gy = max(gy for _, gy in grid_positions.values())
+    return (
+        int(math.floor(min_gx)) - _ISO_GRID_EXTENT_PAD,
+        int(math.ceil(max_gx)) + _ISO_GRID_EXTENT_PAD,
+        int(math.floor(min_gy)) - _ISO_GRID_EXTENT_PAD,
+        int(math.ceil(max_gy)) + _ISO_GRID_EXTENT_PAD,
+    )
+
+
+def _iso_grid_line(
+    layout: IsoLayout,
+    start: tuple[float, float],
+    end: tuple[float, float],
+    grid_color: str,
+) -> str:
+    x1, y1 = _iso_project(layout, *start)
+    x2, y2 = _iso_project(layout, *end)
+    x1 += layout.padding
+    y1 += layout.padding
+    x2 += layout.padding
+    y2 += layout.padding
+    return (
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        f'stroke="{grid_color}" stroke-width="0.6"/>'
     )
 
 
@@ -135,36 +211,18 @@ def _iso_grid_lines(
     layout: IsoLayout,
     grid_color: str = "#efefef",
 ) -> list[str]:
-    if not grid_positions:
+    extents = _iso_grid_extents(grid_positions)
+    if extents is None:
         return []
-    min_gx = min(gx for gx, _ in grid_positions.values())
-    max_gx = max(gx for gx, _ in grid_positions.values())
-    min_gy = min(gy for _, gy in grid_positions.values())
-    max_gy = max(gy for _, gy in grid_positions.values())
-    gx_start = int(math.floor(min_gx)) - _ISO_GRID_EXTENT_PAD
-    gx_end = int(math.ceil(max_gx)) + _ISO_GRID_EXTENT_PAD
-    gy_start = int(math.floor(min_gy)) - _ISO_GRID_EXTENT_PAD
-    gy_end = int(math.ceil(max_gy)) + _ISO_GRID_EXTENT_PAD
+    gx_start, gx_end, gy_start, gy_end = extents
     grid_lines: list[str] = []
     for gx in range(gx_start, gx_end + 1):
-        x1, y1 = _iso_project(layout, float(gx), float(gy_start))
-        x2, y2 = _iso_project(layout, float(gx), float(gy_end))
-        x1 += layout.padding
-        y1 += layout.padding
-        x2 += layout.padding
-        y2 += layout.padding
         grid_lines.append(
-            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{grid_color}" stroke-width="0.6"/>'
+            _iso_grid_line(layout, (float(gx), float(gy_start)), (float(gx), float(gy_end)), grid_color)
         )
     for gy in range(gy_start, gy_end + 1):
-        x1, y1 = _iso_project(layout, float(gx_start), float(gy))
-        x2, y2 = _iso_project(layout, float(gx_end), float(gy))
-        x1 += layout.padding
-        y1 += layout.padding
-        x2 += layout.padding
-        y2 += layout.padding
         grid_lines.append(
-            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{grid_color}" stroke-width="0.6"/>'
+            _iso_grid_line(layout, (float(gx_start), float(gy)), (float(gx_end), float(gy)), grid_color)
         )
     return grid_lines
 
@@ -427,6 +485,28 @@ def _expand_viewbox_for_wan(
     return max(width, box_right), max(height, box_bottom)
 
 
+def _expand_viewbox_for_overlays(
+    width: float,
+    height: float,
+    *,
+    wan_info: WanInfo | None,
+    vpn_tunnels: list[VpnTunnel] | None,
+    node_types: dict[str, str],
+    positions: dict[str, tuple[float, float]],
+    layout: IsoLayout,
+    options: SvgOptions,
+) -> tuple[float, float]:
+    if wan_info:
+        width, height = _expand_viewbox_for_wan(
+            width, height, wan_info, node_types, positions, layout, options
+        )
+    if vpn_tunnels:
+        # VPN box extends to the south-west; expand viewport to accommodate.
+        width = width + 200
+        height = height + 100
+    return width, height
+
+
 def _find_gateway_position(
     node_types: dict[str, str],
     positions: dict[str, tuple[float, float]],
@@ -435,22 +515,6 @@ def _find_gateway_position(
         if ntype == "gateway" and name in positions:
             return positions[name]
     return None
-
-
-def _maybe_render_wan_upstream(
-    lines: list[str],
-    wan_info: WanInfo | None,
-    node_types: dict[str, str],
-    positions: dict[str, tuple[float, float]],
-    layout: IsoLayout,
-    options: SvgOptions,
-    theme: SvgTheme,
-) -> None:
-    if not wan_info:
-        return
-    gateway_pos = _find_gateway_position(node_types, positions)
-    if gateway_pos:
-        _render_iso_wan_upstream(lines, wan_info, gateway_pos, layout, options, theme)
 
 
 def _render_grouped_boundaries(
@@ -514,16 +578,16 @@ def render_svg_isometric(
     grid_positions = layout_positions.grid_positions
     positions = layout_positions.positions
 
-    view_width = layout_positions.width
-    view_height = layout_positions.height
-    if wan_info:
-        view_width, view_height = _expand_viewbox_for_wan(
-            view_width, view_height, wan_info, node_types, positions, layout, options
-        )
-    if vpn_tunnels:
-        # VPN box extends to the south-west; expand viewport to accommodate
-        view_width = view_width + 200
-        view_height = view_height + 100
+    view_width, view_height = _expand_viewbox_for_overlays(
+        layout_positions.width,
+        layout_positions.height,
+        wan_info=wan_info,
+        vpn_tunnels=vpn_tunnels,
+        node_types=node_types,
+        positions=positions,
+        layout=layout,
+        options=options,
+    )
 
     out_width = options.width or int(view_width)
     out_height = options.height or int(view_height)
