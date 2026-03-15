@@ -23,21 +23,47 @@ BUILTIN_THEMES = {
 _ASSETS_DIR = Path(__file__).parent.parent / "assets" / "themes"
 
 
+def _pair_from_sequence(value: object) -> tuple[str, str] | None:
+    if not isinstance(value, list | tuple) or len(value) != 2:
+        return None
+    left, right = value
+    if isinstance(left, str) and isinstance(right, str):
+        return left, right
+    return None
+
+
+def _mapping_string(value: object, *keys: str) -> str | None:
+    if not isinstance(value, dict):
+        return None
+    for key in keys:
+        candidate = value.get(key)
+        if isinstance(candidate, str):
+            return candidate
+    return None
+
+
+def _pair_from_mapping(value: object) -> tuple[str, str] | None:
+    left = _mapping_string(value, "from", "start")
+    right = _mapping_string(value, "to", "end")
+    if left is not None and right is not None:
+        return left, right
+    return None
+
+
 def _coerce_pair(value: object, default: tuple[str, str]) -> tuple[str, str]:
-    if isinstance(value, list | tuple) and len(value) == 2:
-        left, right = value
-        if isinstance(left, str) and isinstance(right, str):
-            return (left, right)
-    if isinstance(value, dict):
-        left = value.get("from") or value.get("start")
-        right = value.get("to") or value.get("end")
-        if isinstance(left, str) and isinstance(right, str):
-            return (left, right)
-    return default
+    return _pair_from_sequence(value) or _pair_from_mapping(value) or default
 
 
 def _coerce_color(value: object, default: str) -> str:
     return value if isinstance(value, str) else default
+
+
+def _vlan_key(value: object) -> int | None:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    return None
 
 
 def _coerce_vlan_colors(value: object) -> dict[int, str]:
@@ -46,11 +72,9 @@ def _coerce_vlan_colors(value: object) -> dict[int, str]:
         return {}
     result: dict[int, str] = {}
     for key, color in value.items():
-        if isinstance(color, str):
-            if isinstance(key, int):
-                result[key] = color
-            elif isinstance(key, str) and key.isdigit():
-                result[int(key)] = color
+        vlan_id = _vlan_key(key)
+        if vlan_id is not None and isinstance(color, str):
+            result[vlan_id] = color
     return result
 
 
@@ -157,9 +181,5 @@ def resolve_svg_themes(
     if theme_file:
         return load_svg_theme(theme_file)
     if theme_name:
-        if theme_name not in BUILTIN_THEMES:
-            valid = ", ".join(sorted(BUILTIN_THEMES.keys()))
-            raise ValueError(f"Unknown theme: {theme_name}. Valid themes: {valid}")
-        builtin_path = _ASSETS_DIR / BUILTIN_THEMES[theme_name]
-        return _load_svg_theme_from_path(builtin_path)
+        return _load_svg_theme_from_path(builtin_theme_yaml_path(theme_name))
     return DEFAULT_SVG_THEME

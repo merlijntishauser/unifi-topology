@@ -3,67 +3,20 @@
 from __future__ import annotations
 
 import math
-from html import escape as _escape_html
 
 from ..model.topology import Edge
-from .svg_labels import (
-    _compact_edge_label,
-    _extract_device_name,
-    _extract_port_text,
-    _strip_local_port,
-)
+from . import _svg_edge_labels_record, _svg_edge_shared
 from .svg_theme import SvgOptions, SvgTheme
 
-
-def _vlan_data_attrs(edge: Edge) -> str:
-    """Generate VLAN data attributes for an edge."""
-    attrs = []
-    if edge.vlans:
-        attrs.append(f'data-vlans="{",".join(str(v) for v in edge.vlans)}"')
-    if edge.active_vlans:
-        attrs.append(f'data-active-vlans="{",".join(str(v) for v in edge.active_vlans)}"')
-    if edge.is_trunk:
-        attrs.append('data-trunk="true"')
-    return " ".join(attrs)
-
-
-def _edge_opacity(node_types: dict[str, str], edge: Edge) -> float:
-    """Return opacity for edge based on endpoint types.
-
-    Client edges are semi-transparent to reduce visual clutter
-    and keep focus on infrastructure connections.
-    """
-    left_type = node_types.get(edge.left, "other")
-    right_type = node_types.get(edge.right, "other")
-
-    if right_type == "client" or left_type == "client":
-        return 0.5
-
-    return 1.0
-
-
-def _render_vlan_endpoint_markers(
-    lines: list[str],
-    x: float,
-    y: float,
-    vlans: tuple[int, ...],
-    theme: SvgTheme,
-    marker_size: int = 6,
-    max_markers: int = 4,
-) -> None:
-    """Render small colored squares showing active VLANs at an endpoint."""
-    if not vlans:
-        return
-    for i, vlan_id in enumerate(vlans[:max_markers]):
-        color = theme.vlan_color(vlan_id)
-        marker_x = x - marker_size - 2
-        marker_y = y + (i * (marker_size + 2))
-        lines.append(
-            f'<rect x="{marker_x}" y="{marker_y}" width="{marker_size}" '
-            f'height="{marker_size}" fill="{color}" stroke="#fff" '
-            f'stroke-width="0.5" rx="1" data-vlan="{vlan_id}">'
-            f"<title>VLAN {vlan_id}</title></rect>"
-        )
+_client_attachment = _svg_edge_labels_record._client_attachment
+_client_port_text = _svg_edge_labels_record._client_port_text
+_edge_label_context = _svg_edge_labels_record._edge_label_context
+_edge_opacity = _svg_edge_shared._edge_opacity
+_edge_render_state = _svg_edge_shared._edge_render_state
+_infra_label_text = _svg_edge_labels_record._infra_label_text
+_render_vlan_endpoint_markers = _svg_edge_shared._render_vlan_endpoint_markers
+_upstream_name_from_label = _svg_edge_labels_record._upstream_name_from_label
+_vlan_data_attrs = _svg_edge_shared._vlan_data_attrs
 
 
 def _render_vlan_striped_edge(
@@ -172,27 +125,22 @@ def _render_single_edge(
     width_px = 2 if edge.poe else 1
 
     path = _compute_elbow_path(src_cx, src_bottom, dst_cx, dst_top, mid_y)
-    left_attr = _escape_html(edge.left, quote=True)
-    right_attr = _escape_html(edge.right, quote=True)
-    vlan_attrs = _vlan_data_attrs(edge)
-    base_attrs = f'data-edge-left="{left_attr}" data-edge-right="{right_attr}"'
-    if vlan_attrs:
-        base_attrs = f"{base_attrs} {vlan_attrs}"
+    state = _edge_render_state(edge, node_types, max_vlan_colors=max_vlan_colors)
 
-    display_vlans = edge.active_vlans
-    if max_vlan_colors and len(display_vlans) > max_vlan_colors:
-        display_vlans = display_vlans[:max_vlan_colors]
-
-    opacity = _edge_opacity(node_types, edge)
-    opacity_attr = f' opacity="{opacity}"' if opacity < 1.0 else ""
-
-    if display_vlans:
+    if state.display_vlans:
         _render_vlan_striped_edge(
-            lines, path, display_vlans, theme, width_px, edge.wireless, base_attrs, opacity
+            lines,
+            path,
+            state.display_vlans,
+            theme,
+            width_px,
+            edge.wireless,
+            state.base_attrs,
+            state.opacity,
         )
-        _render_vlan_endpoint_markers(lines, dst_cx, dst_top + 4, display_vlans, theme)
+        _render_vlan_endpoint_markers(lines, dst_cx, dst_top + 4, state.display_vlans, theme)
     else:
-        _render_standard_edge(lines, path, edge, opacity_attr, base_attrs)
+        _render_standard_edge(lines, path, edge, state.opacity_attr, state.base_attrs)
 
     if edge.poe:
         _render_poe_icon(lines, dst_cx, mid_y, dst_top, theme)
@@ -219,37 +167,31 @@ def _render_svg_edges(
 
 
 def _record_client_label(
-    raw_label: str,
-    label_text: str,
+    context: _svg_edge_labels_record.EdgeLabelContext,
     client_node: str,
     upstream_node: str,
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
 ) -> None:
     """Record port label for a client edge."""
-    if "<->" in label_text:
+    if "<->" in context.compact_label:
         return
-    upstream_part = raw_label.split("<->", 1)[0].strip()
-    port_text = _extract_port_text(upstream_part) or label_text
-    upstream_name = _extract_device_name(upstream_part) or upstream_node
+    port_text = _client_port_text(context)
+    upstream_name = _upstream_name_from_label(context) or upstream_node
     node_port_labels.setdefault(client_node, f"{upstream_name}: {port_text}")
     node_port_prefix.setdefault(client_node, upstream_name)
 
 
 def _record_infra_label(
     edge: Edge,
-    raw_label: str,
-    label_text: str,
+    context: _svg_edge_labels_record.EdgeLabelContext,
     right_type: str,
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
 ) -> None:
     """Record port label for an infrastructure edge."""
-    upstream_part = raw_label.split("<->", 1)[0].strip()
-    upstream_name = _extract_device_name(upstream_part) or edge.left
-    if label_text.lower().startswith("port "):
-        label_text = f"{upstream_name} {label_text}"
-    label_text = _strip_local_port(label_text, right_type)
+    upstream_name = _upstream_name_from_label(context) or edge.left
+    label_text = _infra_label_text(context, right_type, upstream_name=upstream_name)
     node_port_labels.setdefault(edge.right, label_text)
     node_port_prefix.setdefault(edge.right, upstream_name)
 
@@ -260,21 +202,20 @@ def _record_edge_labels(
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
 ) -> None:
-    if not edge.label:
+    context = _edge_label_context(edge)
+    if context is None:
         return
-    raw_label = edge.label
-    label_text = _compact_edge_label(raw_label, left_node=edge.left, right_node=edge.right)
-    left_type = node_types.get(edge.left, "other")
-    right_type = node_types.get(edge.right, "other")
-    if left_type == "client" and right_type != "client":
+    client_attachment = _client_attachment(edge, node_types)
+    if client_attachment is not None:
+        client_node, upstream_node = client_attachment
         _record_client_label(
-            raw_label, label_text, edge.left, edge.right, node_port_labels, node_port_prefix
+            context, client_node, upstream_node, node_port_labels, node_port_prefix
         )
-    elif right_type == "client" and left_type != "client":
-        _record_client_label(
-            raw_label, label_text, edge.right, edge.left, node_port_labels, node_port_prefix
-        )
-    else:
-        _record_infra_label(
-            edge, raw_label, label_text, right_type, node_port_labels, node_port_prefix
-        )
+        return
+    _record_infra_label(
+        edge,
+        context,
+        node_types.get(edge.right, "other"),
+        node_port_labels,
+        node_port_prefix,
+    )
