@@ -17,41 +17,64 @@ class DualRenderGroups:
     group_vlan_ids: dict[str, int]
 
 
-def _groups_from_vlan_node_map(
+def _partition_vlan_nodes(
     vlan_node_map: dict[str, int | None],
-    vlan_names: dict[int, str] | None = None,
-) -> DualRenderGroups:
-    """Convert a node-to-VLAN mapping into group structures."""
-    vlan_names = vlan_names or {}
+) -> tuple[dict[int, list[str]], list[str]]:
     vlan_groups: dict[int, list[str]] = {}
     unassigned: list[str] = []
-
     for node in sorted(vlan_node_map):
         vlan_id = vlan_node_map[node]
         if vlan_id is None:
             unassigned.append(node)
-        else:
-            vlan_groups.setdefault(vlan_id, []).append(node)
+            continue
+        vlan_groups.setdefault(vlan_id, []).append(node)
+    return vlan_groups, unassigned
 
+
+def _named_vlan_groups(
+    vlan_groups: dict[int, list[str]],
+    vlan_names: dict[int, str],
+) -> DualRenderGroups:
     groups: dict[str, list[str]] = {}
     group_vlan_ids: dict[str, int] = {}
     group_order: list[str] = []
-
     for vlan_id in sorted(vlan_groups):
         name = vlan_names.get(vlan_id, f"VLAN {vlan_id}")
         groups[name] = vlan_groups[vlan_id]
         group_vlan_ids[name] = vlan_id
         group_order.append(name)
-
-    if unassigned:
-        groups["Unassigned"] = unassigned
-        group_order.append("Unassigned")
-
     return DualRenderGroups(
         groups=groups,
         group_order=group_order,
         group_vlan_ids=group_vlan_ids,
     )
+
+
+def _with_unassigned_group(
+    dual_groups: DualRenderGroups,
+    unassigned: list[str],
+) -> DualRenderGroups:
+    if not unassigned:
+        return dual_groups
+    groups = dict(dual_groups.groups)
+    group_order = list(dual_groups.group_order)
+    groups["Unassigned"] = unassigned
+    group_order.append("Unassigned")
+    return DualRenderGroups(
+        groups=groups,
+        group_order=group_order,
+        group_vlan_ids=dual_groups.group_vlan_ids,
+    )
+
+
+def _groups_from_vlan_node_map(
+    vlan_node_map: dict[str, int | None],
+    vlan_names: dict[int, str] | None = None,
+) -> DualRenderGroups:
+    """Convert a node-to-VLAN mapping into group structures."""
+    vlan_groups, unassigned = _partition_vlan_nodes(vlan_node_map)
+    dual_groups = _named_vlan_groups(vlan_groups, vlan_names or {})
+    return _with_unassigned_group(dual_groups, unassigned)
 
 
 def resolve_dual_groups(

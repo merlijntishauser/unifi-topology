@@ -2,10 +2,62 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from ..model.topology import VpnTunnel, WanInfo
 from .svg_iso_geometry import IsoLayout
 from .svg_labels import _build_wan_label_lines, _escape_text
 from .svg_theme import SvgOptions, SvgTheme
+
+
+@dataclass(frozen=True)
+class IsoWanBoxMetrics:
+    label_lines: list[str]
+    font_size: int
+    globe_size: float
+    padding: float
+    line_height: float
+    box_width: float
+    box_height: float
+
+
+def _iso_wan_box_metrics(
+    wan_info: WanInfo,
+    options: SvgOptions,
+) -> IsoWanBoxMetrics:
+    label_lines = _build_wan_label_lines(wan_info)
+    font_size = max(options.font_size - 1, 8)
+    globe_size = 40.0
+    padding = 12.0
+    line_height = float(font_size + 4)
+    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
+    box_width = max(globe_size + padding * 2, max_text_width + padding * 2)
+    box_height = globe_size + len(label_lines) * line_height + padding * 3
+    return IsoWanBoxMetrics(
+        label_lines=label_lines,
+        font_size=font_size,
+        globe_size=globe_size,
+        padding=padding,
+        line_height=line_height,
+        box_width=box_width,
+        box_height=box_height,
+    )
+
+
+def _iso_wan_box_origin(
+    gateway_position: tuple[float, float],
+    layout: IsoLayout,
+    box_height: float,
+) -> tuple[float, float]:
+    gx, gy = gateway_position
+    return gx + layout.tile_width + 60, gy - layout.tile_height / 2 - box_height / 2 + 38
+
+
+def _iso_wan_box_bottom(
+    box_y: float,
+    metrics: IsoWanBoxMetrics,
+) -> float:
+    return box_y + metrics.box_height + metrics.padding
 
 
 def _render_iso_wan_upstream(
@@ -18,26 +70,13 @@ def _render_iso_wan_upstream(
 ) -> None:
     """Render WAN upstream visualization (isometric view)."""
     gx, gy = gateway_position
-    tile_w = layout.tile_width
-    tile_h = layout.tile_height
+    metrics = _iso_wan_box_metrics(wan_info, options)
+    box_x, box_y = _iso_wan_box_origin(gateway_position, layout, metrics.box_height)
 
-    label_lines = _build_wan_label_lines(wan_info)
-    font_size = max(options.font_size - 1, 8)
-
-    globe_size = 40
-    padding = 12
-    line_height = font_size + 4
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(globe_size + padding * 2, max_text_width + padding * 2)
-    box_height = globe_size + len(label_lines) * line_height + padding * 3
-
-    box_x = gx + tile_w + 60
-    box_y = gy - tile_h / 2 - box_height / 2 + 38
-
-    gateway_connect_x = gx + tile_w * 0.75
-    gateway_connect_y = gy + tile_h * 0.25
+    gateway_connect_x = gx + layout.tile_width * 0.75
+    gateway_connect_y = gy + layout.tile_height * 0.25
     box_connect_x = box_x
-    box_connect_y = box_y + box_height / 2
+    box_connect_y = box_y + metrics.box_height / 2
 
     lines.append('<g class="wan-upstream">')
     lines.append(
@@ -47,13 +86,13 @@ def _render_iso_wan_upstream(
         f'stroke-linecap="round" opacity="0.8"/>'
     )
     lines.append(
-        f'<rect x="{box_x}" y="{box_y}" width="{box_width}" height="{box_height}" '
+        f'<rect x="{box_x}" y="{box_y}" width="{metrics.box_width}" height="{metrics.box_height}" '
         f'rx="8" ry="8" fill="{theme.wan_background}" stroke="{theme.wan_globe[1]}" stroke-width="2"/>'
     )
 
-    globe_cx = box_x + box_width / 2
-    globe_cy = box_y + padding + globe_size / 2
-    globe_r = globe_size / 2 - 2
+    globe_cx = box_x + metrics.box_width / 2
+    globe_cy = box_y + metrics.padding + metrics.globe_size / 2
+    globe_r = metrics.globe_size / 2 - 2
     lines.append(f'<g transform="translate({globe_cx}, {globe_cy})">')
     lines.append(
         f'<circle cx="0" cy="0" r="{globe_r}" fill="none" '
@@ -77,13 +116,13 @@ def _render_iso_wan_upstream(
     )
     lines.append("</g>")
 
-    text_x = box_x + box_width / 2
-    text_y = box_y + padding + globe_size + padding + font_size
-    for i, label_text in enumerate(label_lines):
-        y = text_y + i * line_height
+    text_x = box_x + metrics.box_width / 2
+    text_y = box_y + metrics.padding + metrics.globe_size + metrics.padding + metrics.font_size
+    for i, label_text in enumerate(metrics.label_lines):
+        y = text_y + i * metrics.line_height
         lines.append(
             f'<text x="{text_x}" y="{y}" text-anchor="middle" '
-            f'fill="{theme.text_primary}" font-size="{font_size}">'
+            f'fill="{theme.text_primary}" font-size="{metrics.font_size}">'
             f"{_escape_text(label_text)}</text>"
         )
 
@@ -104,19 +143,12 @@ def _expand_viewbox_for_wan(
     if not gateway_name or gateway_name not in positions:
         return width, height
 
-    gx, gy = positions[gateway_name]
-    label_lines = _build_wan_label_lines(wan_info)
-    font_size = max(options.font_size - 1, 8)
-    globe_size = 40
-    padding = 12
-    line_height = font_size + 4
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(globe_size + padding * 2, max_text_width + padding * 2)
-    box_height = globe_size + len(label_lines) * line_height + padding * 3
-
-    box_right = gx + layout.tile_width + 60 + box_width + padding
-    box_top = gy - layout.tile_height / 2 - box_height / 2 + 38
-    box_bottom = box_top + box_height + padding
+    gateway_position = positions[gateway_name]
+    metrics = _iso_wan_box_metrics(wan_info, options)
+    gx, _ = gateway_position
+    box_x, box_y = _iso_wan_box_origin(gateway_position, layout, metrics.box_height)
+    box_right = box_x + metrics.box_width + metrics.padding
+    box_bottom = _iso_wan_box_bottom(box_y, metrics)
 
     return max(width, box_right), max(height, box_bottom)
 

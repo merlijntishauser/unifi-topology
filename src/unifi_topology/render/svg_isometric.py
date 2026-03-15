@@ -120,6 +120,43 @@ def _render_iso_gateway_overlays(
     )
 
 
+def _iso_output_size(
+    options: SvgOptions,
+    view_width: float,
+    view_height: float,
+) -> tuple[int, int]:
+    return options.width or int(view_width), options.height or int(view_height)
+
+
+def _render_iso_boundaries_if_needed(
+    lines: list[str],
+    *,
+    options: SvgOptions,
+    groups: dict[str, list[str]] | None,
+    group_order: list[str] | None,
+    group_vlan_ids: dict[str, int] | None,
+    grid_positions: dict[str, tuple[float, float]],
+    layout: IsoLayout,
+    offset_x: float,
+    offset_y: float,
+    theme: SvgTheme,
+) -> None:
+    if options.layout_mode != "grouped" or not groups:
+        return
+    _render_grouped_boundaries(
+        lines,
+        grid_positions,
+        groups,
+        group_order,
+        group_vlan_ids,
+        layout,
+        offset_x,
+        offset_y,
+        options,
+        theme,
+    )
+
+
 def render_svg_isometric(
     edges: list[Edge],
     *,
@@ -156,8 +193,7 @@ def render_svg_isometric(
         options=options,
     )
 
-    out_width = options.width or int(view_width)
-    out_height = options.height or int(view_height)
+    out_width, out_height = _iso_output_size(options, view_width, view_height)
 
     lines = start_svg_document(
         width=view_width,
@@ -169,21 +205,18 @@ def render_svg_isometric(
         defs_prefix="iso",
         iso=True,
     )
-
-    if options.layout_mode == "grouped" and groups:
-        _render_grouped_boundaries(
-            lines,
-            grid_positions,
-            groups,
-            group_order,
-            group_vlan_ids,
-            layout,
-            layout_positions.offset_x,
-            layout_positions.offset_y,
-            options,
-            theme,
-        )
-
+    _render_iso_boundaries_if_needed(
+        lines,
+        options=options,
+        groups=groups,
+        group_order=group_order,
+        group_vlan_ids=group_vlan_ids,
+        grid_positions=grid_positions,
+        layout=layout,
+        offset_x=layout_positions.offset_x,
+        offset_y=layout_positions.offset_y,
+        theme=theme,
+    )
     _render_iso_grid(lines, grid_positions, layout, theme)
     _render_iso_nodes_and_edges(
         lines,

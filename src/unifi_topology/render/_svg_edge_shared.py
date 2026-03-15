@@ -9,16 +9,29 @@ from ..model.topology import Edge
 from .svg_theme import SvgTheme
 
 
-def _vlan_data_attrs(edge: Edge) -> str:
-    """Generate VLAN data attributes for an edge."""
-    attrs = []
-    if edge.vlans:
-        attrs.append(f'data-vlans="{",".join(str(v) for v in edge.vlans)}"')
-    if edge.active_vlans:
-        attrs.append(f'data-active-vlans="{",".join(str(v) for v in edge.active_vlans)}"')
+def _joined_vlans(vlans: tuple[int, ...]) -> str | None:
+    if not vlans:
+        return None
+    return ",".join(str(vlan_id) for vlan_id in vlans)
+
+
+def _edge_vlan_attrs(edge: Edge) -> list[str]:
+    attrs = [
+        f'{attr_name}="{value}"'
+        for attr_name, value in (
+            ("data-vlans", _joined_vlans(edge.vlans)),
+            ("data-active-vlans", _joined_vlans(edge.active_vlans)),
+        )
+        if value is not None
+    ]
     if edge.is_trunk:
         attrs.append('data-trunk="true"')
-    return " ".join(attrs)
+    return attrs
+
+
+def _vlan_data_attrs(edge: Edge) -> str:
+    """Generate VLAN data attributes for an edge."""
+    return " ".join(_edge_vlan_attrs(edge))
 
 
 def _edge_opacity(node_types: dict[str, str], edge: Edge) -> float:

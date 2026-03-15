@@ -14,6 +14,77 @@ import requests
 logger = logging.getLogger(__name__)
 
 
+def _payload_meta(payload: object) -> dict[str, object]:
+    if not isinstance(payload, dict):
+        return {}
+    meta = payload.get("meta", {})
+    return meta if isinstance(meta, dict) else {}
+
+
+def _auth_has_identity(payload: object) -> bool:
+    return isinstance(payload, dict) and ("isSuperAdmin" in payload or "roles" in payload)
+
+
+def _v2_payload_error(payload: object) -> str | None:
+    if not isinstance(payload, dict):
+        return None
+    if not {"errorCode", "error"} & payload.keys():
+        return None
+    message = payload.get("message") or payload.get("error") or "unknown error"
+    return str(message)
+
+
+def _v2_payload_items(path: str, payload: object) -> list[dict[str, object]]:
+    if isinstance(payload, list):
+        return payload
+    if not isinstance(payload, dict):
+        raise UnifiApiError(f"Unexpected response format for {path}")
+    if "data" in payload:
+        return payload["data"]
+    error_message = _v2_payload_error(payload)
+    if error_message is not None:
+        raise UnifiApiError(f"Error response for {path}: {error_message}")
+    return [payload]
+
+
+def _find_policy_by_id(
+    policies: list[dict[str, object]],
+    policy_id: str,
+) -> dict[str, object] | None:
+    return next((policy for policy in policies if policy.get("_id") == policy_id), None)
+
+
+def _missing_policy_ids(
+    policy_pairs: tuple[tuple[str, dict[str, object] | None], ...],
+) -> list[str]:
+    return [policy_id for policy_id, policy in policy_pairs if policy is None]
+
+
+def _require_policy_pair(
+    policies: list[dict[str, object]],
+    policy_id_a: str,
+    policy_id_b: str,
+) -> tuple[dict[str, object], dict[str, object]]:
+    policy_a = _find_policy_by_id(policies, policy_id_a)
+    policy_b = _find_policy_by_id(policies, policy_id_b)
+    missing = _missing_policy_ids(((policy_id_a, policy_a), (policy_id_b, policy_b)))
+    if missing:
+        raise UnifiWriteError(f"Policy not found: {', '.join(missing)}")
+    assert policy_a is not None
+    assert policy_b is not None
+    return policy_a, policy_b
+
+
+def _swap_policy_indexes(
+    policy_a: dict[str, object],
+    policy_b: dict[str, object],
+) -> tuple[dict[str, object], dict[str, object]]:
+    updated_a = dict(policy_a)
+    updated_b = dict(policy_b)
+    updated_a["index"], updated_b["index"] = updated_b["index"], updated_a["index"]
+    return updated_a, updated_b
+
+
 class UnifiError(Exception):
     """Base class for all unifi-topology errors."""
 
@@ -141,10 +212,7 @@ class UnifiClient:
 
     @staticmethod
     def _auth_succeeded(payload: object) -> bool:
-        meta = payload.get("meta", {}) if isinstance(payload, dict) else {}
-        if isinstance(meta, dict) and meta.get("rc") == "ok":
-            return True
-        return isinstance(payload, dict) and ("isSuperAdmin" in payload or "roles" in payload)
+        return _payload_meta(payload).get("rc") == "ok" or _auth_has_identity(payload)
 
     def _csrf_headers(self) -> dict[str, str]:
         if not self._csrf_token:
@@ -207,16 +275,7 @@ class UnifiClient:
 
     @staticmethod
     def _parse_v2_list_payload(path: str, payload: object) -> list[dict[str, object]]:
-        if isinstance(payload, list):
-            return payload
-        if not isinstance(payload, dict):
-            raise UnifiApiError(f"Unexpected response format for {path}")
-        if "data" in payload:
-            return payload["data"]
-        if "errorCode" in payload or "error" in payload:
-            message = payload.get("message") or payload.get("error") or "unknown error"
-            raise UnifiApiError(f"Error response for {path}: {message}")
-        return [payload]
+        return _v2_payload_items(path, payload)
 
     def _get_v2(self, path: str) -> list[dict[str, object]]:
         """GET for V2/Integration API endpoints.
@@ -310,16 +369,7 @@ class UnifiClient:
         """Swap the index (priority) of two firewall policies."""
         path = f"/v2/api/site/{site}/firewall-policies"
         all_policies = self._get_v2(path)
-        policy_a = next((p for p in all_policies if p.get("_id") == policy_id_a), None)
-        policy_b = next((p for p in all_policies if p.get("_id") == policy_id_b), None)
-        if policy_a is None or policy_b is None:
-            missing = [
-                pid for pid, p in [(policy_id_a, policy_a), (policy_id_b, policy_b)] if p is None
-            ]
-            raise UnifiWriteError(f"Policy not found: {', '.join(missing)}")
-        idx_a = policy_a["index"]
-        idx_b = policy_b["index"]
-        policy_a["index"] = idx_b
-        policy_b["index"] = idx_a
-        self._put_v2(f"{path}/{policy_id_a}", policy_a)
-        self._put_v2(f"{path}/{policy_id_b}", policy_b)
+        policy_a, policy_b = _require_policy_pair(all_policies, policy_id_a, policy_id_b)
+        updated_a, updated_b = _swap_policy_indexes(policy_a, policy_b)
+        self._put_v2(f"{path}/{policy_id_a}", updated_a)
+        self._put_v2(f"{path}/{policy_id_b}", updated_b)
