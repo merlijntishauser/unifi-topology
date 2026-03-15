@@ -34,6 +34,10 @@ def _as_int(value: object | None) -> int | None:
 def _as_group_id(value: object | None) -> str | None:
     if value is None or isinstance(value, bool):
         return None
+    return _group_id_string(value)
+
+
+def _group_id_string(value: object) -> str | None:
     if isinstance(value, int):
         return str(value)
     if isinstance(value, str):
@@ -65,7 +69,14 @@ def _coerce_vlan_string(value: str) -> tuple[int, ...]:
     """Parse a comma-separated VLAN string to tuple of ints."""
     if _is_empty_vlan_string(value):
         return ()
-    parts = [part.strip() for part in value.split(",") if part.strip()]
+    return _parsed_vlan_parts(_vlan_string_parts(value))
+
+
+def _vlan_string_parts(value: str) -> list[str]:
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def _parsed_vlan_parts(parts: list[str]) -> tuple[int, ...]:
     parsed = [_as_int(part) for part in parts]
     return tuple(sorted(vlan for vlan in parsed if vlan is not None))
 

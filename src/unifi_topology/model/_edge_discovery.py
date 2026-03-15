@@ -26,10 +26,19 @@ def _uplink_name(
     """Get upstream device name from uplink info."""
     if not uplink:
         return None
-    if uplink.mac:
-        resolved = index.get(normalize_mac(uplink.mac))
-        if resolved:
-            return resolved
+    resolved = _uplink_name_by_mac(uplink, index)
+    if resolved is not None:
+        return resolved
+    return _uplink_name_fallback(uplink, only_unifi=only_unifi)
+
+
+def _uplink_name_by_mac(uplink: UplinkInfo, index: dict[str, str]) -> str | None:
+    if not uplink.mac:
+        return None
+    return index.get(normalize_mac(uplink.mac))
+
+
+def _uplink_name_fallback(uplink: UplinkInfo, *, only_unifi: bool) -> str | None:
     if uplink.name:
         return uplink.name
     if not only_unifi and uplink.mac:

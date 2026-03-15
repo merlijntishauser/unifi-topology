@@ -76,15 +76,9 @@ jobs:
           python -m pip install -e . -c constraints.txt
           python -m pip install -r requirements-dev.txt -c constraints.txt
       - name: Xenon complexity check
-        run: python -m xenon src/unifi_topology --max-absolute B --max-modules A --max-average A
-      - name: Max complexity 10
-        run: |
-          high_complexity=$(python -m radon cc src/unifi_topology -s | grep -E " - C \(| - D \(| - E \(| - F \(" || true)
-          if [ -n "$high_complexity" ]; then
-            echo "Functions with complexity > 10 found:"
-            echo "$high_complexity"
-            exit 1
-          fi
+        run: python -m xenon src/unifi_topology --max-absolute A --max-modules A --max-average A
+      - name: Max complexity 5
+        run: ./scripts/check_complexity.sh 5
 
   audit:
     runs-on: ubuntu-latest

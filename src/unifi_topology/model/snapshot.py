@@ -53,17 +53,36 @@ def _serialize_mapping(values: dict[Any, Any]) -> dict[Any, Any]:
     return {key: _serialize_value(value) for key, value in values.items()}
 
 
-def _serialize_value(value: Any) -> Any:
-    """Recursively serialize a value to JSON-compatible form."""
-    if value is None:
-        return None
-    if isinstance(value, _JSON_SCALARS):
+def _scalar_or_none(value: Any) -> Any:
+    if value is None or isinstance(value, _JSON_SCALARS):
         return value
+    return _UNSERIALIZED
+
+
+def _serialize_collection(value: Any) -> Any:
     if isinstance(value, tuple | list):
         return _serialize_sequence(value)
     if isinstance(value, dict):
         return _serialize_mapping(value)
-    if is_dataclass(value) and not isinstance(value, type):
+    return _UNSERIALIZED
+
+
+def _is_dataclass_instance(value: Any) -> bool:
+    return is_dataclass(value) and not isinstance(value, type)
+
+
+_UNSERIALIZED = object()
+
+
+def _serialize_value(value: Any) -> Any:
+    """Recursively serialize a value to JSON-compatible form."""
+    scalar = _scalar_or_none(value)
+    if scalar is not _UNSERIALIZED:
+        return scalar
+    collection = _serialize_collection(value)
+    if collection is not _UNSERIALIZED:
+        return collection
+    if _is_dataclass_instance(value):
         return _dataclass_to_dict(value)
     return str(value)
 

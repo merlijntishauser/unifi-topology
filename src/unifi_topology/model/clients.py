@@ -66,6 +66,35 @@ def _client_vlans(client: object) -> tuple[int, ...]:
     return (client_vlan,)
 
 
+def _client_edge(
+    device_name: str,
+    name: str,
+    client: object,
+    *,
+    include_ports: bool,
+) -> Edge:
+    is_wireless = not _client_is_wired(client)
+    vlans = _client_vlans(client)
+    return Edge(
+        left=device_name,
+        right=name,
+        label=_client_edge_label(device_name, name, client) if include_ports else None,
+        wireless=is_wireless,
+        channel=_client_channel(client) if is_wireless else None,
+        vlans=vlans,
+        active_vlans=vlans,
+        is_trunk=False,
+        connection=_extract_connection_info(client),
+    )
+
+
+def _add_attachment_key(seen: set[tuple[str, str]], attachment: tuple[str, str]) -> bool:
+    if attachment in seen:
+        return False
+    seen.add(attachment)
+    return True
+
+
 def build_client_edges(
     clients: Iterable[object],
     device_index: dict[str, str],
@@ -83,29 +112,31 @@ def build_client_edges(
         attachment = _client_attachment(client, device_index)
         if attachment is None:
             continue
-        device_name, name = attachment
-        key = (device_name, name)
-        if key in seen:
+        if not _add_attachment_key(seen, attachment):
             continue
-        is_wireless = not _client_is_wired(client)
-        channel = _client_channel(client) if is_wireless else None
-        vlans = _client_vlans(client)
-        connection = _extract_connection_info(client)
-        edges.append(
-            Edge(
-                left=device_name,
-                right=name,
-                label=_client_edge_label(device_name, name, client) if include_ports else None,
-                wireless=is_wireless,
-                channel=channel,
-                vlans=vlans,
-                active_vlans=vlans,
-                is_trunk=False,
-                connection=connection,
-            )
-        )
-        seen.add(key)
+        device_name, name = attachment
+        edges.append(_client_edge(device_name, name, client, include_ports=include_ports))
     return edges
+
+
+def _device_node_types(devices: Iterable[Device]) -> dict[str, str]:
+    return {device.name: classify_device_type(device) for device in devices}
+
+
+def _client_node_types(
+    clients: Iterable[object],
+    *,
+    client_mode: str,
+    only_unifi: bool,
+) -> dict[str, str]:
+    node_types: dict[str, str] = {}
+    for client in clients:
+        if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
+            continue
+        name = client_display_name(client)
+        if name:
+            node_types[name] = classify_client_type(client)
+    return node_types
 
 
 def build_node_type_map(
@@ -116,16 +147,15 @@ def build_node_type_map(
     only_unifi: bool = False,
 ) -> dict[str, str]:
     """Build a map of node names to their types."""
-    node_types: dict[str, str] = {}
-    for device in devices:
-        node_types[device.name] = classify_device_type(device)
+    node_types = _device_node_types(devices)
     if clients:
-        for client in clients:
-            if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
-                continue
-            name = client_display_name(client)
-            if name:
-                node_types[name] = classify_client_type(client)
+        node_types.update(
+            _client_node_types(
+                clients,
+                client_mode=client_mode,
+                only_unifi=only_unifi,
+            )
+        )
     return node_types
 
 

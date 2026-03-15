@@ -29,13 +29,24 @@ def _normalized_device_type(device: object) -> str:
 def _classify_known_device_type(value: str, *, in_gateway_mode: object) -> str | None:
     if value in _GATEWAY_TYPES:
         return "gateway"
-    if value == "ux":
-        return "ap" if in_gateway_mode is False else "gateway"
+    ux_type = _classify_ux_type(value, in_gateway_mode=in_gateway_mode)
+    if ux_type is not None:
+        return ux_type
     if value in _SWITCH_TYPES:
         return "switch"
-    if value in _AP_TYPES or "ap" in value:
+    if _is_ap_type(value):
         return "ap"
     return None
+
+
+def _classify_ux_type(value: str, *, in_gateway_mode: object) -> str | None:
+    if value != "ux":
+        return None
+    return "ap" if in_gateway_mode is False else "gateway"
+
+
+def _is_ap_type(value: str) -> bool:
+    return value in _AP_TYPES or "ap" in value
 
 
 def classify_device_type(device: object) -> str:

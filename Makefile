@@ -22,15 +22,15 @@ typecheck:
 	$(VENV)/pyright
 
 complexity:
-	@echo "=== Cyclomatic Complexity (C+ rated functions) ==="
-	@$(VENV)/radon cc src/unifi_topology -a -nc -s
+	@echo "=== Cyclomatic Complexity (B+ rated functions) ==="
+	@$(VENV)/radon cc src/unifi_topology -a -nb -s
 	@echo ""
 	@echo "=== Maintainability Index (B or lower) ==="
 	@$(VENV)/radon mi src/unifi_topology -s -nb
 	@echo ""
-	@echo "=== Threshold Checks (max function: 10, max module avg: A, overall avg: A) ==="
-	$(VENV)/xenon src/unifi_topology --max-absolute B --max-modules A --max-average A
-	@./scripts/check_complexity.sh 10
+	@echo "=== Threshold Checks (max function: 5, max module avg: A, overall avg: A) ==="
+	$(VENV)/xenon src/unifi_topology --max-absolute A --max-modules A --max-average A
+	@./scripts/check_complexity.sh 5
 
 audit:
 	$(VENV)/pip-audit
@@ -63,8 +63,8 @@ ci:
 	$(VENV)/pyright
 	@echo ""
 	@echo "=== Complexity ==="
-	$(VENV)/xenon src/unifi_topology --max-absolute B --max-modules A --max-average A
-	@./scripts/check_complexity.sh 10
+	$(VENV)/xenon src/unifi_topology --max-absolute A --max-modules A --max-average A
+	@./scripts/check_complexity.sh 5
 	@echo ""
 	@echo "=== Dependency Audit ==="
 	$(VENV)/pip-audit

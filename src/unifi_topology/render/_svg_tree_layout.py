@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from dataclasses import dataclass, field
 
 from ..model.topology import Edge
 from .svg_icons import _TYPE_ORDER
@@ -89,6 +90,70 @@ def _resolve_roots(
     return sorted(roots, key=sort_key)
 
 
+@dataclass
+class _LayoutState:
+    levels: dict[str, int] = field(default_factory=dict)
+    positions_index: dict[str, float] = field(default_factory=dict)
+    visited: set[str] = field(default_factory=set)
+    cursor: int = 0
+
+
+def _leaf_position(state: _LayoutState, node: str) -> float:
+    idx = float(state.cursor)
+    state.cursor += 1
+    state.positions_index[node] = idx
+    return idx
+
+
+def _record_layout_level(state: _LayoutState, node: str, level: int) -> None:
+    state.levels[node] = min(state.levels.get(node, level), level)
+
+
+def _child_position(
+    child: str,
+    level: int,
+    children: dict[str, list[str]],
+    state: _LayoutState,
+) -> float:
+    if child in state.visited:
+        return state.positions_index.get(child, float(state.cursor))
+    return _dfs_position(child, level + 1, children, state)
+
+
+def _child_indices(
+    node: str,
+    level: int,
+    children: dict[str, list[str]],
+    state: _LayoutState,
+) -> list[float]:
+    return [
+        _child_position(child, level, children, state)
+        for child in children.get(node, [])
+    ]
+
+
+def _assign_position(node: str, child_indices: list[float], state: _LayoutState) -> float:
+    if not child_indices:
+        return _leaf_position(state, node)
+    idx = sum(child_indices) / len(child_indices)
+    state.positions_index[node] = idx
+    return idx
+
+
+def _dfs_position(
+    node: str,
+    level: int,
+    children: dict[str, list[str]],
+    state: _LayoutState,
+) -> float:
+    existing = state.positions_index.get(node)
+    if existing is not None:
+        return existing
+    state.visited.add(node)
+    _record_layout_level(state, node, level)
+    return _assign_position(node, _child_indices(node, level, children, state), state)
+
+
 def _layout_positions(
     nodes: set[str],
     children: dict[str, list[str]],
@@ -96,44 +161,13 @@ def _layout_positions(
     roots: list[str],
     sort_key,
 ) -> tuple[dict[str, float], dict[str, int]]:
-    levels: dict[str, int] = {}
-    positions_index: dict[str, float] = {}
-    visited: set[str] = set()
-    cursor = 0
-
-    def dfs(node: str, level: int) -> float:
-        nonlocal cursor
-        if node in positions_index:
-            return positions_index[node]
-        visited.add(node)
-        levels[node] = min(levels.get(node, level), level)
-        child_list = children.get(node, [])
-        if not child_list:
-            idx = float(cursor)
-            cursor += 1
-            positions_index[node] = idx
-            return idx
-        child_indices: list[float] = []
-        for child in child_list:
-            if child in visited:
-                child_indices.append(positions_index.get(child, float(cursor)))
-                continue
-            child_indices.append(dfs(child, level + 1))
-        if not child_indices:
-            idx = float(cursor)
-            cursor += 1
-            positions_index[node] = idx
-            return idx
-        idx = sum(child_indices) / len(child_indices)
-        positions_index[node] = idx
-        return idx
-
+    state = _LayoutState()
     for root in roots:
-        dfs(root, 0)
+        _dfs_position(root, 0, children, state)
     for node in sorted(nodes, key=sort_key):
-        if node not in positions_index:
-            dfs(node, 0)
-    return positions_index, levels
+        if node not in state.positions_index:
+            _dfs_position(node, 0, children, state)
+    return state.positions_index, state.levels
 
 
 def _tree_layout_indices(

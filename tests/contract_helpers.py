@@ -25,23 +25,38 @@ def assert_lldp_entry_contract(entry: object) -> None:
         raise AssertionError("LLDP entry missing port_id")
 
 
-def assert_device_contract(device: object) -> None:
-    if not isinstance(device, dict):
-        raise AssertionError("Device must be a dict")
-    name = device.get("name")
-    mac = device.get("mac")
-    if not isinstance(name, str) or not name.strip():
-        raise AssertionError("Device missing name")
-    if not isinstance(mac, str) or not mac.strip():
-        raise AssertionError("Device missing mac")
+def _require_mapping(value: object, message: str) -> dict[object, object]:
+    if not isinstance(value, dict):
+        raise AssertionError(message)
+    return value
+
+
+def _require_text_field(device: dict[object, object], key: str) -> None:
+    value = device.get(key)
+    if not isinstance(value, str) or not value.strip():
+        raise AssertionError(f"Device missing {key}")
+
+
+def _device_lldp_entries(device: dict[object, object]) -> list[object]:
     lldp_info = device.get("lldp_info") or device.get("lldp") or []
     if not isinstance(lldp_info, list):
         raise AssertionError("Device lldp_info must be a list")
-    for entry in lldp_info:
-        assert_lldp_entry_contract(entry)
+    return lldp_info
+
+
+def _assert_device_port_table(device: dict[object, object]) -> None:
     port_table = device.get("port_table") or []
     if not isinstance(port_table, list):
         raise AssertionError("Device port_table must be a list")
+
+
+def assert_device_contract(device: object) -> None:
+    device_mapping = _require_mapping(device, "Device must be a dict")
+    _require_text_field(device_mapping, "name")
+    _require_text_field(device_mapping, "mac")
+    for entry in _device_lldp_entries(device_mapping):
+        assert_lldp_entry_contract(entry)
+    _assert_device_port_table(device_mapping)
 
 
 def _client_uplink_mac(client: dict) -> str | None:

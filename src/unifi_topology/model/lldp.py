@@ -98,15 +98,18 @@ def _port_label_from_parts(
     name: str | None,
     desc: str | None,
 ) -> str | None:
-    if number is not None and desc:
-        return f"Port {number} ({desc})"
-    if number is not None:
-        return f"Port {number}"
-    if name:
-        return name
+    numbered_label = _numbered_port_label(number, desc)
+    if numbered_label is not None:
+        return numbered_label
+    return name or desc
+
+
+def _numbered_port_label(number: int | None, desc: str | None) -> str | None:
+    if number is None:
+        return None
     if desc:
-        return desc
-    return None
+        return f"Port {number} ({desc})"
+    return f"Port {number}"
 
 
 def local_port_label(entry: LLDPEntry) -> str | None:

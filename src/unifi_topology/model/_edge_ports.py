@@ -20,13 +20,26 @@ def _lldp_candidates(entry: LLDPEntry) -> list[str]:
 def _match_port_by_name(candidates: list[str], port_table: list[PortInfo]) -> int | None:
     """Match port by name/ifname."""
     for candidate in candidates:
-        normalized = candidate.strip().lower()
-        for port in port_table:
-            if port.ifname and port.ifname.strip().lower() == normalized:
-                return port.port_idx
-            if port.name and port.name.strip().lower() == normalized:
-                return port.port_idx
+        matched = _matching_port_idx(candidate.strip().lower(), port_table)
+        if matched is not None:
+            return matched
     return None
+
+
+def _matching_port_idx(normalized: str, port_table: list[PortInfo]) -> int | None:
+    for port in port_table:
+        if normalized in _port_name_candidates(port):
+            return port.port_idx
+    return None
+
+
+def _port_name_candidates(port: PortInfo) -> tuple[str, ...]:
+    values = []
+    if port.ifname:
+        values.append(port.ifname.strip().lower())
+    if port.name:
+        values.append(port.name.strip().lower())
+    return tuple(values)
 
 
 def _match_port_by_number(candidates: list[str], port_table: list[PortInfo]) -> int | None:

@@ -25,11 +25,22 @@ def _format_compact_ports(
     right_port: str | None,
     label: str,
 ) -> str:
-    if left_port and right_port:
-        if left_name:
-            return f"{left_name} {left_port} <-> {right_port}"
-        return f"{left_port} <-> {right_port}"
+    port_pair = _compact_port_pair(left_port, right_port)
+    if port_pair is not None:
+        return _prefixed_port_pair(left_name, port_pair)
     return left_port or right_port or label
+
+
+def _compact_port_pair(left_port: str | None, right_port: str | None) -> str | None:
+    if not left_port or not right_port:
+        return None
+    return f"{left_port} <-> {right_port}"
+
+
+def _prefixed_port_pair(left_name: str | None, port_pair: str) -> str:
+    if left_name:
+        return f"{left_name} {port_pair}"
+    return port_pair
 
 
 @dataclass(frozen=True)

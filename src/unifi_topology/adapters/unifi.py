@@ -95,12 +95,21 @@ def _call_with_retries[T](operation: str, func: Callable[[], T]) -> T:
             return _call_with_timeout(operation, func, timeout)
         except Exception as exc:  # noqa: BLE001 - surface full error after retries
             last_exc = exc
-            logger.warning("Failed %s attempt %d/%d: %s", operation, attempt, attempts, exc)
-            if attempt < attempts and backoff > 0:
-                time.sleep(backoff * attempt)
+            _log_retry_failure(operation, attempt, attempts, exc)
+            _sleep_before_retry(attempt, attempts, backoff)
     if last_exc:
         raise last_exc
     raise RuntimeError(f"Failed {operation}")
+
+
+def _log_retry_failure(operation: str, attempt: int, attempts: int, exc: Exception) -> None:
+    logger.warning("Failed %s attempt %d/%d: %s", operation, attempt, attempts, exc)
+
+
+def _sleep_before_retry(attempt: int, attempts: int, backoff: float) -> None:
+    if attempt >= attempts or backoff <= 0:
+        return
+    time.sleep(backoff * attempt)
 
 
 def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:

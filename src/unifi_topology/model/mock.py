@@ -298,30 +298,67 @@ def _add_port(
     rng: random.Random,
     is_trunk: bool = False,
 ) -> None:
-    # Assign VLAN based on port index for variety
-    vlan_options = [1, 10, 20, 30, 100]
-    native_vlan = vlan_options[port_idx % len(vlan_options)]
-    tagged_vlans: list[int] = []
-    if is_trunk:
-        # Trunk ports carry multiple VLANs
-        tagged_vlans = [v for v in vlan_options if v != native_vlan]
     device["port_table"].append(
-        {
-            "port_idx": port_idx,
-            "name": f"Port {port_idx}",
-            "ifname": f"eth{port_idx}",
-            "is_uplink": False,
-            "poe_enable": poe_enabled,
-            "port_poe": poe_enabled,
-            "poe_class": 4 if poe_enabled else 0,
-            "poe_power": round(rng.uniform(2.0, 6.0), 2) if poe_enabled else 0.0,
-            "poe_good": poe_enabled,
-            "poe_voltage": round(rng.uniform(44.0, 52.0), 1) if poe_enabled else 0.0,
-            "poe_current": round(rng.uniform(0.05, 0.12), 3) if poe_enabled else 0.0,
-            "native_vlan": native_vlan,
-            "tagged_vlans": tagged_vlans,
-        }
+        _port_entry(
+            port_idx,
+            poe_enabled=poe_enabled,
+            rng=rng,
+            is_trunk=is_trunk,
+        )
     )
+
+
+def _port_entry(
+    port_idx: int,
+    *,
+    poe_enabled: bool,
+    rng: random.Random,
+    is_trunk: bool,
+) -> dict[str, Any]:
+    native_vlan = _native_vlan(port_idx)
+    return {
+        "port_idx": port_idx,
+        "name": f"Port {port_idx}",
+        "ifname": f"eth{port_idx}",
+        "is_uplink": False,
+        "native_vlan": native_vlan,
+        "tagged_vlans": _tagged_vlans(native_vlan, is_trunk=is_trunk),
+        **_poe_port_fields(poe_enabled=poe_enabled, rng=rng),
+    }
+
+
+def _native_vlan(port_idx: int) -> int:
+    vlan_options = [1, 10, 20, 30, 100]
+    return vlan_options[port_idx % len(vlan_options)]
+
+
+def _tagged_vlans(native_vlan: int, *, is_trunk: bool) -> list[int]:
+    if not is_trunk:
+        return []
+    vlan_options = [1, 10, 20, 30, 100]
+    return [vlan for vlan in vlan_options if vlan != native_vlan]
+
+
+def _poe_port_fields(*, poe_enabled: bool, rng: random.Random) -> dict[str, Any]:
+    if not poe_enabled:
+        return {
+            "poe_enable": False,
+            "port_poe": False,
+            "poe_class": 0,
+            "poe_power": 0.0,
+            "poe_good": False,
+            "poe_voltage": 0.0,
+            "poe_current": 0.0,
+        }
+    return {
+        "poe_enable": True,
+        "port_poe": True,
+        "poe_class": 4,
+        "poe_power": round(rng.uniform(2.0, 6.0), 2),
+        "poe_good": True,
+        "poe_voltage": round(rng.uniform(44.0, 52.0), 1),
+        "poe_current": round(rng.uniform(0.05, 0.12), 3),
+    }
 
 
 def _next_core_port(state: _MockState) -> int:

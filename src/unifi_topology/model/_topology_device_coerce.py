@@ -8,8 +8,8 @@ from collections.abc import Iterable
 from . import _topology_port_coerce
 from ._raw import RawRecord
 from .helpers import as_list, get_field
-from .lldp import coerce_lldp
-from .topology import Device, DeviceSource, UplinkInfo
+from .lldp import LLDPEntry, coerce_lldp
+from .topology import Device, DeviceSource, PortInfo, UplinkInfo
 
 logger = logging.getLogger(__name__)
 
@@ -130,32 +130,52 @@ def _device_identity(device: DeviceSource) -> tuple[str, str]:
     return str(name), str(mac)
 
 
+def _coerced_lldp_info(
+    device: DeviceSource,
+    name: str,
+    uplink: UplinkInfo | None,
+    last_uplink: UplinkInfo | None,
+) -> list[LLDPEntry]:
+    return [coerce_lldp(entry) for entry in _resolve_lldp_info(device, name, uplink, last_uplink)]
+
+
+def _device_tables(
+    device: DeviceSource,
+    network_vlan_map: dict[str, int] | None,
+) -> tuple[list[PortInfo], dict[int, bool], list[dict[str, object]]]:
+    return (
+        _topology_port_coerce._coerce_port_table(device, network_vlan_map),
+        _topology_port_coerce._poe_ports_from_device(device, network_vlan_map),
+        _topology_port_coerce._coerce_network_table(device),
+    )
+
+
+def _device_text(value: object | None) -> str:
+    return str(value or "")
+
+
 def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None = None) -> Device:
     name, mac = _device_identity(device)
     model_name, model, ip, dev_type, version = _device_display_fields(device)
     in_gateway_mode = _gateway_mode(device)
-
     uplink, last_uplink = _uplink_info(device)
-    coerced_lldp = [
-        coerce_lldp(entry)
-        for entry in _resolve_lldp_info(device, name, uplink, last_uplink)
-    ]
+    port_table, poe_ports, network_table = _device_tables(device, network_vlan_map)
 
     return Device(
         name=name,
-        model_name=str(model_name or ""),
-        model=str(model or ""),
+        model_name=_device_text(model_name),
+        model=_device_text(model),
         mac=mac,
-        ip=str(ip or ""),
-        type=str(dev_type or ""),
-        lldp_info=coerced_lldp,
-        port_table=_topology_port_coerce._coerce_port_table(device, network_vlan_map),
-        poe_ports=_topology_port_coerce._poe_ports_from_device(device, network_vlan_map),
+        ip=_device_text(ip),
+        type=_device_text(dev_type),
+        lldp_info=_coerced_lldp_info(device, name, uplink, last_uplink),
+        port_table=port_table,
+        poe_ports=poe_ports,
         uplink=uplink,
         last_uplink=last_uplink,
-        version=str(version or ""),
+        version=_device_text(version),
         in_gateway_mode=in_gateway_mode,
-        network_table=_topology_port_coerce._coerce_network_table(device),
+        network_table=network_table,
     )
 
 
