@@ -30,11 +30,7 @@ STORE_BASE = "https://store.ui.com"
 STORE_HOME = f"{STORE_BASE}/us/en"
 FIRMWARE_API = "https://fw-update.ubnt.com/api/firmware-latest"
 OUTPUT_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "src"
-    / "unifi_topology"
-    / "assets"
-    / "models.json"
+    Path(__file__).resolve().parent.parent / "src" / "unifi_topology" / "assets" / "models.json"
 )
 
 STORE_CATEGORIES = [
@@ -235,10 +231,7 @@ def _fetch_category(
 def _fetch_product_detail(
     session: requests.Session, build_id: str, slug: str, category: str
 ) -> dict[str, Any] | None:
-    url = (
-        f"{STORE_BASE}/_next/data/{build_id}/us/en"
-        f"/category/{category}/products/{slug}.json"
-    )
+    url = f"{STORE_BASE}/_next/data/{build_id}/us/en/category/{category}/products/{slug}.json"
     params = {
         "store": "us",
         "language": "en",
@@ -249,9 +242,7 @@ def _fetch_product_detail(
         resp = session.get(url, params=params, timeout=30)
         resp.raise_for_status()
         data = resp.json()
-        products = (
-            data.get("pageProps", {}).get("collection", {}).get("products", [])
-        )
+        products = data.get("pageProps", {}).get("collection", {}).get("products", [])
         return products[0] if products else None
     except (requests.RequestException, IndexError, KeyError):
         return None
@@ -342,9 +333,7 @@ def _enrich_with_docs(
             entry["docs"] = docs
 
 
-def _build_store_models(
-    session: requests.Session, build_id: str
-) -> dict[str, ModelEntry]:
+def _build_store_models(session: requests.Session, build_id: str) -> dict[str, ModelEntry]:
     """Fetch all store products and build {sku: entry} map."""
     models: dict[str, ModelEntry] = {}
     slug_to_category: dict[str, str] = {}
@@ -360,9 +349,7 @@ def _build_store_models(
     return models
 
 
-def _find_store_entry(
-    models: dict[str, ModelEntry], platform: str
-) -> ModelEntry | None:
+def _find_store_entry(models: dict[str, ModelEntry], platform: str) -> ModelEntry | None:
     """Find existing store entry for a firmware platform code."""
     if platform in models:
         return models[platform]
@@ -373,9 +360,7 @@ def _find_store_entry(
     return next((v for k, v in models.items() if k.lower() == lower), None)
 
 
-def _add_firmware_entry(
-    models: dict[str, ModelEntry], platform: str, changelog_url: str
-) -> bool:
+def _add_firmware_entry(models: dict[str, ModelEntry], platform: str, changelog_url: str) -> bool:
     """Add a firmware platform entry, linking to store data if available."""
     store = _find_store_entry(models, platform)
     if store is None:

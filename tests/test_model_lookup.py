@@ -96,7 +96,5 @@ def test_firmware_code_fallback_in_coercion():
     """Firmware platform codes should also resolve in coercion."""
     from unifi_topology.model.device_stats_coerce import normalize_device_stats
 
-    result = normalize_device_stats(
-        [{"mac": "aa:bb:cc:dd:ee:ff", "model": "U6M"}]
-    )
+    result = normalize_device_stats([{"mac": "aa:bb:cc:dd:ee:ff", "model": "U6M"}])
     assert result[0].model_name == "Access Point U6 Mesh"
