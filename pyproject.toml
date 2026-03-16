@@ -29,6 +29,7 @@ dependencies = [
   "python-dotenv>=1.0,<2",
   "PyYAML>=6.0,<7",
   "dnspython>=2.7,<3",
+  "Jinja2>=3.1,<4",
 ]
 
 [project.urls]
@@ -110,6 +111,7 @@ package-dir = {"" = "src"}
 [tool.setuptools.package-data]
 "unifi_topology" = [
   "py.typed",
+  "render/templates/*.j2",
   "assets/icons/*.svg",
   "assets/icons/isometric/*.svg",
   "assets/icons/isometric/ISOPACKS_LICENSE",
