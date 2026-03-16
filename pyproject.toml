@@ -118,6 +118,7 @@ package-dir = {"" = "src"}
   "assets/themes/*.yaml",
   "assets/fonts/*.woff2",
   "assets/fonts/*_LICENSE",
+  "assets/*.json",
 ]
 
 [tool.setuptools.packages.find]

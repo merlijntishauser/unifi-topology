@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [Unreleased]
+
+## [1.2.3] (2026-03-16)
+
+### Fixed
+- Incomplete URL substring sanitization in test suite (CodeQL #193)
+- `models.json` not included in PyPI wheel, causing model name lookup to silently return empty (fixes #22)
+
 ## [1.2.2] (2026-03-15)
 
 ### Added
@@ -109,7 +117,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.1.1...v1.2.0
