@@ -1,7 +1,8 @@
 """Look up friendly product names for UniFi model codes.
 
 Uses the bundled ``assets/models.json`` file (scraped from the official
-Ubiquiti store) to resolve short model codes to human-readable names.
+Ubiquiti store and firmware API) to resolve model codes to human-readable
+names, store URLs, documentation links, and firmware changelogs.
 """
 
 from __future__ import annotations
@@ -14,10 +15,10 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 _MODELS_PATH = Path(__file__).resolve().parent.parent / "assets" / "models.json"
-_cache: dict[str, dict[str, str]] | None = None
+_cache: dict[str, dict[str, Any]] | None = None
 
 
-def _load_models() -> dict[str, dict[str, str]]:
+def _load_models() -> dict[str, dict[str, Any]]:
     """Load the model lookup table (cached after first call)."""
     global _cache  # noqa: PLW0603
     if _cache is not None:
@@ -31,21 +32,27 @@ def _load_models() -> dict[str, dict[str, str]]:
     return _cache or {}
 
 
-def lookup_model_name(model: str) -> str:
-    """Return the friendly product name for a UniFi model code.
-
-    Falls back to case-insensitive matching.  Returns an empty string
-    if no match is found.
-    """
+def _find_entry(model: str) -> dict[str, Any] | None:
+    """Find the model entry, trying exact then case-insensitive match."""
     models = _load_models()
     entry = models.get(model)
     if entry is not None:
-        return entry["name"]
+        return entry
     lower = model.lower()
     for key, value in models.items():
         if key.lower() == lower:
-            return value["name"]
-    return ""
+            return value
+    return None
+
+
+def lookup_model_name(model: str) -> str:
+    """Return the friendly product name for a UniFi model code.
+
+    Accepts both store SKUs (``U6-Mesh``) and firmware platform codes
+    (``U6M``).  Returns an empty string if no match is found.
+    """
+    entry = _find_entry(model)
+    return entry["name"] if entry else ""
 
 
 def lookup_model_url(model: str) -> str:
@@ -53,12 +60,24 @@ def lookup_model_url(model: str) -> str:
 
     Returns an empty string if no match is found.
     """
-    models = _load_models()
-    entry = models.get(model)
-    if entry is not None:
-        return entry.get("url", "")
-    lower = model.lower()
-    for key, value in models.items():
-        if key.lower() == lower:
-            return value.get("url", "")
-    return ""
+    entry = _find_entry(model)
+    return entry.get("url", "") if entry else ""
+
+
+def lookup_model_docs(model: str) -> dict[str, str]:
+    """Return documentation links for a UniFi model code.
+
+    Returns a dict with keys like ``datasheet`` and ``guide``,
+    or an empty dict if no documentation is available.
+    """
+    entry = _find_entry(model)
+    return entry.get("docs", {}) if entry else {}
+
+
+def lookup_firmware_changelog(model: str) -> str:
+    """Return the firmware release notes URL for a UniFi model code.
+
+    Returns an empty string if no changelog is available.
+    """
+    entry = _find_entry(model)
+    return entry.get("firmware_changelog", "") if entry else ""

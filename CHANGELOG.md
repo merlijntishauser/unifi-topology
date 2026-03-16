@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [Unreleased]
+## [1.2.4] (2026-03-16)
+
+### Added
+- Model lookup now resolves firmware platform codes (e.g. `U6M`, `UDMPRO`) in addition to store SKUs (fixes #23)
+- `lookup_model_docs()` and `lookup_firmware_changelog()` for documentation and release notes links
+- Scraper extended to cross-reference the official Ubiquiti firmware API with the store, including datasheet and firmware changelog URLs
 
 ## [1.2.3] (2026-03-16)
 

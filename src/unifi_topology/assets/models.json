@@ -1,17 +1,31 @@
 {
   "_meta": {
-    "source": "https://store.ui.com",
-    "scraped_at": "2026-03-15T22:14:27.718968+00:00",
-    "description": "UniFi device model codes to friendly names, scraped from the official Ubiquiti store."
+    "source": "https://store.ui.com, https://fw-update.ubnt.com/api/firmware-latest",
+    "scraped_at": "2026-03-16T10:49:09.096362+00:00",
+    "description": "UniFi device model codes to friendly names. Scraped from the official Ubiquiti store and firmware API."
   },
   "models": {
+    "BZ2": {
+      "name": "UAP",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3a44dd11-6c86-45ef-8d4e-5dbb91349ea7/changelog"
+    },
+    "BZ2LR": {
+      "name": "UAP-LR",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bc2689b1-eaab-469c-b14d-f9e7677ae4ec/changelog"
+    },
     "CK-Enterprise": {
       "name": "CloudKey Enterprise",
-      "url": "https://store.ui.com/us/en/products/cloud-key-enterprise"
+      "url": "https://store.ui.com/us/en/products/cloud-key-enterprise",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ck-enterprise"
+      }
     },
     "E7": {
       "name": "Access Point E7",
-      "url": "https://store.ui.com/us/en/products/e7"
+      "url": "https://store.ui.com/us/en/products/e7",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/e7/#index"
+      }
     },
     "E7-Audience-Indoor": {
       "name": "Access Point E7 Audience Indoor",
@@ -47,15 +61,45 @@
     },
     "ECS-Aggregation": {
       "name": "Switch Enterprise Campus Aggregation",
-      "url": "https://store.ui.com/us/en/products/ecs-aggregation"
+      "url": "https://store.ui.com/us/en/products/ecs-aggregation",
+      "docs": {
+        "guide": "https://ui.com/qig/ecs-aggregation"
+      }
     },
     "EFG": {
       "name": "Enterprise Fortress Gateway",
-      "url": "https://store.ui.com/us/en/products/efg"
+      "url": "https://store.ui.com/us/en/products/efg",
+      "docs": {
+        "guide": "https://ui.com/qig/efg"
+      }
     },
     "Official UniFi Hosting": {
       "name": "Official UniFi Hosting",
       "url": "https://store.ui.com/us/en/products/unifi-hosting"
+    },
+    "S216150": {
+      "name": "US-16-150W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c377bc2b-5cca-4b17-8a61-99023a46241e/changelog"
+    },
+    "S224250": {
+      "name": "US-24-250W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e0cfa6ba-dc78-4689-b471-176289efd503/changelog"
+    },
+    "S224500": {
+      "name": "US-24-500W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/77f8ec77-8083-45cf-ac96-cceb7d73d9a0/changelog"
+    },
+    "S248500": {
+      "name": "US-48-500W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5d1a5f66-6b44-4a17-865d-46832f4d20e4/changelog"
+    },
+    "S248750": {
+      "name": "US-48-750W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/68d2b436-9370-4d6c-a3c8-149517696235/changelog"
+    },
+    "S28150": {
+      "name": "US-8-150W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d8733872-0752-43a0-a018-c36c2d565914/changelog"
     },
     "U-LTE": {
       "name": "UniFi LTE Backup",
@@ -65,6 +109,26 @@
       "name": "UniFi LTE Backup Pro",
       "url": "https://store.ui.com/us/en/products/u-lte-backup-pro"
     },
+    "U2HSR": {
+      "name": "UAP-Outdoor+",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/486b88e1-23e7-438d-b6e3-8f6bdfe3ca8a/changelog"
+    },
+    "U2IW": {
+      "name": "UAP-IW",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/930b5619-cb2c-4075-b62b-135fd094c9ee/changelog"
+    },
+    "U2Lv2": {
+      "name": "UAP-LR",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b5129be5-10e6-4076-8d8a-ac7f4c06891e/changelog"
+    },
+    "U2O": {
+      "name": "UAP-Outdoor",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d692a802-d636-4c23-9841-97f1d0fcd003/changelog"
+    },
+    "U2Sv2": {
+      "name": "UAP",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7c4d47da-9d61-4dd7-91a1-8f6afebd2865/changelog"
+    },
     "U5G-Max": {
       "name": "UniFi 5G Max",
       "url": "https://store.ui.com/us/en/products/u5g-max"
@@ -73,125 +137,540 @@
       "name": "UniFi 5G Max Outdoor",
       "url": "https://store.ui.com/us/en/products/u5g-max-outdoor"
     },
+    "U5O": {
+      "name": "UAP-Outdoor5",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/235b1693-b45d-411c-acf6-b610c8a5d315/changelog"
+    },
     "U6-Enterprise": {
       "name": "Access Point U6 Enterprise",
-      "url": "https://store.ui.com/us/en/products/u6-enterprise"
+      "url": "https://store.ui.com/us/en/products/u6-enterprise",
+      "docs": {
+        "guide": "https://dl.ubnt.com/qig/u6-enterprise",
+        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
+      }
     },
     "U6-Enterprise-IW": {
       "name": "Access Point U6 Enterprise In-Wall",
-      "url": "https://store.ui.com/us/en/products/u6-enterprise-iw"
+      "url": "https://store.ui.com/us/en/products/u6-enterprise-iw",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6-enterprise-iw"
+      }
     },
     "U6-Extender-US": {
       "name": "Access Point U6 Extender",
-      "url": "https://store.ui.com/us/en/products/u6-extender"
+      "url": "https://store.ui.com/us/en/products/u6-extender",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6-extender",
+        "datasheet": "https://dl.ui.com/ds/u6-extender_ds.pdf"
+      }
     },
     "U6-IW": {
       "name": "Access Point U6 In-Wall",
-      "url": "https://store.ui.com/us/en/products/u6-iw"
+      "url": "https://store.ui.com/us/en/products/u6-iw",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6-iw"
+      }
     },
     "U6-Mesh": {
       "name": "Access Point U6 Mesh",
-      "url": "https://store.ui.com/us/en/products/u6-mesh"
+      "url": "https://store.ui.com/us/en/products/u6-mesh",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
+        "guide": "https://dl.ui.com/qig/u6-mesh"
+      }
     },
     "U6-Mesh-Pro": {
       "name": "Access Point U6 Mesh Pro",
-      "url": "https://store.ui.com/us/en/products/u6-mesh-pro"
+      "url": "https://store.ui.com/us/en/products/u6-mesh-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u6-mesh-pro"
+      }
     },
     "U6-PLUS": {
       "name": "Access Point U6 Plus",
-      "url": "https://store.ui.com/us/en/products/u6-plus"
+      "url": "https://store.ui.com/us/en/products/u6-plus",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6+"
+      }
     },
     "U6-Pro": {
       "name": "Access Point U6 Pro",
-      "url": "https://store.ui.com/us/en/products/u6-pro"
+      "url": "https://store.ui.com/us/en/products/u6-pro",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/u6-pro_ds.pdf",
+        "guide": "https://dl.ui.com/qig/u6-pro"
+      }
+    },
+    "U6ENT": {
+      "name": "Access Point U6 Enterprise",
+      "url": "https://store.ui.com/us/en/products/u6-enterprise",
+      "docs": {
+        "guide": "https://dl.ubnt.com/qig/u6-enterprise",
+        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/53dba281-bb41-4481-892b-c2786b0c0434/changelog"
+    },
+    "U6ENTIW": {
+      "name": "Access Point U6 Enterprise In-Wall",
+      "url": "https://store.ui.com/us/en/products/u6-enterprise-iw",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6-enterprise-iw"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0a0a482d-3c38-4128-9e13-451d0602e6b1/changelog"
+    },
+    "U6EXT": {
+      "name": "U6-Extender",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cf580af7-d60c-4df3-885b-ba3285cd31ff/changelog"
+    },
+    "U6IW": {
+      "name": "Access Point U6 In-Wall",
+      "url": "https://store.ui.com/us/en/products/u6-iw",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6-iw"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4640c65b-3bb0-4844-943b-b2103ecd4bf9/changelog"
+    },
+    "U6M": {
+      "name": "Access Point U6 Mesh",
+      "url": "https://store.ui.com/us/en/products/u6-mesh",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
+        "guide": "https://dl.ui.com/qig/u6-mesh"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/14474afe-bf84-4c5d-8aed-5630d9b4108f/changelog"
+    },
+    "U6MP": {
+      "name": "Access Point U6 Mesh Pro",
+      "url": "https://store.ui.com/us/en/products/u6-mesh-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u6-mesh-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/28fd1f0a-61bb-4651-8198-0c4e6414cff4/changelog"
     },
     "U7-IW": {
       "name": "Access Point U7 In-Wall",
-      "url": "https://store.ui.com/us/en/products/u7-iw"
+      "url": "https://store.ui.com/us/en/products/u7-iw",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-iw"
+      }
     },
     "U7-LR": {
       "name": "Access Point U7 Long-Range",
-      "url": "https://store.ui.com/us/en/products/u7-lr"
+      "url": "https://store.ui.com/us/en/products/u7-lr",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lr"
+      }
     },
     "U7-Lite": {
       "name": "Access Point U7 Lite",
-      "url": "https://store.ui.com/us/en/products/u7-lite"
+      "url": "https://store.ui.com/us/en/products/u7-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lite"
+      }
     },
     "U7-Mesh": {
       "name": "Access Point U7 Mesh",
-      "url": "https://store.ui.com/us/en/products/u7-mesh"
+      "url": "https://store.ui.com/us/en/products/u7-mesh",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-mesh"
+      }
     },
     "U7-Outdoor": {
       "name": "Access Point U7 Outdoor",
-      "url": "https://store.ui.com/us/en/products/u7-outdoor"
+      "url": "https://store.ui.com/us/en/products/u7-outdoor",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-outdoor"
+      }
     },
     "U7-Pro": {
       "name": "Access Point U7 Pro",
-      "url": "https://store.ui.com/us/en/products/u7-pro"
+      "url": "https://store.ui.com/us/en/products/u7-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro"
+      }
     },
     "U7-Pro-Max": {
       "name": "Access Point U7 Pro Max",
-      "url": "https://store.ui.com/us/en/products/u7-pro-max"
+      "url": "https://store.ui.com/us/en/products/u7-pro-max",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-max"
+      }
     },
     "U7-Pro-Outdoor-US": {
       "name": "Access Point U7 Pro Outdoor",
-      "url": "https://store.ui.com/us/en/products/u7-pro-outdoor-us"
+      "url": "https://store.ui.com/us/en/products/u7-pro-outdoor-us",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-outdoor"
+      }
     },
     "U7-Pro-Wall": {
       "name": "Access Point U7 Pro Wall",
-      "url": "https://store.ui.com/us/en/products/u7-pro-wall"
+      "url": "https://store.ui.com/us/en/products/u7-pro-wall",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-wall"
+      }
     },
     "U7-Pro-XG": {
       "name": "Access Point U7 Pro XG",
-      "url": "https://store.ui.com/us/en/products/u7-pro-xg"
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u7-pro-xg/#index"
+      }
     },
     "U7-Pro-XG-Wall": {
       "name": "Access Point U7 Pro XG Wall",
-      "url": "https://store.ui.com/us/en/products/u7-pro-xg-wall"
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg-wall",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-xg-wall"
+      }
     },
     "U7-Pro-XGS": {
       "name": "Access Point U7 Pro XGS",
-      "url": "https://store.ui.com/us/en/products/u7-pro-xgs"
+      "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      }
+    },
+    "U7EDU": {
+      "name": "Access Point U7 Lite",
+      "url": "https://store.ui.com/us/en/products/u7-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lite"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/eff48bc4-6824-46a4-b700-ae6d7d402949/changelog"
+    },
+    "U7HD": {
+      "name": "UAP-HD",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/20124be7-84e0-4e5c-8ec5-c6397a80c06a/changelog"
+    },
+    "U7IW": {
+      "name": "Access Point U7 In-Wall",
+      "url": "https://store.ui.com/us/en/products/u7-iw",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-iw"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e8329e61-c3c2-449f-bf91-4d45da028b8c/changelog"
+    },
+    "U7IWP": {
+      "name": "Access Point U7 Pro Wall",
+      "url": "https://store.ui.com/us/en/products/u7-pro-wall",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-wall"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/97f2e8ac-4896-455f-9c83-be0cbaef38c9/changelog"
+    },
+    "U7LR": {
+      "name": "Access Point U7 Long-Range",
+      "url": "https://store.ui.com/us/en/products/u7-lr",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lr"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba2d5b45-dd0a-4075-bcd5-7befa6e14399/changelog"
+    },
+    "U7LT": {
+      "name": "U6+",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f547b5e0-5951-46f5-bde8-21c4e792965a/changelog"
+    },
+    "U7MP": {
+      "name": "Access Point U7 Pro Max",
+      "url": "https://store.ui.com/us/en/products/u7-pro-max",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-max"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/18e7f970-2f2d-4945-b3c8-6ec0bf37c19f/changelog"
+    },
+    "U7MSH": {
+      "name": "Access Point U7 Mesh",
+      "url": "https://store.ui.com/us/en/products/u7-mesh",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-mesh"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6fbd6ac5-a433-4dd4-901a-c153aca259e5/changelog"
+    },
+    "U7NHD": {
+      "name": "UAP-nanoHD",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3893b740-69a2-41ef-9e9a-7129e1f5fbb2/changelog"
+    },
+    "U7P": {
+      "name": "Access Point U6 Pro",
+      "url": "https://store.ui.com/us/en/products/u6-pro",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/u6-pro_ds.pdf",
+        "guide": "https://dl.ui.com/qig/u6-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/62a146a0-d8dd-4161-a291-a74fd562b9ce/changelog"
+    },
+    "U7PG2": {
+      "name": "Access Point U7 Pro XG",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u7-pro-xg/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5464c424-a775-4715-8bbc-d84602f55445/changelog"
+    },
+    "U7PIW": {
+      "name": "Access Point U7 Pro XG Wall",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xg-wall",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro-xg-wall"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/277a7dcb-9eac-40af-b51b-e662b0fa7760/changelog"
+    },
+    "U7PRO": {
+      "name": "Access Point U7 Pro",
+      "url": "https://store.ui.com/us/en/products/u7-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/01651e48-bab6-45a8-9c12-4d96d7ffe0ab/changelog"
+    },
+    "U7PROMAX": {
+      "name": "Access Point U7 Pro XGS",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/04b2a329-aba9-445f-9680-be61169e604b/changelog"
+    },
+    "U7SHD": {
+      "name": "UAP-SHD",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/589b4cf6-d20e-40f4-9e6b-1e7212de27b1/changelog"
+    },
+    "U7UKU": {
+      "name": "Swiss Army Knife",
+      "url": "https://store.ui.com/us/en/products/uk-ultra",
+      "docs": {
+        "guide": "https://ui.com/qig/uk-ultra"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/861f05b8-2de4-4bf7-8352-c33eae32f694/changelog"
     },
     "UACC-Flex-Utility-Pro": {
       "name": "Flex Utility Pro",
-      "url": "https://store.ui.com/us/en/products/uacc-flex-utility-pro"
+      "url": "https://store.ui.com/us/en/products/uacc-flex-utility-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/uacc-flex-utility-pro"
+      }
+    },
+    "UACCMPOEAF": {
+      "name": "U-PoE-AF",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ff2cf20-8ac4-453e-8114-033a8f76e404/changelog"
+    },
+    "UAE6": {
+      "name": "Access Point E7",
+      "url": "https://store.ui.com/us/en/products/e7",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/e7/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b285a7a5-4d31-4e00-9c24-3fcb9bb7fea3/changelog"
+    },
+    "UAIW6": {
+      "name": "Access Point U7 In-Wall",
+      "url": "https://store.ui.com/us/en/products/u7-iw",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-iw"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/308b64b9-bc5c-4844-97a3-da015c55f48a/changelog"
+    },
+    "UAL6": {
+      "name": "Access Point U7 Pro",
+      "url": "https://store.ui.com/us/en/products/u7-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5729f8c9-394a-4ad7-952d-cebedcc030ca/changelog"
+    },
+    "UALR6": {
+      "name": "Access Point U7 Long-Range",
+      "url": "https://store.ui.com/us/en/products/u7-lr",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lr"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9f61c2cb-ca6b-43e2-998e-38efce5ba231/changelog"
+    },
+    "UALR6v2": {
+      "name": "Access Point U7 Long-Range",
+      "url": "https://store.ui.com/us/en/products/u7-lr",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lr"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/878e3366-0de2-4d37-8bd0-7b4399002215/changelog"
+    },
+    "UALRPL6": {
+      "name": "Access Point U7 Pro XGS",
+      "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cb7506e7-9469-4f48-94d7-e735d355e829/changelog"
+    },
+    "UAM6": {
+      "name": "Access Point U7 Mesh",
+      "url": "https://store.ui.com/us/en/products/u7-mesh",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-mesh"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/12d5a387-96f7-4330-80b6-16034487cf86/changelog"
     },
     "UAP-AC-M": {
       "name": "Access Point AC Mesh",
-      "url": "https://store.ui.com/us/en/products/uap-ac-mesh"
+      "url": "https://store.ui.com/us/en/products/uap-ac-mesh",
+      "docs": {
+        "datasheet": "https://www.ui.com/downloads/datasheets/unifi/UniFi_AC_Mesh_DS.pdf",
+        "guide": "https://dl.ui.com/qig/uap-ac-m/#index"
+      }
     },
     "UAP-AC-PRO": {
       "name": "Access Point AC Pro",
-      "url": "https://store.ui.com/us/en/products/uap-ac-pro"
+      "url": "https://store.ui.com/us/en/products/uap-ac-pro",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/uap-ac-pro"
+      }
+    },
+    "UAP6MP": {
+      "name": "Access Point U6 Mesh Pro",
+      "url": "https://store.ui.com/us/en/products/u6-mesh-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/u6-mesh-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7063ccd6-22c1-496e-aa51-ee4e0ed6b03e/changelog"
+    },
+    "UAPA693": {
+      "name": "UAPA693",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c9472971-bb24-4113-90e6-03721b79bd27/changelog"
+    },
+    "UAPA697": {
+      "name": "UAPA697",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f2396b29-976f-4c75-8112-12372766300e/changelog"
+    },
+    "UAPA698": {
+      "name": "UAPA698",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/af1064c4-c318-46dd-aa63-eb93a410b3c9/changelog"
+    },
+    "UAPA699": {
+      "name": "UAPA699",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1813e3cd-b8e2-464b-9d44-0ab80e4da9e2/changelog"
+    },
+    "UAPA69E": {
+      "name": "UAPA69E",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a9694b21-7331-4bdf-9b0e-e7f1c230b8e8/changelog"
+    },
+    "UAPA6A4": {
+      "name": "UAPA6A4",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5bed9ae0-5aa1-42f0-a5af-b73a9bc90060/changelog"
+    },
+    "UAPA6A5": {
+      "name": "UAPA6A5",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cd12565c-46fd-4027-8f4a-e5480992dc51/changelog"
+    },
+    "UAPA6A6": {
+      "name": "UAPA6A6",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6e299c36-1a5a-4d22-ab21-a36ee31926c1/changelog"
+    },
+    "UAPA6A9": {
+      "name": "UAPA6A9",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a7bb4817-2df5-443d-b3c2-caf0c968203b/changelog"
+    },
+    "UAPA6AB": {
+      "name": "UAPA6AB",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e7bc63c6-cd26-48e7-8139-e66a6b0b358d/changelog"
+    },
+    "UAPA6AC": {
+      "name": "UAPA6AC",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3659cd1a-43a6-43ae-a6f8-282685ae1358/changelog"
+    },
+    "UAPA6AE": {
+      "name": "UAPA6AE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2aec6028-4d0c-44f0-a4f7-13ebece90829/changelog"
+    },
+    "UAPA6AF": {
+      "name": "UAPA6AF",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c27da21-11f3-4ba4-96ba-fb4e984ac805/changelog"
+    },
+    "UAPA6B0": {
+      "name": "UAPA6B0",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/074a9230-2a39-4156-ad4f-08d1d32dcfe0/changelog"
+    },
+    "UAPA6B1": {
+      "name": "UAPA6B1",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/88e3d401-e7a7-4c61-9bc8-852ad9c45b45/changelog"
+    },
+    "UAPA6B3": {
+      "name": "UAPA6B3",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/42e39de7-9322-4cc4-8c13-57547c554a4d/changelog"
+    },
+    "UAPA6BA": {
+      "name": "UAPA6BA",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/963a07db-b8e0-41a3-a84d-9cc6d488c45e/changelog"
+    },
+    "UAPA6BC": {
+      "name": "UAPA6BC",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fcce3b05-09fa-4f66-8ad4-fcdbed402ac9/changelog"
+    },
+    "UAPA6BE": {
+      "name": "UAPA6BE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/08f3606f-a4f3-4118-b84f-c4d778575379/changelog"
+    },
+    "UAPL6": {
+      "name": "U6+",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/940c8beb-8127-4923-a30d-559c0341929d/changelog"
     },
     "UBB": {
       "name": "Building-to-Building Bridge",
-      "url": "https://store.ui.com/us/en/products/ubb"
+      "url": "https://store.ui.com/us/en/products/ubb",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ubb/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a7dd55e1-126f-4205-b6cf-b7110fde2347/changelog"
     },
     "UBB-XG": {
       "name": "Building-to-Building Bridge XG",
-      "url": "https://store.ui.com/us/en/products/ubb-xg"
+      "url": "https://store.ui.com/us/en/products/ubb-xg",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ubb-xg"
+      }
+    },
+    "UBBXG": {
+      "name": "Building-to-Building Bridge XG",
+      "url": "https://store.ui.com/us/en/products/ubb-xg",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ubb-xg"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1c4761aa-d7b4-47bd-a331-b08655b613a3/changelog"
     },
     "UC-Cast-Lite": {
       "name": "Display Cast Lite",
-      "url": "https://store.ui.com/us/en/products/uc-cast-lite"
+      "url": "https://store.ui.com/us/en/products/uc-cast-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/uc-cast-lite"
+      }
     },
     "UC-Cast-Pro": {
       "name": "Display Cast Pro",
-      "url": "https://store.ui.com/us/en/products/uc-cast-pro"
+      "url": "https://store.ui.com/us/en/products/uc-cast-pro",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/uc-cast-pro"
+      }
     },
     "UC-Display": {
       "name": "Connect Display",
-      "url": "https://store.ui.com/us/en/products/uc-display21"
+      "url": "https://store.ui.com/us/en/products/uc-display21",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/uc-display"
+      }
     },
     "UC-EV-Station-Lite": {
       "name": "EV Station Lite",
-      "url": "https://store.ui.com/us/en/products/uc-ev-station-lite"
+      "url": "https://store.ui.com/us/en/products/uc-ev-station-lite",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/uc-ev-station-lite/#index"
+      }
     },
     "UC-EV-Station-Pro": {
       "name": "EV Station Pro",
-      "url": "https://store.ui.com/us/en/products/uc-ev-station-pro"
+      "url": "https://store.ui.com/us/en/products/uc-ev-station-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/uc-ev-station-pro"
+      }
     },
     "UCG-Fiber": {
       "name": "Cloud Gateway Fiber",
@@ -199,7 +678,10 @@
     },
     "UCG-Industrial": {
       "name": "Cloud Gateway Industrial",
-      "url": "https://store.ui.com/us/en/products/ucg-industrial"
+      "url": "https://store.ui.com/us/en/products/ucg-industrial",
+      "docs": {
+        "guide": "https://ui.com/qig/ucg-industrial"
+      }
     },
     "UCG-Max": {
       "name": "Cloud Gateway Max",
@@ -211,59 +693,218 @@
     },
     "UCG-Ultra": {
       "name": "Cloud Gateway Ultra",
-      "url": "https://store.ui.com/us/en/products/ucg-ultra"
+      "url": "https://store.ui.com/us/en/products/ucg-ultra",
+      "docs": {
+        "guide": "https://ui.com/qig/ucg-ultra"
+      }
+    },
+    "UCI": {
+      "name": "UCI",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/41fc5131-d067-4f27-8d2d-940f85702c4d/changelog"
+    },
+    "UCK": {
+      "name": "UCK",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/90de918c-c669-4aaf-bb92-bbcd0b900a6d/changelog"
     },
     "UCK-G2-SSD": {
       "name": "CloudKey+ SSD",
       "url": "https://store.ui.com/us/en/products/uck-g2-ssd"
     },
+    "UCKG2": {
+      "name": "UCK-G2",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/497a807b-27ef-489f-9e44-a3358a5eb83d/changelog"
+    },
+    "UCKP": {
+      "name": "UCK-G2-Plus",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9cd52bd9-9961-49a1-954c-28b48aaacf03/changelog"
+    },
+    "UCXG": {
+      "name": "CloudKey Enterprise",
+      "url": "https://store.ui.com/us/en/products/cloud-key-enterprise",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ck-enterprise"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9ad0aa1a-1a8c-4618-8d49-e0c5e16b31a7/changelog"
+    },
     "UDB": {
       "name": "UniFi Device Bridge",
-      "url": "https://store.ui.com/us/en/products/udb"
+      "url": "https://store.ui.com/us/en/products/udb",
+      "docs": {
+        "guide": "https://ui.com/qig/udb"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/51728f6e-d82e-4e00-aeba-937fc004c7bb/changelog"
     },
     "UDB-IoT": {
       "name": "Device Bridge IoT",
-      "url": "https://store.ui.com/us/en/products/udb-iot"
+      "url": "https://store.ui.com/us/en/products/udb-iot",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/udb-iot"
+      }
     },
     "UDB-Pro": {
       "name": "Device Bridge Pro",
-      "url": "https://store.ui.com/us/en/products/udb-pro"
+      "url": "https://store.ui.com/us/en/products/udb-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/udb-pro"
+      }
     },
     "UDB-Pro-Sector": {
       "name": "Device Bridge Pro Sector",
-      "url": "https://store.ui.com/us/en/products/udb-pro-sector"
+      "url": "https://store.ui.com/us/en/products/udb-pro-sector",
+      "docs": {
+        "guide": "https://ui.com/qig/udb-pro-sector"
+      }
     },
     "UDB-Switch": {
       "name": "Device Bridge Switch",
-      "url": "https://store.ui.com/us/en/products/udb-switch"
+      "url": "https://store.ui.com/us/en/products/udb-switch",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/udb-switch"
+      }
+    },
+    "UDBA69F": {
+      "name": "UDBA69F",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb33ad4b-7bb4-4fbf-8b52-11518ff3eb83/changelog"
+    },
+    "UDBE802": {
+      "name": "Device Bridge Pro Sector",
+      "url": "https://store.ui.com/us/en/products/udb-pro-sector",
+      "docs": {
+        "guide": "https://ui.com/qig/udb-pro-sector"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/58797a2b-1da9-4734-b8a8-42b2da5fdb9f/changelog"
+    },
+    "UDM": {
+      "name": "UDM",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/56d2948a-d5a0-4f9f-af53-bc4a7c492fa2/changelog"
     },
     "UDM-Pro": {
       "name": "Dream Machine Pro",
-      "url": "https://store.ui.com/us/en/products/udm-pro"
+      "url": "https://store.ui.com/us/en/products/udm-pro",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/udm-pro.pdf",
+        "guide": "https://dl.ui.com/qig/udm-pro"
+      }
     },
     "UDM-Pro-Max": {
       "name": "Dream Machine Pro Max",
-      "url": "https://store.ui.com/us/en/products/udm-pro-max"
+      "url": "https://store.ui.com/us/en/products/udm-pro-max",
+      "docs": {
+        "guide": "https://ui.com/qig/udm-pro-max"
+      }
     },
     "UDM-SE": {
       "name": "Dream Machine Special Edition",
-      "url": "https://store.ui.com/us/en/products/udm-se"
+      "url": "https://store.ui.com/us/en/products/udm-se",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/udm_se_ds.pdf",
+        "guide": "https://dl.ui.com/qig/udm-se"
+      }
+    },
+    "UDMA69B": {
+      "name": "Dream Machine Pro Max",
+      "url": "https://store.ui.com/us/en/products/udm-pro-max",
+      "docs": {
+        "guide": "https://ui.com/qig/udm-pro-max"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/02ea9883-e84e-42f0-9083-695cd0313e4d/changelog"
+    },
+    "UDMB": {
+      "name": "Dream Machine Special Edition",
+      "url": "https://store.ui.com/us/en/products/udm-se",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/udm_se_ds.pdf",
+        "guide": "https://dl.ui.com/qig/udm-se"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d559faf8-78cf-42fb-8aa1-7196fc633212/changelog"
+    },
+    "UDMPRO": {
+      "name": "Dream Machine Pro",
+      "url": "https://store.ui.com/us/en/products/udm-pro",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/udm-pro.pdf",
+        "guide": "https://dl.ui.com/qig/udm-pro"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0eecacb0-ab4a-46de-b577-5fe8d21831db/changelog"
     },
     "UDR-5G-Max": {
       "name": "Dream Router 5G Max",
-      "url": "https://store.ui.com/us/en/products/udr-5g-max"
+      "url": "https://store.ui.com/us/en/products/udr-5g-max",
+      "docs": {
+        "guide": "https://ui.com/qig/udr-5g-max"
+      }
     },
     "UDR7": {
       "name": "Dream Router 7",
-      "url": "https://store.ui.com/us/en/products/udr7"
+      "url": "https://store.ui.com/us/en/products/udr7",
+      "docs": {
+        "guide": "https://ui.com/qig/udr7"
+      }
     },
     "UDW": {
       "name": "Dream Wall",
-      "url": "https://store.ui.com/us/en/products/udw"
+      "url": "https://store.ui.com/us/en/products/udw",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/udw"
+      }
+    },
+    "UFLHD": {
+      "name": "UAP-FlexHD",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b7fdfb50-4e72-416b-b25b-968698da1a57/changelog"
+    },
+    "UGW3": {
+      "name": "USG",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/803dc567-1c67-45db-b68c-8dfa10145a8f/changelog"
+    },
+    "UGW4": {
+      "name": "USG-Pro-4",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b5444204-2e73-414f-a4f0-98fec667a853/changelog"
+    },
+    "UGWXG": {
+      "name": "USG-XG-8",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e19d3986-ce9d-4c84-a7d7-06d920a5c76a/changelog"
+    },
+    "UHDIW": {
+      "name": "UAP-IW-HD",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b775cc70-6a8d-414f-b1bd-1ceed1fa52cf/changelog"
     },
     "UK-Ultra": {
       "name": "Swiss Army Knife",
-      "url": "https://store.ui.com/us/en/products/uk-ultra"
+      "url": "https://store.ui.com/us/en/products/uk-ultra",
+      "docs": {
+        "guide": "https://ui.com/qig/uk-ultra"
+      }
+    },
+    "UKPW": {
+      "name": "Swiss Army Knife",
+      "url": "https://store.ui.com/us/en/products/uk-ultra",
+      "docs": {
+        "guide": "https://ui.com/qig/uk-ultra"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d80df91e-f1a2-4f0a-8ef0-c27c858e025f/changelog"
+    },
+    "ULTE": {
+      "name": "UniFi LTE Backup",
+      "url": "https://store.ui.com/us/en/products/u-lte",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/348e6514-2b72-4bbb-b8e9-d42e8e714f6d/changelog"
+    },
+    "ULTEPEU": {
+      "name": "UniFi LTE Backup",
+      "url": "https://store.ui.com/us/en/products/u-lte",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c87b2c39-51ae-46fe-9175-86a01596ef82/changelog"
+    },
+    "ULTEPUS": {
+      "name": "UniFi LTE Backup Pro",
+      "url": "https://store.ui.com/us/en/products/u-lte-backup-pro",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c9bf555b-b9f0-45a4-ae51-efb14ba0d0ac/changelog"
+    },
+    "UMBBE630": {
+      "name": "UMBBE630",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2740fb58-3c20-4725-8016-7e6b674171af/changelog"
+    },
+    "UMBBE631": {
+      "name": "UMBBE631",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c5169102-d2de-4a58-bd48-0cc31d59eced/changelog"
     },
     "UMR-Industrial": {
       "name": "Mobile Router Industrial",
@@ -279,31 +920,60 @@
     },
     "UNAS-2": {
       "name": "UNAS 2",
-      "url": "https://store.ui.com/us/en/products/unas-2"
+      "url": "https://store.ui.com/us/en/products/unas-2",
+      "docs": {
+        "guide": "https://ui.com/qig/unas-2-b"
+      }
     },
     "UNAS-4": {
       "name": "UNAS 4",
-      "url": "https://store.ui.com/us/en/products/unas-4"
+      "url": "https://store.ui.com/us/en/products/unas-4",
+      "docs": {
+        "guide": "https://ui.com/qig/unas-4-w"
+      }
     },
     "UNAS-Pro": {
       "name": "UNAS Pro",
-      "url": "https://store.ui.com/us/en/products/unas-pro"
+      "url": "https://store.ui.com/us/en/products/unas-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/unas-pro"
+      }
     },
     "UNAS-Pro-4": {
       "name": "UNAS Pro 4",
-      "url": "https://store.ui.com/us/en/products/unas-pro-4"
+      "url": "https://store.ui.com/us/en/products/unas-pro-4",
+      "docs": {
+        "guide": "https://ui.com/qig/unas-pro-4"
+      }
     },
     "UNAS-Pro-8": {
       "name": "UNAS Pro 8",
-      "url": "https://store.ui.com/us/en/products/unas-pro-8"
+      "url": "https://store.ui.com/us/en/products/unas-pro-8",
+      "docs": {
+        "guide": "https://ui.com/qig/unas-pro-8"
+      }
+    },
+    "UP1": {
+      "name": "USP-Plug",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a24f789-2e72-4078-b336-81f104a50bba/changelog"
+    },
+    "UP6": {
+      "name": "USP-Strip",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/255982b8-6385-46d5-8e64-c43ca0a0ccd8/changelog"
     },
     "UPL-Amp": {
       "name": "UniFi PowerAmp",
-      "url": "https://store.ui.com/us/en/products/upl-amp"
+      "url": "https://store.ui.com/us/en/products/upl-amp",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/upl-amp-b"
+      }
     },
     "UPL-Port": {
       "name": "PoE Audio Port",
-      "url": "https://store.ui.com/us/en/products/upl-port"
+      "url": "https://store.ui.com/us/en/products/upl-port",
+      "docs": {
+        "guide": "https://ui.com/qig/upl-port-w"
+      }
     },
     "UPS-2U-US": {
       "name": "UniFi UPS 2U",
@@ -311,7 +981,369 @@
     },
     "UPS-Tower-US": {
       "name": "UniFi UPS Tower",
-      "url": "https://store.ui.com/us/en/products/ups-tower-us"
+      "url": "https://store.ui.com/us/en/products/ups-tower-us",
+      "docs": {
+        "guide": "https://ui.com/qig/ups-tower"
+      }
+    },
+    "US16P150": {
+      "name": "Switch 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-16-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-16-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ce5ce216-d8de-4ad6-8a15-d4f0d18bf69a/changelog"
+    },
+    "US24": {
+      "name": "Switch 24",
+      "url": "https://store.ui.com/us/en/products/usw-24",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-24_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-24"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/615a34a1-96f4-4290-a9ec-af864271db46/changelog"
+    },
+    "US24P250": {
+      "name": "Switch 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-24-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-24-poe",
+        "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f4de140a-df96-4e2f-aad4-bef7e80bb02c/changelog"
+    },
+    "US24P500": {
+      "name": "USW-24-500W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/56f0602e-32ea-4b1d-aa3b-73f23151f3b5/changelog"
+    },
+    "US24PL2": {
+      "name": "USW-24-PoE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/75747daa-c762-4c9e-92b7-996c80eb5fbb/changelog"
+    },
+    "US24PRO": {
+      "name": "Switch Pro 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-24",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-24_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-24"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0073f981-4a5e-4169-b45d-09035bdaa11f/changelog"
+    },
+    "US24PRO2": {
+      "name": "Switch Pro 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-24-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-24-poe_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-24-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ae04cc1-9fcd-44c1-a28f-f0e55bfe0ad0/changelog"
+    },
+    "US48": {
+      "name": "Switch 48",
+      "url": "https://store.ui.com/us/en/products/usw-48",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-48"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2813e242-f8d8-4963-b2ff-a573d18937be/changelog"
+    },
+    "US48P500": {
+      "name": "Switch 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-48-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-48-poe",
+        "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a752339-a617-4b84-bca4-b6138db71516/changelog"
+    },
+    "US48P750": {
+      "name": "USW-48-750W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/64f52edf-c365-49e3-84ba-c0215a42bb2c/changelog"
+    },
+    "US48PL2": {
+      "name": "USW-48-PoE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/48d3e87b-9c8e-49ea-80f3-5f1cbe4d0c7f/changelog"
+    },
+    "US48PRO": {
+      "name": "Switch Pro 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-48",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-48"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b08972d7-9134-4c30-9381-b19e81384df2/changelog"
+    },
+    "US48PRO2": {
+      "name": "Switch Pro 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-48-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-48-poe_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-48-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7b994c84-0d43-4fa5-a1c1-2be3e20ff059/changelog"
+    },
+    "US624P": {
+      "name": "Switch Enterprise 24 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/enterprise-24-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/70841a0b-f229-42ec-a62b-27970c1fdd54/changelog"
+    },
+    "US648P": {
+      "name": "Switch Enterprise 48 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe",
+      "docs": {
+        "guide": "http://ui.com/qig/enterprise-48-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c64130e-c71c-445a-ba16-ddf9c6252ecb/changelog"
+    },
+    "US68P": {
+      "name": "Switch Enterprise 8 PoE (Vintage)",
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/enterprise-8-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/11731f2f-ec2a-4dec-af99-e1da2b626b5e/changelog"
+    },
+    "US6XG150": {
+      "name": "Switch Hi-Capacity Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-pro-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/aggregation-pro",
+        "datasheet": "https://dl.ui.com/ds/usw-pro-aggregation_ds.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0adadd4c-1611-4d30-9852-b0a686b7781c/changelog"
+    },
+    "US8": {
+      "name": "USW-8",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/650c83e5-980d-4794-87a9-75d3d77cef8a/changelog"
+    },
+    "US8P150": {
+      "name": "USW-8-150W",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e2b3409f-f8e9-4641-9013-6bf8608410e0/changelog"
+    },
+    "US8P60": {
+      "name": "USW-8-PoE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fec6d726-5fbd-412f-bbd3-479c456ca730/changelog"
+    },
+    "USAGGPRO": {
+      "name": "Switch Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-aggregation"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ef00764-aab3-4471-8234-45b3fd3766d5/changelog"
+    },
+    "USC8": {
+      "name": "Switch Ultra 60W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-60w",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c13e8ad6-6730-460b-86d8-22b35986b10e/changelog"
+    },
+    "USC8P450": {
+      "name": "Switch Ultra 210W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-210w",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/662f8948-3401-4cfe-a42b-a1761c129440/changelog"
+    },
+    "USF5P": {
+      "name": "Switch Flex",
+      "url": "https://store.ui.com/us/en/products/usw-flex",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/USW-Flex_DS.pdf",
+        "guide": "https://dl.ui.com/qig/usw-flex"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb3d948d-7ba5-4233-8dc1-c098ff15c1f6/changelog"
+    },
+    "USFXG": {
+      "name": "Switch Pro XG Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/60e368bc-8d1b-421c-b595-d3ff6e9ee1f0/changelog"
+    },
+    "USL16LP": {
+      "name": "Switch Lite 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-lite-16-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-lite-16-poe.pdf",
+        "guide": "https://ui.com/qig/usw-lite-16-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/21a07965-1787-421d-999f-8b46434650db/changelog"
+    },
+    "USL16LPB": {
+      "name": "Switch Pro Max 16",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/03d2600a-2a25-4e1e-a51f-ed11be111eb1/changelog"
+    },
+    "USL16P": {
+      "name": "Switch Pro Max 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2bf048b8-9128-4b84-9e20-a16e2dafd14b/changelog"
+    },
+    "USL16PB": {
+      "name": "Switch Pro Max 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8f74d7e3-4642-4bb0-a776-ecbe9e94d95c/changelog"
+    },
+    "USL24": {
+      "name": "Switch Pro Max 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4554f1fe-b7f6-4cb6-b567-eab17a930116/changelog"
+    },
+    "USL24B": {
+      "name": "Switch Pro Max 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/35905616-1c98-4613-b748-f9baadac62e6/changelog"
+    },
+    "USL24P": {
+      "name": "Switch Pro Max 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b1f250fb-0f64-449e-b292-8685babf4407/changelog"
+    },
+    "USL24PB": {
+      "name": "Switch Pro Max 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/113d9f4c-cfd2-4bfd-ab25-5f1e4471af30/changelog"
+    },
+    "USL48": {
+      "name": "Switch Pro Max 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1639d28e-7082-41fe-9ca6-48a7de5b6b7f/changelog"
+    },
+    "USL48B": {
+      "name": "Switch Pro Max 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/51f6524a-923a-4681-ac3f-a9788813755e/changelog"
+    },
+    "USL48P": {
+      "name": "Switch Pro Max 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/06f3d569-9ce5-4701-a5b7-ce1be14386ca/changelog"
+    },
+    "USL48PB": {
+      "name": "Switch Pro Max 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/feba904f-15cf-430b-82c2-c886d26062c6/changelog"
+    },
+    "USL8A": {
+      "name": "Switch Lite 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-lite-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-lite-8-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7cdc1161-fd6f-4550-bbb6-3dd259dc929d/changelog"
+    },
+    "USL8LP": {
+      "name": "Switch Lite 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-lite-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-lite-8-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e6fef6f9-16af-422c-b3f6-4b36f5b2474c/changelog"
+    },
+    "USL8LPB": {
+      "name": "USL8LPB",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a2c36784-70a9-4ff1-94ad-9ddbb9a15f9e/changelog"
+    },
+    "USL8MP": {
+      "name": "Switch Pro 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6edda40c-ede7-4e94-a17a-98e0fa1ee9eb/changelog"
+    },
+    "USLP8P": {
+      "name": "Switch Pro 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4345dd46-e992-45d0-afb9-72ca1221dfc7/changelog"
+    },
+    "USM8P": {
+      "name": "Switch Pro 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3c6f8d93-8fc6-4d6e-89bb-0e19f37f431d/changelog"
+    },
+    "USM8P210": {
+      "name": "Switch Ultra 210W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-210w",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a806db2c-4fc4-49bb-8816-6f48cf3f7606/changelog"
+    },
+    "USM8P60": {
+      "name": "Switch Pro 8 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/efae96b5-09d0-4fb1-a215-b4587fd1a453/changelog"
+    },
+    "USMINI": {
+      "name": "Switch Flex Mini",
+      "url": "https://store.ui.com/us/en/products/usw-flex-mini",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4cafc8c9-4830-41cf-afc4-ae678c19afed/changelog"
+    },
+    "USMINI2": {
+      "name": "Switch Flex Mini",
+      "url": "https://store.ui.com/us/en/products/usw-flex-mini",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/096c0b64-0711-449e-b812-9efeb6af54ca/changelog"
+    },
+    "USMULT": {
+      "name": "UniFi WAN Switch",
+      "url": "https://store.ui.com/us/en/products/usw-wan",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-wan"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/daee7da6-5c97-4abc-832d-ef682b176e42/changelog"
     },
     "USP-PDU-HD": {
       "name": "Power Distribution Hi-Density",
@@ -323,167 +1355,383 @@
     },
     "USP-RPS": {
       "name": "Redundant Power",
-      "url": "https://store.ui.com/us/en/products/usp-rps"
+      "url": "https://store.ui.com/us/en/products/usp-rps",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usp-rps",
+        "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
+      }
+    },
+    "USPM16": {
+      "name": "Switch Pro Max 16",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/940135de-b84d-4376-85ba-e581fa8ce55b/changelog"
+    },
+    "USPM16P": {
+      "name": "Switch Pro Max 16 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/531c7744-74cc-4a6f-839d-f78fc13f883c/changelog"
+    },
+    "USPM24": {
+      "name": "Switch Pro Max 24",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5f110576-e1c3-4792-b048-aed48832983d/changelog"
+    },
+    "USPM24P": {
+      "name": "Switch Pro Max 24 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/401a48ce-12ae-4925-b281-4b565774bbf9/changelog"
+    },
+    "USPM48": {
+      "name": "Switch Pro Max 48",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/36afbb25-596d-40a4-afff-b386d4312de5/changelog"
+    },
+    "USPM48P": {
+      "name": "Switch Pro Max 48 PoE",
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0b1939dd-5e9e-4d04-95c9-1c9c85acde48/changelog"
+    },
+    "USPPDUHD": {
+      "name": "Power Distribution Hi-Density",
+      "url": "https://store.ui.com/us/en/products/usp-pdu-hd",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/caab6e18-c68e-4cab-9197-ec1136272a55/changelog"
+    },
+    "USPPDUP": {
+      "name": "Power Distribution Pro",
+      "url": "https://store.ui.com/us/en/products/usp-pdu-pro",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1d601822-9bcc-4bf5-b95f-aa2ee4e13aa6/changelog"
+    },
+    "USPRPS": {
+      "name": "Redundant Power",
+      "url": "https://store.ui.com/us/en/products/usp-rps",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usp-rps",
+        "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5e77b5df-40af-44f4-bae6-f969c3346ea7/changelog"
+    },
+    "USPRPSP": {
+      "name": "Redundant Power",
+      "url": "https://store.ui.com/us/en/products/usp-rps",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usp-rps",
+        "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3fb054b0-168f-44b4-8d48-ae309552352d/changelog"
     },
     "USW-16-POE": {
       "name": "Switch 16 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-16-poe"
+      "url": "https://store.ui.com/us/en/products/usw-16-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-16-poe"
+      }
     },
     "USW-24": {
       "name": "Switch 24",
-      "url": "https://store.ui.com/us/en/products/usw-24"
+      "url": "https://store.ui.com/us/en/products/usw-24",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-24_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-24"
+      }
     },
     "USW-24-POE": {
       "name": "Switch 24 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-24-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-24-poe",
+        "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      }
     },
     "USW-48": {
       "name": "Switch 48",
-      "url": "https://store.ui.com/us/en/products/usw-48"
+      "url": "https://store.ui.com/us/en/products/usw-48",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-48"
+      }
     },
     "USW-48-POE": {
       "name": "Switch 48 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-48-poe"
+      "url": "https://store.ui.com/us/en/products/usw-48-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-48-poe",
+        "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      }
     },
     "USW-Aggregation": {
       "name": "Switch Aggregation",
-      "url": "https://store.ui.com/us/en/products/usw-aggregation"
+      "url": "https://store.ui.com/us/en/products/usw-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-aggregation"
+      }
     },
     "USW-Enterprise-24-PoE": {
       "name": "Switch Enterprise 24 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/enterprise-24-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
+      }
     },
     "USW-Enterprise-48-PoE": {
       "name": "Switch Enterprise 48 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe"
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe",
+      "docs": {
+        "guide": "http://ui.com/qig/enterprise-48-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
+      }
     },
     "USW-Enterprise-8-PoE": {
       "name": "Switch Enterprise 8 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe"
+      "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/enterprise-8-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
+      }
     },
     "USW-Flex": {
       "name": "Switch Flex",
-      "url": "https://store.ui.com/us/en/products/usw-flex"
+      "url": "https://store.ui.com/us/en/products/usw-flex",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/USW-Flex_DS.pdf",
+        "guide": "https://dl.ui.com/qig/usw-flex"
+      }
     },
     "USW-Flex-2.5G-5": {
       "name": "Switch Flex Mini 2.5G",
-      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-5"
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-5",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-flex-2.5g-5/index.html#index"
+      }
     },
     "USW-Flex-2.5G-8": {
       "name": "Switch Flex 2.5G",
-      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8"
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-flex-2.5g-8"
+      }
     },
     "USW-Flex-2.5G-8-PoE": {
       "name": "Switch Flex 2.5G PoE",
-      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8-poe"
+      "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-flex-2.5g-8-poe"
+      }
     },
     "USW-Flex-Mini": {
       "name": "Switch Flex Mini",
-      "url": "https://store.ui.com/us/en/products/usw-flex-mini"
+      "url": "https://store.ui.com/us/en/products/usw-flex-mini",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
+      }
     },
     "USW-Flex-Utility": {
       "name": "Switch Flex Utility",
-      "url": "https://store.ui.com/us/en/products/usw-flexutility"
+      "url": "https://store.ui.com/us/en/products/usw-flexutility",
+      "docs": {
+        "datasheet": "https://dl.ui.com/datasheets/unifi/USW-Flex_DS.pdf"
+      }
     },
     "USW-Flex-XG": {
       "name": "Switch Flex XG",
-      "url": "https://store.ui.com/us/en/products/usw-flex-xg"
+      "url": "https://store.ui.com/us/en/products/usw-flex-xg",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/flex-xg",
+        "datasheet": "https://dl.ui.com/ds/usw-flex-xg_ds"
+      }
     },
     "USW-Lite-16-PoE": {
       "name": "Switch Lite 16 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-lite-16-poe"
+      "url": "https://store.ui.com/us/en/products/usw-lite-16-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-lite-16-poe.pdf",
+        "guide": "https://ui.com/qig/usw-lite-16-poe"
+      }
     },
     "USW-Lite-8-PoE": {
       "name": "Switch Lite 8 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-lite-8-poe"
+      "url": "https://store.ui.com/us/en/products/usw-lite-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-lite-8-poe",
+        "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
+      }
     },
     "USW-Mission-Critical": {
       "name": "UPS PoE Switch Mission Critical",
-      "url": "https://store.ui.com/us/en/products/usw-mission-critical"
+      "url": "https://store.ui.com/us/en/products/usw-mission-critical",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/mission-critical"
+      }
     },
     "USW-Pro-24": {
       "name": "Switch Pro 24",
-      "url": "https://store.ui.com/us/en/products/usw-pro-24"
+      "url": "https://store.ui.com/us/en/products/usw-pro-24",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-24_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-24"
+      }
     },
     "USW-Pro-24-POE": {
       "name": "Switch Pro 24 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-24-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-24-poe_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-24-poe"
+      }
     },
     "USW-Pro-48": {
       "name": "Switch Pro 48",
-      "url": "https://store.ui.com/us/en/products/usw-pro-48"
+      "url": "https://store.ui.com/us/en/products/usw-pro-48",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-48"
+      }
     },
     "USW-Pro-48-POE": {
       "name": "Switch Pro 48 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-48-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-48-poe",
+      "docs": {
+        "datasheet": "https://dl.ui.com/ds/usw-pro-48-poe_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-pro-48-poe"
+      }
     },
     "USW-Pro-8-PoE": {
       "name": "Switch Pro 8 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-8-poe"
+      }
     },
     "USW-Pro-Aggregation": {
       "name": "Switch Hi-Capacity Aggregation",
-      "url": "https://store.ui.com/us/en/products/usw-pro-aggregation"
+      "url": "https://store.ui.com/us/en/products/usw-pro-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/aggregation-pro",
+        "datasheet": "https://dl.ui.com/ds/usw-pro-aggregation_ds.pdf"
+      }
     },
     "USW-Pro-HD-24": {
       "name": "Switch Pro HD 24",
-      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24"
+      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-hd-24"
+      }
     },
     "USW-Pro-HD-24-PoE": {
       "name": "Switch Pro HD 24 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-hd-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-hd-24-poe"
+      }
     },
     "USW-Pro-Max-16": {
       "name": "Switch Pro Max 16",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-16"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16"
+      }
     },
     "USW-Pro-Max-16-PoE": {
       "name": "Switch Pro Max 16 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      }
     },
     "USW-Pro-Max-24": {
       "name": "Switch Pro Max 24",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-24"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24"
+      }
     },
     "USW-Pro-Max-24-PoE": {
       "name": "Switch Pro Max 24 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      }
     },
     "USW-Pro-Max-48": {
       "name": "Switch Pro Max 48",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-48"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48"
+      }
     },
     "USW-Pro-Max-48-PoE": {
       "name": "Switch Pro Max 48 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      }
     },
     "USW-Pro-XG-10-PoE": {
       "name": "Switch Pro XG 10 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-10-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-10-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-10-poe"
+      }
     },
     "USW-Pro-XG-24": {
       "name": "Switch Pro XG 24",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-24"
+      }
     },
     "USW-Pro-XG-24-PoE": {
       "name": "Switch Pro XG 24 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-24-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-24-poe"
+      }
     },
     "USW-Pro-XG-48": {
       "name": "Switch Pro XG 48",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-48"
+      }
     },
     "USW-Pro-XG-48-PoE": {
       "name": "Switch Pro XG 48 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-48-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-48-poe"
+      }
     },
     "USW-Pro-XG-8-PoE": {
       "name": "Switch Pro XG 8 PoE",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-8-poe"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-8-poe",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-pro-xg-8-poe"
+      }
     },
     "USW-Pro-XG-Aggregation": {
       "name": "Switch Pro XG Aggregation",
-      "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation"
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
+      }
     },
     "USW-Ultra": {
       "name": "Switch Ultra",
@@ -499,19 +1747,127 @@
     },
     "USW-WAN": {
       "name": "UniFi WAN Switch",
-      "url": "https://store.ui.com/us/en/products/usw-wan"
+      "url": "https://store.ui.com/us/en/products/usw-wan",
+      "docs": {
+        "guide": "https://ui.com/qig/usw-wan"
+      }
     },
     "USW-WAN-RJ45": {
       "name": "UniFi WAN Switch RJ45",
-      "url": "https://store.ui.com/us/en/products/usw-wan-rj45"
+      "url": "https://store.ui.com/us/en/products/usw-wan-rj45",
+      "docs": {
+        "guide": "http://ui.com/qig/usw-wan-rj45"
+      }
+    },
+    "USWDA23": {
+      "name": "USWDA23",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7b0640ea-5ca3-460c-bc2f-426ba821cd1a/changelog"
+    },
+    "USWDA24": {
+      "name": "USWDA24",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1a57b19a-5840-4555-a781-7676c17acc17/changelog"
+    },
+    "USWDA25": {
+      "name": "USWDA25",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/dbc1a3b7-7411-4bcd-9dca-3524513c51b5/changelog"
+    },
+    "USWDA26": {
+      "name": "USWDA26",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/afd7c47d-c284-4ba1-a7ff-f806b6b09a8e/changelog"
+    },
+    "USWED35": {
+      "name": "USWED35",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/03bd9523-f2bf-4780-82dc-268e90b747b6/changelog"
+    },
+    "USWED36": {
+      "name": "USWED36",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/73ab7485-10a0-4e46-b6cc-cbd943ead22c/changelog"
+    },
+    "USWED37": {
+      "name": "USWED37",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2dd96da7-c901-4842-89f9-0ec3937099d5/changelog"
+    },
+    "USWED42": {
+      "name": "USWED42",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6fc94667-d342-4652-8335-3e01a4570e2b/changelog"
+    },
+    "USWED43": {
+      "name": "USWED43",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/25c87ce4-5a44-45e5-83c9-98a4948ac6b6/changelog"
+    },
+    "USWED44": {
+      "name": "USWED44",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1d6cc279-a5f6-4015-a427-b50762efe249/changelog"
+    },
+    "USWED45": {
+      "name": "USWED45",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7380b3a9-9142-4cbb-98eb-12006bffb80a/changelog"
+    },
+    "USWED72": {
+      "name": "USWED72",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6dc8b784-a7fa-4e31-8da6-b1920bd0f3a5/changelog"
+    },
+    "USWED73": {
+      "name": "USWED73",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a02b1424-a4c6-40a3-b818-8669079fd6e5/changelog"
+    },
+    "USWED74": {
+      "name": "USWED74",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a3e486e-c2a0-47f9-81cc-4f138e04e1dd/changelog"
+    },
+    "USWED75": {
+      "name": "USWED75",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fc1479df-6f3b-4ac1-8b4f-cf2ca1aec29e/changelog"
+    },
+    "USWED76": {
+      "name": "USWED76",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6ec34c5a-b6ba-4183-a836-493d07a191b0/changelog"
+    },
+    "USWED77": {
+      "name": "USWED77",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/190622f2-9bf7-4534-a45e-ac517457cbab/changelog"
+    },
+    "USWF003": {
+      "name": "USWF003",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f082d434-3b6a-4bc7-99ad-63a45c7212b4/changelog"
+    },
+    "USWF066": {
+      "name": "USWF066",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c6125a40-960a-42fb-b9b9-b270199098fc/changelog"
+    },
+    "USWF067": {
+      "name": "USWF067",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cd203b43-83e5-4eac-b4fa-1e6da35dcdda/changelog"
+    },
+    "USWF069": {
+      "name": "USWF069",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6feedef4-46c8-480e-965b-2afb81f1b2e0/changelog"
+    },
+    "USXG": {
+      "name": "Switch Pro XG Aggregation",
+      "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fbfedb58-c0c3-4ffa-9f02-7e5e957815f2/changelog"
+    },
+    "USXG24": {
+      "name": "USXG24",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2ef1aa3e-0d84-48c8-8c3f-3baba5b41fdf/changelog"
     },
     "UT-ATA": {
       "name": "Analog Telephone Adapter",
-      "url": "https://store.ui.com/us/en/products/ut-ata"
+      "url": "https://store.ui.com/us/en/products/ut-ata",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/ut-ata"
+      }
     },
     "UT-G3-Handset": {
       "name": "G3 Wireless Handset",
-      "url": "https://store.ui.com/us/en/products/ut-g3-handset"
+      "url": "https://store.ui.com/us/en/products/ut-g3-handset",
+      "docs": {
+        "guide": "https://ui.com/qig/ut-g3-handset"
+      }
     },
     "UTP-G3-Touch-Enterprise": {
       "name": "Phone G3 Touch Enterprise",
@@ -523,7 +1879,10 @@
     },
     "UTP-G3-Touch-Wall": {
       "name": "Phone G3 Touch Wall",
-      "url": "https://store.ui.com/us/en/products/utp-g3-touch-wall"
+      "url": "https://store.ui.com/us/en/products/utp-g3-touch-wall",
+      "docs": {
+        "guide": "https://ui.com/qig/utp-g3-wall"
+      }
     },
     "UTP-Touch-US": {
       "name": "Phone G2 Touch",
@@ -535,35 +1894,116 @@
     },
     "UTR": {
       "name": "UniFi Travel Router",
-      "url": "https://store.ui.com/us/en/products/utr"
+      "url": "https://store.ui.com/us/en/products/utr",
+      "docs": {
+        "guide": "https://ui.com/qig/utr"
+      }
+    },
+    "UTREA06": {
+      "name": "UTREA06",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a53ec285-c870-46d9-a08f-8260d8856efe/changelog"
     },
     "UWB-XG": {
       "name": "WiFi BaseStation XG",
-      "url": "https://store.ui.com/us/en/products/uwb-xg"
+      "url": "https://store.ui.com/us/en/products/uwb-xg",
+      "docs": {
+        "guide": "https://ui.com/qig/uwb-xg"
+      }
+    },
+    "UX": {
+      "name": "UX",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4a3d956e-e728-492a-949a-325774e10ec2/changelog"
     },
     "UX7": {
       "name": "UniFi Express 7",
-      "url": "https://store.ui.com/us/en/products/ux7"
+      "url": "https://store.ui.com/us/en/products/ux7",
+      "docs": {
+        "guide": "https://ui.com/qig/ux7"
+      }
+    },
+    "UXBSDM": {
+      "name": "UniFi Express 7",
+      "url": "https://store.ui.com/us/en/products/ux7",
+      "docs": {
+        "guide": "https://ui.com/qig/ux7"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0dac0845-0288-43be-9ff3-a224f21f833f/changelog"
+    },
+    "UXG": {
+      "name": "Cloud Gateway Ultra",
+      "url": "https://store.ui.com/us/en/products/ucg-ultra",
+      "docs": {
+        "guide": "https://ui.com/qig/ucg-ultra"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1f9e6245-6339-41e1-971b-145b39ac4bcb/changelog"
     },
     "UXG-Enterprise": {
       "name": "Gateway Enterprise",
-      "url": "https://store.ui.com/us/en/products/uxg-enterprise"
+      "url": "https://store.ui.com/us/en/products/uxg-enterprise",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-enterprise"
+      }
     },
     "UXG-Fiber": {
       "name": "Gateway Fiber",
-      "url": "https://store.ui.com/us/en/products/uxg-fiber"
+      "url": "https://store.ui.com/us/en/products/uxg-fiber",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-fiber"
+      }
     },
     "UXG-Lite": {
       "name": "Gateway Lite",
-      "url": "https://store.ui.com/us/en/products/uxg-lite"
+      "url": "https://store.ui.com/us/en/products/uxg-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-lite"
+      }
     },
     "UXG-Max": {
       "name": "Gateway Max",
-      "url": "https://store.ui.com/us/en/products/uxg-max"
+      "url": "https://store.ui.com/us/en/products/uxg-max",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-max"
+      }
     },
     "UXG-Pro": {
       "name": "Gateway Pro",
-      "url": "https://store.ui.com/us/en/products/uxg-pro"
+      "url": "https://store.ui.com/us/en/products/uxg-pro",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-pro"
+      }
+    },
+    "UXGA6AA": {
+      "name": "Cloud Gateway Industrial",
+      "url": "https://store.ui.com/us/en/products/ucg-industrial",
+      "docs": {
+        "guide": "https://ui.com/qig/ucg-industrial"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2fbd927b-2684-439f-8987-e244d09caa6a/changelog"
+    },
+    "UXGB": {
+      "name": "Cloud Gateway Max",
+      "url": "https://store.ui.com/us/en/products/ucg-max",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c8654ad6-831f-4ba9-9dd6-a0e83511b23a/changelog"
+    },
+    "UXGENT": {
+      "name": "Gateway Enterprise",
+      "url": "https://store.ui.com/us/en/products/uxg-enterprise",
+      "docs": {
+        "guide": "https://ui.com/qig/uxg-enterprise"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/af57c01e-c247-4584-9465-08aea690dc4d/changelog"
+    },
+    "UXGPRO": {
+      "name": "UXG-Pro-US",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/378df9ff-e556-44ce-988f-0f9a8b10c0dd/changelog"
+    },
+    "UXGPROV2": {
+      "name": "UXG-Pro-US",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6520fc8e-46a1-46c6-b2f2-db4a3b08a74e/changelog"
+    },
+    "UXSDM": {
+      "name": "UXSDM",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/289b70d9-29b7-4a9d-a897-4b9e20bcabbf/changelog"
     }
   }
 }

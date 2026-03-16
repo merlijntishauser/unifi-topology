@@ -15,7 +15,12 @@ from .firewall_coerce import (
     normalize_firewall_zones,
 )
 from .inventory import DeviceInfo, build_device_inventory
-from .model_lookup import lookup_model_name, lookup_model_url
+from .model_lookup import (
+    lookup_firmware_changelog,
+    lookup_model_docs,
+    lookup_model_name,
+    lookup_model_url,
+)
 from .topology import Device, Edge, TopologyResult, VpnTunnel, WanInfo
 from .topology_coerce import normalize_devices
 from .vpn import extract_vpn_tunnels
@@ -47,6 +52,8 @@ __all__ = [
     "generate_mock_payload",
     "group_devices_by_type",
     "group_nodes_by_vlan",
+    "lookup_firmware_changelog",
+    "lookup_model_docs",
     "lookup_model_name",
     "lookup_model_url",
     "normalize_device_stats",
