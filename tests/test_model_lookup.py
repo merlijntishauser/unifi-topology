@@ -28,8 +28,8 @@ def test_lookup_unknown_model():
 
 def test_lookup_url_known():
     url = lookup_model_url("USW-24")
-    assert "store.ui.com" in url
-    assert "usw-24" in url
+    assert url.startswith("https://store.ui.com/")
+    assert url.endswith("/usw-24")
 
 
 def test_lookup_url_unknown():
