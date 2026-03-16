@@ -73,6 +73,8 @@ PLATFORM_TO_SKU: dict[str, str] = {
     "U7IWP": "U7-Pro-Wall",
     "U7LR": "U7-LR",
     "U7LT": "U6+",
+    "UAPA693": "U7-Lite",
+    "G7LT": "U7-Lite",
     "U7MP": "U7-Pro-Max",
     "U7MSH": "U7-Mesh",
     "U7NHD": "UAP-nanoHD",
@@ -113,6 +115,8 @@ PLATFORM_TO_SKU: dict[str, str] = {
     "UXGENT": "UXG-Enterprise",
     "UXGPRO": "UXG-Pro-US",
     "UXGPROV2": "UXG-Pro-US",
+    "UDMA6A8": "UCG-Fiber",
+    "UCGF": "UCG-Fiber",
     # ── Switches ────────────────────────────────────────────────────
     "US8": "USW-8",
     "US8P60": "USW-8-PoE",
@@ -136,6 +140,8 @@ PLATFORM_TO_SKU: dict[str, str] = {
     "US6XG150": "USW-Pro-Aggregation",
     "USC8": "USW-Ultra-60W",
     "USC8P450": "USW-Ultra-210W",
+    "USWED37": "USW-Ultra-210W",
+    "USM25G8P": "USW-Ultra-210W",
     "USF5P": "USW-Flex",
     "USFXG": "USW-Pro-XG-Aggregation",
     "USL8LP": "USW-Lite-8-PoE",
@@ -402,6 +408,26 @@ def _merge_firmware(
     _print_firmware_stats(matched, unmatched)
 
 
+def _ensure_sku_aliases(models: dict[str, ModelEntry]) -> None:
+    """Create entries for PLATFORM_TO_SKU codes not already in models.
+
+    The firmware merge only processes codes present in the firmware API.
+    Controller model codes and shortname aliases that aren't firmware
+    platform codes still need entries so ``lookup_model_name`` resolves them.
+    """
+    added = 0
+    for code, sku in PLATFORM_TO_SKU.items():
+        if code in models:
+            continue
+        store = models.get(sku)
+        if store is None:
+            continue
+        models[code] = dict(store)
+        added += 1
+    if added:
+        print(f"  SKU aliases: {added} added from PLATFORM_TO_SKU")
+
+
 def _print_firmware_stats(matched: int, unmatched: list[str]) -> None:
     print(f"  Firmware: {matched} matched, {len(unmatched)} unmatched")
     if unmatched:
@@ -427,6 +453,7 @@ def scrape() -> dict[str, Any]:
     platforms = _fetch_firmware_platforms(session)
     print(f"  {len(platforms)} firmware platforms")
     _merge_firmware(models, platforms)
+    _ensure_sku_aliases(models)
 
     return {
         "_meta": {
