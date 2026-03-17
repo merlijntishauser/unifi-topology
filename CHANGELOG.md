@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] (2026-03-17)
+
+### Added
+- Generic Mermaid diagram rendering (`render_mermaid`, `MermaidTheme`)
+- Markdown device port overview tables (`render_device_port_overview`)
+- LLDP Markdown table rendering (`render_lldp_md`)
+- Jinja2 template engine for render output
+- Enables downstream consumers (unifi-homelab-ops) to use renderers directly
+
+### Fixed
+- Model lookup for 3 devices returning empty names by adding scraper aliases for controller model codes (`UDMA6A8`/`UCGF`, `UAPA693`/`G7LT`, `USWED37`/`USM25G8P`) (fixes #23)
+
 ## [1.2.4] (2026-03-16)
 
 ### Added
@@ -122,7 +134,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.4...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.4...v1.3.0
 [1.2.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.1...v1.2.2
