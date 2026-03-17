@@ -73,6 +73,13 @@
         "guide": "https://ui.com/qig/efg"
       }
     },
+    "G7LT": {
+      "name": "Access Point U7 Lite",
+      "url": "https://store.ui.com/us/en/products/u7-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lite"
+      }
+    },
     "Official UniFi Hosting": {
       "name": "Official UniFi Hosting",
       "url": "https://store.ui.com/us/en/products/unifi-hosting"
@@ -535,7 +542,11 @@
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7063ccd6-22c1-496e-aa51-ee4e0ed6b03e/changelog"
     },
     "UAPA693": {
-      "name": "UAPA693",
+      "name": "Access Point U7 Lite",
+      "url": "https://store.ui.com/us/en/products/u7-lite",
+      "docs": {
+        "guide": "https://ui.com/qig/u7-lite"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/c9472971-bb24-4113-90e6-03721b79bd27/changelog"
     },
     "UAPA697": {
@@ -698,6 +709,10 @@
         "guide": "https://ui.com/qig/ucg-ultra"
       }
     },
+    "UCGF": {
+      "name": "Cloud Gateway Fiber",
+      "url": "https://store.ui.com/us/en/products/ucg-fiber"
+    },
     "UCI": {
       "name": "UCI",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/41fc5131-d067-4f27-8d2d-940f85702c4d/changelog"
@@ -808,6 +823,10 @@
         "guide": "https://ui.com/qig/udm-pro-max"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/02ea9883-e84e-42f0-9083-695cd0313e4d/changelog"
+    },
+    "UDMA6A8": {
+      "name": "Cloud Gateway Fiber",
+      "url": "https://store.ui.com/us/en/products/ucg-fiber"
     },
     "UDMB": {
       "name": "Dream Machine Special Edition",
@@ -1300,6 +1319,10 @@
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4345dd46-e992-45d0-afb9-72ca1221dfc7/changelog"
     },
+    "USM25G8P": {
+      "name": "Switch Ultra 210W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-210w"
+    },
     "USM8P": {
       "name": "Switch Pro 8 PoE",
       "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
@@ -1784,7 +1807,8 @@
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/73ab7485-10a0-4e46-b6cc-cbd943ead22c/changelog"
     },
     "USWED37": {
-      "name": "USWED37",
+      "name": "Switch Ultra 210W",
+      "url": "https://store.ui.com/us/en/products/usw-ultra-210w",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/2dd96da7-c901-4842-89f9-0ec3937099d5/changelog"
     },
     "USWED42": {
