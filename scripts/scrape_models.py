@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from parse_specs import extract_specs
 
 STORE_BASE = "https://store.ui.com"
 STORE_HOME = f"{STORE_BASE}/us/en"
@@ -321,22 +322,33 @@ def _add_product(
     slug_to_category[slug] = category
 
 
-def _enrich_with_docs(
+def _apply_docs(entry: ModelEntry, detail: dict[str, Any]) -> None:
+    docs = _extract_documents(detail)
+    if docs:
+        entry["docs"] = docs
+
+
+def _apply_specs(entry: ModelEntry, detail: dict[str, Any]) -> None:
+    specs = extract_specs(detail)
+    if specs:
+        entry["specs"] = specs
+
+
+def _enrich_with_detail(
     models: dict[str, ModelEntry],
     slug_to_category: dict[str, str],
     session: requests.Session,
     build_id: str,
 ) -> None:
-    print(f"  Fetching document links for {len(models)} products ...")
+    print(f"  Enriching detail for {len(models)} products ...")
     for entry in models.values():
         slug = entry["url"].rsplit("/", 1)[-1]
         category = slug_to_category.get(slug, STORE_CATEGORIES[0])
         detail = _fetch_product_detail(session, build_id, slug, category)
         if not detail:
             continue
-        docs = _extract_documents(detail)
-        if docs:
-            entry["docs"] = docs
+        _apply_docs(entry, detail)
+        _apply_specs(entry, detail)
 
 
 def _build_store_models(session: requests.Session, build_id: str) -> dict[str, ModelEntry]:
@@ -351,7 +363,7 @@ def _build_store_models(session: requests.Session, build_id: str) -> dict[str, M
             _add_product(models, slug_to_category, product, category)
         print(f"    {len(products)} products ({len(models)} total)")
 
-    _enrich_with_docs(models, slug_to_category, session, build_id)
+    _enrich_with_detail(models, slug_to_category, session, build_id)
     return models
 
 

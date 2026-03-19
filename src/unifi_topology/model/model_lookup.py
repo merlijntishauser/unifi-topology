@@ -74,6 +74,17 @@ def lookup_model_docs(model: str) -> dict[str, str]:
     return entry.get("docs", {}) if entry else {}
 
 
+def lookup_model_specs(model: str) -> dict[str, Any]:
+    """Return physical device specs for a UniFi model code.
+
+    Returns a dict with keys like ``dimensions_mm``, ``weight_kg``,
+    ``max_power_w``, ``form_factor``, and ``rack_height_u``,
+    or an empty dict if no specs are available.
+    """
+    entry = _find_entry(model)
+    return entry.get("specs", {}) if entry else {}
+
+
 def lookup_firmware_changelog(model: str) -> str:
     """Return the firmware release notes URL for a UniFi model code.
 

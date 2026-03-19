@@ -6,6 +6,7 @@ from unifi_topology.model.model_lookup import (
     lookup_firmware_changelog,
     lookup_model_docs,
     lookup_model_name,
+    lookup_model_specs,
     lookup_model_url,
 )
 
@@ -98,3 +99,22 @@ def test_firmware_code_fallback_in_coercion():
 
     result = normalize_device_stats([{"mac": "aa:bb:cc:dd:ee:ff", "model": "U6M"}])
     assert result[0].model_name == "Access Point U6 Mesh"
+
+
+def test_specs_for_known_product():
+    specs = lookup_model_specs("USW-Pro-24-POE")
+    assert specs["dimensions_mm"] == {"width": 442, "depth": 285, "height": 44}
+    assert specs["weight_kg"] == 4.3
+    assert specs["max_power_w"] == 450
+    assert specs["form_factor"] == "Rack mount (1U)"
+    assert specs["rack_height_u"] == 1
+
+
+def test_specs_for_unknown():
+    assert lookup_model_specs("NONEXISTENT-999") == {}
+
+
+def test_specs_for_firmware_code():
+    specs = lookup_model_specs("U6M")
+    assert "dimensions_mm" in specs
+    assert "weight_kg" in specs

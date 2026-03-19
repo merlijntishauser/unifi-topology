@@ -19,6 +19,7 @@ from .model_lookup import (
     lookup_firmware_changelog,
     lookup_model_docs,
     lookup_model_name,
+    lookup_model_specs,
     lookup_model_url,
 )
 from .topology import Device, Edge, TopologyResult, VpnTunnel, WanInfo
@@ -55,6 +56,7 @@ __all__ = [
     "lookup_firmware_changelog",
     "lookup_model_docs",
     "lookup_model_name",
+    "lookup_model_specs",
     "lookup_model_url",
     "normalize_device_stats",
     "normalize_devices",

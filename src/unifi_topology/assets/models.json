@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "https://store.ui.com, https://fw-update.ubnt.com/api/firmware-latest",
-    "scraped_at": "2026-03-16T10:49:09.096362+00:00",
+    "scraped_at": "2026-03-19T21:41:08.709179+00:00",
     "description": "UniFi device model codes to friendly names. Scraped from the official Ubiquiti store and firmware API."
   },
   "models": {
@@ -18,6 +18,16 @@
       "url": "https://store.ui.com/us/en/products/cloud-key-enterprise",
       "docs": {
         "guide": "https://dl.ui.com/qig/ck-enterprise"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 787.0,
+          "depth": 43.7,
+          "height": 481.4
+        },
+        "max_power_w": 190.0,
+        "form_factor": "Rack Mount (1U)",
+        "rack_height_u": 1
       }
     },
     "E7": {
@@ -25,6 +35,16 @@
       "url": "https://store.ui.com/us/en/products/e7",
       "docs": {
         "guide": "https://dl.ui.com/qig/e7/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 250.0,
+          "depth": 250.0,
+          "height": 43.5
+        },
+        "weight_kg": 1.8,
+        "max_power_w": 43.0,
+        "form_factor": "Ceiling, Wall, VESA"
       }
     },
     "E7-Audience-Indoor": {
@@ -64,6 +84,17 @@
       "url": "https://store.ui.com/us/en/products/ecs-aggregation",
       "docs": {
         "guide": "https://ui.com/qig/ecs-aggregation"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 496.0
+        },
+        "weight_kg": 9.9,
+        "max_power_w": 340.0,
+        "form_factor": "Rack mount (1U, Full-Depth)",
+        "rack_height_u": 1
       }
     },
     "EFG": {
@@ -71,6 +102,16 @@
       "url": "https://store.ui.com/us/en/products/efg",
       "docs": {
         "guide": "https://ui.com/qig/efg"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 325.0
+        },
+        "max_power_w": 82.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "G7LT": {
@@ -78,6 +119,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lite",
       "docs": {
         "guide": "https://ui.com/qig/u7-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 171.5,
+          "height": 33.0
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "Official UniFi Hosting": {
@@ -107,6 +157,22 @@
     "S28150": {
       "name": "US-8-150W",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/d8733872-0752-43a0-a018-c36c2d565914/changelog"
+    },
+    "U-AirWire": {
+      "name": "AirWire",
+      "url": "https://store.ui.com/us/en/products/u-airwire",
+      "docs": {
+        "guide": "https://ui.com/qig/u-airwire"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 117.0,
+          "depth": 117.0,
+          "height": 42.5
+        },
+        "weight_kg": 0.537,
+        "max_power_w": 18.0
+      }
     },
     "U-LTE": {
       "name": "UniFi LTE Backup",
@@ -154,6 +220,15 @@
       "docs": {
         "guide": "https://dl.ubnt.com/qig/u6-enterprise",
         "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 220.0,
+          "height": 48.0
+        },
+        "weight_kg": 1.1,
+        "max_power_w": 22.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U6-Enterprise-IW": {
@@ -161,6 +236,16 @@
       "url": "https://store.ui.com/us/en/products/u6-enterprise-iw",
       "docs": {
         "guide": "https://dl.ui.com/qig/u6-enterprise-iw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 159.7,
+          "depth": 156.7,
+          "height": 33.8
+        },
+        "weight_kg": 0.884,
+        "max_power_w": 21.0,
+        "form_factor": "Wall"
       }
     },
     "U6-Extender-US": {
@@ -169,6 +254,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/u6-extender",
         "datasheet": "https://dl.ui.com/ds/u6-extender_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 169.7,
+          "depth": 112.2,
+          "height": 32.2
+        },
+        "weight_kg": 0.29,
+        "max_power_w": 11.0,
+        "form_factor": "Wall"
       }
     },
     "U6-IW": {
@@ -176,14 +271,33 @@
       "url": "https://store.ui.com/us/en/products/u6-iw",
       "docs": {
         "guide": "https://dl.ui.com/qig/u6-iw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 139.7,
+          "depth": 96.0,
+          "height": 31.2
+        },
+        "weight_kg": 0.46,
+        "max_power_w": 13.0,
+        "form_factor": "Wall"
       }
     },
     "U6-Mesh": {
       "name": "Access Point U6 Mesh",
       "url": "https://store.ui.com/us/en/products/u6-mesh",
       "docs": {
-        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
-        "guide": "https://dl.ui.com/qig/u6-mesh"
+        "guide": "https://dl.ui.com/qig/u6-mesh",
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 48.5,
+          "height": 159.5
+        },
+        "weight_kg": 0.4,
+        "max_power_w": 13.0,
+        "form_factor": "Wall, Pole"
       }
     },
     "U6-Mesh-Pro": {
@@ -191,6 +305,16 @@
       "url": "https://store.ui.com/us/en/products/u6-mesh-pro",
       "docs": {
         "guide": "https://ui.com/qig/u6-mesh-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 343.2,
+          "depth": 181.2,
+          "height": 60.2
+        },
+        "weight_kg": 0.819,
+        "max_power_w": 9.0,
+        "form_factor": "Wall, Pole"
       }
     },
     "U6-PLUS": {
@@ -198,6 +322,15 @@
       "url": "https://store.ui.com/us/en/products/u6-plus",
       "docs": {
         "guide": "https://dl.ui.com/qig/u6+"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 160.0,
+          "height": 33.0
+        },
+        "weight_kg": 0.338,
+        "max_power_w": 9.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U6-Pro": {
@@ -206,6 +339,15 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/u6-pro_ds.pdf",
         "guide": "https://dl.ui.com/qig/u6-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 197.0,
+          "height": 35.0
+        },
+        "weight_kg": 0.58,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U6ENT": {
@@ -215,6 +357,15 @@
         "guide": "https://dl.ubnt.com/qig/u6-enterprise",
         "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 220.0,
+          "height": 48.0
+        },
+        "weight_kg": 1.1,
+        "max_power_w": 22.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/53dba281-bb41-4481-892b-c2786b0c0434/changelog"
     },
     "U6ENTIW": {
@@ -222,6 +373,16 @@
       "url": "https://store.ui.com/us/en/products/u6-enterprise-iw",
       "docs": {
         "guide": "https://dl.ui.com/qig/u6-enterprise-iw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 159.7,
+          "depth": 156.7,
+          "height": 33.8
+        },
+        "weight_kg": 0.884,
+        "max_power_w": 21.0,
+        "form_factor": "Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0a0a482d-3c38-4128-9e13-451d0602e6b1/changelog"
     },
@@ -235,14 +396,33 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/u6-iw"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 139.7,
+          "depth": 96.0,
+          "height": 31.2
+        },
+        "weight_kg": 0.46,
+        "max_power_w": 13.0,
+        "form_factor": "Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4640c65b-3bb0-4844-943b-b2103ecd4bf9/changelog"
     },
     "U6M": {
       "name": "Access Point U6 Mesh",
       "url": "https://store.ui.com/us/en/products/u6-mesh",
       "docs": {
-        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
-        "guide": "https://dl.ui.com/qig/u6-mesh"
+        "guide": "https://dl.ui.com/qig/u6-mesh",
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 48.5,
+          "height": 159.5
+        },
+        "weight_kg": 0.4,
+        "max_power_w": 13.0,
+        "form_factor": "Wall, Pole"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/14474afe-bf84-4c5d-8aed-5630d9b4108f/changelog"
     },
@@ -252,6 +432,16 @@
       "docs": {
         "guide": "https://ui.com/qig/u6-mesh-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 343.2,
+          "depth": 181.2,
+          "height": 60.2
+        },
+        "weight_kg": 0.819,
+        "max_power_w": 9.0,
+        "form_factor": "Wall, Pole"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/28fd1f0a-61bb-4651-8198-0c4e6414cff4/changelog"
     },
     "U7-IW": {
@@ -259,6 +449,16 @@
       "url": "https://store.ui.com/us/en/products/u7-iw",
       "docs": {
         "guide": "https://ui.com/qig/u7-iw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 98.7,
+          "height": 30.2
+        },
+        "weight_kg": 0.4,
+        "max_power_w": 13.0,
+        "form_factor": "Wall"
       }
     },
     "U7-LR": {
@@ -266,6 +466,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lr",
       "docs": {
         "guide": "https://ui.com/qig/u7-lr"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 175.7,
+          "height": 43.0
+        },
+        "weight_kg": 0.448,
+        "max_power_w": 14.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7-Lite": {
@@ -273,6 +482,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lite",
       "docs": {
         "guide": "https://ui.com/qig/u7-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 171.5,
+          "height": 33.0
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7-Mesh": {
@@ -280,6 +498,15 @@
       "url": "https://store.ui.com/us/en/products/u7-mesh",
       "docs": {
         "guide": "https://ui.com/qig/u7-mesh"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 48.5,
+          "height": 159.5
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Wall, Pole, Table stand"
       }
     },
     "U7-Outdoor": {
@@ -287,6 +514,16 @@
       "url": "https://store.ui.com/us/en/products/u7-outdoor",
       "docs": {
         "guide": "https://ui.com/qig/u7-outdoor"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 170.0,
+          "depth": 208.0,
+          "height": 54.5
+        },
+        "weight_kg": 1.2,
+        "max_power_w": 19.0,
+        "form_factor": "Wall, Pole"
       }
     },
     "U7-Pro": {
@@ -294,6 +531,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro",
       "docs": {
         "guide": "https://ui.com/qig/u7-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 46.0
+        },
+        "weight_kg": 0.68,
+        "max_power_w": 21.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7-Pro-Max": {
@@ -301,6 +547,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-max",
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-max"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 46.0
+        },
+        "weight_kg": 0.68,
+        "max_power_w": 25.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7-Pro-Outdoor-US": {
@@ -308,6 +563,16 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-outdoor-us",
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-outdoor"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 170.0,
+          "depth": 208.0,
+          "height": 66.5
+        },
+        "weight_kg": 1.2,
+        "max_power_w": 21.0,
+        "form_factor": "Wall, Pole"
       }
     },
     "U7-Pro-Wall": {
@@ -315,6 +580,16 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-wall",
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-wall"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 150.0,
+          "depth": 103.0,
+          "height": 36.0
+        },
+        "weight_kg": 0.58,
+        "max_power_w": 22.0,
+        "form_factor": "Wall"
       }
     },
     "U7-Pro-XG": {
@@ -322,6 +597,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xg",
       "docs": {
         "guide": "https://dl.ui.com/qig/u7-pro-xg/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.75,
+        "max_power_w": 22.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7-Pro-XG-Wall": {
@@ -329,6 +613,16 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xg-wall",
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-xg-wall"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 155.0,
+          "depth": 108.0,
+          "height": 33.5
+        },
+        "weight_kg": 0.505,
+        "max_power_w": 22.0,
+        "form_factor": "Wall"
       }
     },
     "U7-Pro-XGS": {
@@ -336,6 +630,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
       "docs": {
         "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 215.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.8,
+        "max_power_w": 29.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "U7EDU": {
@@ -343,6 +646,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lite",
       "docs": {
         "guide": "https://ui.com/qig/u7-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 171.5,
+          "height": 33.0
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/eff48bc4-6824-46a4-b700-ae6d7d402949/changelog"
     },
@@ -356,6 +668,16 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-iw"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 98.7,
+          "height": 30.2
+        },
+        "weight_kg": 0.4,
+        "max_power_w": 13.0,
+        "form_factor": "Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/e8329e61-c3c2-449f-bf91-4d45da028b8c/changelog"
     },
     "U7IWP": {
@@ -364,6 +686,16 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-wall"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 150.0,
+          "depth": 103.0,
+          "height": 36.0
+        },
+        "weight_kg": 0.58,
+        "max_power_w": 22.0,
+        "form_factor": "Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/97f2e8ac-4896-455f-9c83-be0cbaef38c9/changelog"
     },
     "U7LR": {
@@ -371,6 +703,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lr",
       "docs": {
         "guide": "https://ui.com/qig/u7-lr"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 175.7,
+          "height": 43.0
+        },
+        "weight_kg": 0.448,
+        "max_power_w": 14.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba2d5b45-dd0a-4075-bcd5-7befa6e14399/changelog"
     },
@@ -384,6 +725,15 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-max"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 46.0
+        },
+        "weight_kg": 0.68,
+        "max_power_w": 25.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/18e7f970-2f2d-4945-b3c8-6ec0bf37c19f/changelog"
     },
     "U7MSH": {
@@ -391,6 +741,15 @@
       "url": "https://store.ui.com/us/en/products/u7-mesh",
       "docs": {
         "guide": "https://ui.com/qig/u7-mesh"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 48.5,
+          "height": 159.5
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Wall, Pole, Table stand"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/6fbd6ac5-a433-4dd4-901a-c153aca259e5/changelog"
     },
@@ -405,6 +764,15 @@
         "datasheet": "https://dl.ui.com/ds/u6-pro_ds.pdf",
         "guide": "https://dl.ui.com/qig/u6-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 197.0,
+          "height": 35.0
+        },
+        "weight_kg": 0.58,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/62a146a0-d8dd-4161-a291-a74fd562b9ce/changelog"
     },
     "U7PG2": {
@@ -412,6 +780,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xg",
       "docs": {
         "guide": "https://dl.ui.com/qig/u7-pro-xg/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.75,
+        "max_power_w": 22.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/5464c424-a775-4715-8bbc-d84602f55445/changelog"
     },
@@ -421,6 +798,16 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-pro-xg-wall"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 155.0,
+          "depth": 108.0,
+          "height": 33.5
+        },
+        "weight_kg": 0.505,
+        "max_power_w": 22.0,
+        "form_factor": "Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/277a7dcb-9eac-40af-b51b-e662b0fa7760/changelog"
     },
     "U7PRO": {
@@ -429,6 +816,15 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 46.0
+        },
+        "weight_kg": 0.68,
+        "max_power_w": 21.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/01651e48-bab6-45a8-9c12-4d96d7ffe0ab/changelog"
     },
     "U7PROMAX": {
@@ -436,6 +832,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
       "docs": {
         "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 215.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.8,
+        "max_power_w": 29.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/04b2a329-aba9-445f-9680-be61169e604b/changelog"
     },
@@ -449,6 +854,16 @@
       "docs": {
         "guide": "https://ui.com/qig/uk-ultra"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 84.0,
+          "height": 34.0
+        },
+        "weight_kg": 0.173,
+        "max_power_w": 8.0,
+        "form_factor": "Ceiling, Wall, Pole, Table (With Accessory)\n(Mounts Included)\nDesktop Stand (Optional)"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/861f05b8-2de4-4bf7-8352-c33eae32f694/changelog"
     },
     "UACC-Flex-Utility-Pro": {
@@ -456,6 +871,14 @@
       "url": "https://store.ui.com/us/en/products/uacc-flex-utility-pro",
       "docs": {
         "guide": "https://ui.com/qig/uacc-flex-utility-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 350.0,
+          "depth": 220.0,
+          "height": 89.0
+        },
+        "weight_kg": 1.6
       }
     },
     "UACCMPOEAF": {
@@ -468,6 +891,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/e7/#index"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 250.0,
+          "depth": 250.0,
+          "height": 43.5
+        },
+        "weight_kg": 1.8,
+        "max_power_w": 43.0,
+        "form_factor": "Ceiling, Wall, VESA"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/b285a7a5-4d31-4e00-9c24-3fcb9bb7fea3/changelog"
     },
     "UAIW6": {
@@ -475,6 +908,16 @@
       "url": "https://store.ui.com/us/en/products/u7-iw",
       "docs": {
         "guide": "https://ui.com/qig/u7-iw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 98.7,
+          "height": 30.2
+        },
+        "weight_kg": 0.4,
+        "max_power_w": 13.0,
+        "form_factor": "Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/308b64b9-bc5c-4844-97a3-da015c55f48a/changelog"
     },
@@ -484,6 +927,15 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 206.0,
+          "height": 46.0
+        },
+        "weight_kg": 0.68,
+        "max_power_w": 21.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/5729f8c9-394a-4ad7-952d-cebedcc030ca/changelog"
     },
     "UALR6": {
@@ -491,6 +943,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lr",
       "docs": {
         "guide": "https://ui.com/qig/u7-lr"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 175.7,
+          "height": 43.0
+        },
+        "weight_kg": 0.448,
+        "max_power_w": 14.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/9f61c2cb-ca6b-43e2-998e-38efce5ba231/changelog"
     },
@@ -500,6 +961,15 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-lr"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 175.7,
+          "height": 43.0
+        },
+        "weight_kg": 0.448,
+        "max_power_w": 14.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/878e3366-0de2-4d37-8bd0-7b4399002215/changelog"
     },
     "UALRPL6": {
@@ -507,6 +977,15 @@
       "url": "https://store.ui.com/us/en/products/u7-pro-xgs",
       "docs": {
         "guide": "https://dl.ui.com/qig/u7-pro-xgs/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 215.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.8,
+        "max_power_w": 29.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/cb7506e7-9469-4f48-94d7-e735d355e829/changelog"
     },
@@ -516,6 +995,15 @@
       "docs": {
         "guide": "https://ui.com/qig/u7-mesh"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 48.5,
+          "height": 159.5
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Wall, Pole, Table stand"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/12d5a387-96f7-4330-80b6-16034487cf86/changelog"
     },
     "UAP-AC-M": {
@@ -524,6 +1012,16 @@
       "docs": {
         "datasheet": "https://www.ui.com/downloads/datasheets/unifi/UniFi_AC_Mesh_DS.pdf",
         "guide": "https://dl.ui.com/qig/uap-ac-m/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 353.0,
+          "depth": 46.0,
+          "height": 34.4
+        },
+        "weight_kg": 0.152,
+        "max_power_w": 8.5,
+        "form_factor": "Wall, Pole"
       }
     },
     "UAP-AC-PRO": {
@@ -531,6 +1029,15 @@
       "url": "https://store.ui.com/us/en/products/uap-ac-pro",
       "docs": {
         "guide": "https://dl.ui.com/qig/uap-ac-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 196.7,
+          "height": 35.0
+        },
+        "weight_kg": 0.35,
+        "max_power_w": 9.0,
+        "form_factor": "Ceiling, Wall"
       }
     },
     "UAP6MP": {
@@ -539,6 +1046,16 @@
       "docs": {
         "guide": "https://ui.com/qig/u6-mesh-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 343.2,
+          "depth": 181.2,
+          "height": 60.2
+        },
+        "weight_kg": 0.819,
+        "max_power_w": 9.0,
+        "form_factor": "Wall, Pole"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7063ccd6-22c1-496e-aa51-ee4e0ed6b03e/changelog"
     },
     "UAPA693": {
@@ -546,6 +1063,15 @@
       "url": "https://store.ui.com/us/en/products/u7-lite",
       "docs": {
         "guide": "https://ui.com/qig/u7-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 171.5,
+          "height": 33.0
+        },
+        "weight_kg": 0.313,
+        "max_power_w": 13.0,
+        "form_factor": "Ceiling, Wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/c9472971-bb24-4113-90e6-03721b79bd27/changelog"
     },
@@ -631,6 +1157,14 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/ubb/#index"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 140.0,
+          "height": 90.0
+        },
+        "weight_kg": 0.376,
+        "max_power_w": 11.0
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/a7dd55e1-126f-4205-b6cf-b7110fde2347/changelog"
     },
     "UBB-XG": {
@@ -638,6 +1172,14 @@
       "url": "https://store.ui.com/us/en/products/ubb-xg",
       "docs": {
         "guide": "https://dl.ui.com/qig/ubb-xg"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 191.8,
+          "height": 59.0
+        },
+        "weight_kg": 1.7,
+        "max_power_w": 29.0
       }
     },
     "UBBXG": {
@@ -646,6 +1188,14 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/ubb-xg"
       },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 191.8,
+          "height": 59.0
+        },
+        "weight_kg": 1.7,
+        "max_power_w": 29.0
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/1c4761aa-d7b4-47bd-a331-b08655b613a3/changelog"
     },
     "UC-Cast-Lite": {
@@ -653,6 +1203,15 @@
       "url": "https://store.ui.com/us/en/products/uc-cast-lite",
       "docs": {
         "guide": "https://ui.com/qig/uc-cast-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 90.0,
+          "depth": 52.0,
+          "height": 31.0
+        },
+        "weight_kg": 0.16,
+        "max_power_w": 5.0
       }
     },
     "UC-Cast-Pro": {
@@ -660,6 +1219,14 @@
       "url": "https://store.ui.com/us/en/products/uc-cast-pro",
       "docs": {
         "guide": "https://dl.ui.com/qig/uc-cast-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 123.0,
+          "depth": 52.0,
+          "height": 31.0
+        },
+        "weight_kg": 0.24
       }
     },
     "UC-Display": {
@@ -667,6 +1234,16 @@
       "url": "https://store.ui.com/us/en/products/uc-display21",
       "docs": {
         "guide": "https://dl.ui.com/qig/uc-display"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 538.3,
+          "depth": 330.0,
+          "height": 37.0
+        },
+        "weight_kg": 4.9,
+        "max_power_w": 27.0,
+        "form_factor": "VESA mount adapter (Included)\nTable stand, surface, arm, flush mount (Optional)"
       }
     },
     "UC-EV-Station-Lite": {
@@ -674,6 +1251,15 @@
       "url": "https://store.ui.com/us/en/products/uc-ev-station-lite",
       "docs": {
         "guide": "https://dl.ui.com/qig/uc-ev-station-lite/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 254.7,
+          "depth": 192.7,
+          "height": 85.0
+        },
+        "weight_kg": 5.9,
+        "form_factor": "Wall Mount or Stand"
       }
     },
     "UC-EV-Station-Pro": {
@@ -681,6 +1267,15 @@
       "url": "https://store.ui.com/us/en/products/uc-ev-station-pro",
       "docs": {
         "guide": "https://ui.com/qig/uc-ev-station-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 280.0,
+          "depth": 178.0,
+          "height": 143.0
+        },
+        "weight_kg": 8.1,
+        "form_factor": "Wall Mount or Stand"
       }
     },
     "UCG-Fiber": {
@@ -692,6 +1287,15 @@
       "url": "https://store.ui.com/us/en/products/ucg-industrial",
       "docs": {
         "guide": "https://ui.com/qig/ucg-industrial"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 307.9,
+          "depth": 203.5,
+          "height": 43.7
+        },
+        "max_power_w": 28.0,
+        "form_factor": "Wall-mounted\nCompact desktop (Table stand included)\nRack mount (Accessory sold separately)"
       }
     },
     "UCG-Max": {
@@ -707,6 +1311,15 @@
       "url": "https://store.ui.com/us/en/products/ucg-ultra",
       "docs": {
         "guide": "https://ui.com/qig/ucg-ultra"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 141.8,
+          "depth": 127.6,
+          "height": 30.0
+        },
+        "max_power_w": 6.2,
+        "form_factor": "Compact desktop"
       }
     },
     "UCGF": {
@@ -739,6 +1352,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/ck-enterprise"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 787.0,
+          "depth": 43.7,
+          "height": 481.4
+        },
+        "max_power_w": 190.0,
+        "form_factor": "Rack Mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/9ad0aa1a-1a8c-4618-8d49-e0c5e16b31a7/changelog"
     },
     "UDB": {
@@ -747,6 +1370,16 @@
       "docs": {
         "guide": "https://ui.com/qig/udb"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 130.0,
+          "depth": 55.0,
+          "height": 34.0
+        },
+        "weight_kg": 0.2,
+        "max_power_w": 25.0,
+        "form_factor": "Wall (Included)"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/51728f6e-d82e-4e00-aeba-937fc004c7bb/changelog"
     },
     "UDB-IoT": {
@@ -754,6 +1387,16 @@
       "url": "https://store.ui.com/us/en/products/udb-iot",
       "docs": {
         "guide": "https://dl.ui.com/qig/udb-iot"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 63.0,
+          "depth": 44.5,
+          "height": 25.5
+        },
+        "weight_kg": 0.045,
+        "max_power_w": 2.3,
+        "form_factor": "Included mount"
       }
     },
     "UDB-Pro": {
@@ -761,6 +1404,15 @@
       "url": "https://store.ui.com/us/en/products/udb-pro",
       "docs": {
         "guide": "https://ui.com/qig/udb-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 189.5,
+          "height": 64.3
+        },
+        "weight_kg": 0.431,
+        "max_power_w": 9.0,
+        "form_factor": "Pole (Included)"
       }
     },
     "UDB-Pro-Sector": {
@@ -768,6 +1420,15 @@
       "url": "https://store.ui.com/us/en/products/udb-pro-sector",
       "docs": {
         "guide": "https://ui.com/qig/udb-pro-sector"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 360.9,
+          "depth": 129.6,
+          "height": 71.4
+        },
+        "weight_kg": 0.782,
+        "max_power_w": 6.0
       }
     },
     "UDB-Switch": {
@@ -775,6 +1436,15 @@
       "url": "https://store.ui.com/us/en/products/udb-switch",
       "docs": {
         "guide": "https://dl.ui.com/qig/udb-switch"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 212.9,
+          "depth": 113.0,
+          "height": 32.5
+        },
+        "weight_kg": 0.548,
+        "max_power_w": 25.0
       }
     },
     "UDBA69F": {
@@ -786,6 +1456,15 @@
       "url": "https://store.ui.com/us/en/products/udb-pro-sector",
       "docs": {
         "guide": "https://ui.com/qig/udb-pro-sector"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 360.9,
+          "depth": 129.6,
+          "height": 71.4
+        },
+        "weight_kg": 0.782,
+        "max_power_w": 6.0
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/58797a2b-1da9-4734-b8a8-42b2da5fdb9f/changelog"
     },
@@ -799,6 +1478,16 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/udm-pro.pdf",
         "guide": "https://dl.ui.com/qig/udm-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 33.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UDM-Pro-Max": {
@@ -806,6 +1495,16 @@
       "url": "https://store.ui.com/us/en/products/udm-pro-max",
       "docs": {
         "guide": "https://ui.com/qig/udm-pro-max"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UDM-SE": {
@@ -814,6 +1513,16 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/udm_se_ds.pdf",
         "guide": "https://dl.ui.com/qig/udm-se"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UDMA69B": {
@@ -821,6 +1530,16 @@
       "url": "https://store.ui.com/us/en/products/udm-pro-max",
       "docs": {
         "guide": "https://ui.com/qig/udm-pro-max"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/02ea9883-e84e-42f0-9083-695cd0313e4d/changelog"
     },
@@ -835,6 +1554,16 @@
         "datasheet": "https://dl.ui.com/ds/udm_se_ds.pdf",
         "guide": "https://dl.ui.com/qig/udm-se"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/d559faf8-78cf-42fb-8aa1-7196fc633212/changelog"
     },
     "UDMPRO": {
@@ -844,6 +1573,16 @@
         "datasheet": "https://dl.ui.com/ds/udm-pro.pdf",
         "guide": "https://dl.ui.com/qig/udm-pro"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 33.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0eecacb0-ab4a-46de-b577-5fe8d21831db/changelog"
     },
     "UDR-5G-Max": {
@@ -851,6 +1590,15 @@
       "url": "https://store.ui.com/us/en/products/udr-5g-max",
       "docs": {
         "guide": "https://ui.com/qig/udr-5g-max"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 110.0,
+          "depth": 110.0,
+          "height": 250.0
+        },
+        "max_power_w": 34.5,
+        "form_factor": "Desktop"
       }
     },
     "UDR7": {
@@ -858,6 +1606,14 @@
       "url": "https://store.ui.com/us/en/products/udr7",
       "docs": {
         "guide": "https://ui.com/qig/udr7"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 110.0,
+          "height": 184.1
+        },
+        "max_power_w": 26.0,
+        "form_factor": "Compact desktop"
       }
     },
     "UDW": {
@@ -865,6 +1621,15 @@
       "url": "https://store.ui.com/us/en/products/udw",
       "docs": {
         "guide": "https://dl.ui.com/qig/udw"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 549.0,
+          "depth": 342.0,
+          "height": 62.0
+        },
+        "max_power_w": 532.0,
+        "form_factor": "Wall-mounted"
       }
     },
     "UFLHD": {
@@ -892,6 +1657,16 @@
       "url": "https://store.ui.com/us/en/products/uk-ultra",
       "docs": {
         "guide": "https://ui.com/qig/uk-ultra"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 84.0,
+          "height": 34.0
+        },
+        "weight_kg": 0.173,
+        "max_power_w": 8.0,
+        "form_factor": "Ceiling, Wall, Pole, Table (With Accessory)\n(Mounts Included)\nDesktop Stand (Optional)"
       }
     },
     "UKPW": {
@@ -899,6 +1674,16 @@
       "url": "https://store.ui.com/us/en/products/uk-ultra",
       "docs": {
         "guide": "https://ui.com/qig/uk-ultra"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 137.0,
+          "depth": 84.0,
+          "height": 34.0
+        },
+        "weight_kg": 0.173,
+        "max_power_w": 8.0,
+        "form_factor": "Ceiling, Wall, Pole, Table (With Accessory)\n(Mounts Included)\nDesktop Stand (Optional)"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/d80df91e-f1a2-4f0a-8ef0-c27c858e025f/changelog"
     },
@@ -942,6 +1727,16 @@
       "url": "https://store.ui.com/us/en/products/unas-2",
       "docs": {
         "guide": "https://ui.com/qig/unas-2-b"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 135.0,
+          "depth": 129.0,
+          "height": 223.7
+        },
+        "weight_kg": 1.3,
+        "max_power_w": 60.0,
+        "form_factor": "Desktop"
       }
     },
     "UNAS-4": {
@@ -949,6 +1744,16 @@
       "url": "https://store.ui.com/us/en/products/unas-4",
       "docs": {
         "guide": "https://ui.com/qig/unas-4-w"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 246.0,
+          "depth": 129.0,
+          "height": 224.5
+        },
+        "weight_kg": 2.6,
+        "max_power_w": 90.0,
+        "form_factor": "Desktop"
       }
     },
     "UNAS-Pro": {
@@ -956,6 +1761,17 @@
       "url": "https://store.ui.com/us/en/products/unas-pro",
       "docs": {
         "guide": "https://ui.com/qig/unas-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 325.0,
+          "height": 87.4
+        },
+        "weight_kg": 9.2,
+        "max_power_w": 160.0,
+        "form_factor": "Rack mount (2U)",
+        "rack_height_u": 2
       }
     },
     "UNAS-Pro-4": {
@@ -963,6 +1779,17 @@
       "url": "https://store.ui.com/us/en/products/unas-pro-4",
       "docs": {
         "guide": "https://ui.com/qig/unas-pro-4"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 400.0,
+          "height": 43.7
+        },
+        "weight_kg": 6.7,
+        "max_power_w": 150.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UNAS-Pro-8": {
@@ -970,6 +1797,17 @@
       "url": "https://store.ui.com/us/en/products/unas-pro-8",
       "docs": {
         "guide": "https://ui.com/qig/unas-pro-8"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 480.0,
+          "height": 87.4
+        },
+        "weight_kg": 11.5,
+        "max_power_w": 250.0,
+        "form_factor": "Rack mount (2U)",
+        "rack_height_u": 2
       }
     },
     "UP1": {
@@ -985,6 +1823,16 @@
       "url": "https://store.ui.com/us/en/products/upl-amp",
       "docs": {
         "guide": "https://dl.ui.com/qig/upl-amp-b"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 217.0,
+          "depth": 236.8,
+          "height": 63.7
+        },
+        "weight_kg": 2.4,
+        "max_power_w": 17.0,
+        "form_factor": "Compact Desktop"
       }
     },
     "UPL-Port": {
@@ -992,6 +1840,16 @@
       "url": "https://store.ui.com/us/en/products/upl-port",
       "docs": {
         "guide": "https://ui.com/qig/upl-port-w"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 109.0,
+          "depth": 109.0,
+          "height": 40.5
+        },
+        "weight_kg": 0.25,
+        "max_power_w": 10.0,
+        "form_factor": "Compact Desktop"
       }
     },
     "UPS-2U-US": {
@@ -1003,6 +1861,15 @@
       "url": "https://store.ui.com/us/en/products/ups-tower-us",
       "docs": {
         "guide": "https://ui.com/qig/ups-tower"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 288.0,
+          "depth": 99.0,
+          "height": 280.5
+        },
+        "weight_kg": 8.17,
+        "form_factor": "Desktop"
       }
     },
     "US16P150": {
@@ -1010,6 +1877,17 @@
       "url": "https://store.ui.com/us/en/products/usw-16-poe",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-16-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.8,
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/ce5ce216-d8de-4ad6-8a15-d4f0d18bf69a/changelog"
     },
@@ -1020,6 +1898,17 @@
         "datasheet": "https://dl.ui.com/ds/usw-24_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-24"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.7,
+        "max_power_w": 25.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/615a34a1-96f4-4290-a9ec-af864271db46/changelog"
     },
     "US24P250": {
@@ -1028,6 +1917,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-24-poe",
         "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.0,
+        "max_power_w": 120.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/f4de140a-df96-4e2f-aad4-bef7e80bb02c/changelog"
     },
@@ -1046,6 +1946,17 @@
         "datasheet": "https://dl.ui.com/ds/usw-pro-24_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-24"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.5,
+        "max_power_w": 30.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0073f981-4a5e-4169-b45d-09035bdaa11f/changelog"
     },
     "US24PRO2": {
@@ -1055,14 +1966,36 @@
         "datasheet": "https://dl.ui.com/ds/usw-pro-24-poe_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-24-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.3,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ae04cc1-9fcd-44c1-a28f-f0e55bfe0ad0/changelog"
     },
     "US48": {
       "name": "Switch 48",
       "url": "https://store.ui.com/us/en/products/usw-48",
       "docs": {
-        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
-        "guide": "https://dl.ui.com/qig/usw-48"
+        "guide": "https://dl.ui.com/qig/usw-48",
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.9,
+        "max_power_w": 40.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/2813e242-f8d8-4963-b2ff-a573d18937be/changelog"
     },
@@ -1072,6 +2005,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-48-poe",
         "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.5,
+        "max_power_w": 240.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a752339-a617-4b84-bca4-b6138db71516/changelog"
     },
@@ -1090,6 +2034,17 @@
         "datasheet": "https://dl.ui.com/ds/usw-pro-48_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-48"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.0,
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/b08972d7-9134-4c30-9381-b19e81384df2/changelog"
     },
     "US48PRO2": {
@@ -1098,6 +2053,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-pro-48-poe_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 660.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7b994c84-0d43-4fa5-a1c1-2be3e20ff059/changelog"
     },
@@ -1108,6 +2074,17 @@
         "guide": "https://dl.ui.com/qig/enterprise-24-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 460.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/70841a0b-f229-42ec-a62b-27970c1fdd54/changelog"
     },
     "US648P": {
@@ -1116,6 +2093,17 @@
       "docs": {
         "guide": "http://ui.com/qig/enterprise-48-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 870.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c64130e-c71c-445a-ba16-ddf9c6252ecb/changelog"
     },
@@ -1126,6 +2114,16 @@
         "guide": "https://dl.ui.com/qig/enterprise-8-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.4,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/11731f2f-ec2a-4dec-af99-e1da2b626b5e/changelog"
     },
     "US6XG150": {
@@ -1134,6 +2132,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/aggregation-pro",
         "datasheet": "https://dl.ui.com/ds/usw-pro-aggregation_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.6,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0adadd4c-1611-4d30-9852-b0a686b7781c/changelog"
     },
@@ -1155,6 +2164,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-aggregation"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 120.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.6,
+        "max_power_w": 36.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ef00764-aab3-4471-8234-45b3fd3766d5/changelog"
     },
     "USC8": {
@@ -1174,6 +2194,16 @@
         "datasheet": "https://dl.ui.com/ds/USW-Flex_DS.pdf",
         "guide": "https://dl.ui.com/qig/usw-flex"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 122.5,
+          "depth": 107.1,
+          "height": 28.0
+        },
+        "weight_kg": 0.23,
+        "max_power_w": 51.0,
+        "form_factor": "Compact desktop, wall, pole"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb3d948d-7ba5-4233-8dc1-c098ff15c1f6/changelog"
     },
     "USFXG": {
@@ -1181,6 +2211,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 480.0
+        },
+        "weight_kg": 7.1,
+        "max_power_w": 200.0,
+        "form_factor": "Rack Mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/60e368bc-8d1b-421c-b595-d3ff6e9ee1f0/changelog"
     },
@@ -1191,6 +2232,16 @@
         "datasheet": "https://dl.ui.com/ds/usw-lite-16-poe.pdf",
         "guide": "https://ui.com/qig/usw-lite-16-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 192.0,
+          "depth": 185.0,
+          "height": 44.0
+        },
+        "weight_kg": 1.2,
+        "max_power_w": 60.0,
+        "form_factor": "Compact desktop, wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/21a07965-1787-421d-999f-8b46434650db/changelog"
     },
     "USL16LPB": {
@@ -1198,6 +2249,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 1.95,
+        "max_power_w": 25.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/03d2600a-2a25-4e1e-a51f-ed11be111eb1/changelog"
     },
@@ -1207,6 +2269,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 210.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/2bf048b8-9128-4b84-9e20-a16e2dafd14b/changelog"
     },
     "USL16PB": {
@@ -1214,6 +2287,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 210.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/8f74d7e3-4642-4bb0-a776-ecbe9e94d95c/changelog"
     },
@@ -1223,6 +2307,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.2,
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4554f1fe-b7f6-4cb6-b567-eab17a930116/changelog"
     },
     "USL24B": {
@@ -1230,6 +2325,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.2,
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/35905616-1c98-4613-b748-f9baadac62e6/changelog"
     },
@@ -1239,6 +2345,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/b1f250fb-0f64-449e-b292-8685babf4407/changelog"
     },
     "USL24PB": {
@@ -1246,6 +2363,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/113d9f4c-cfd2-4bfd-ab25-5f1e4471af30/changelog"
     },
@@ -1255,6 +2383,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.8,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/1639d28e-7082-41fe-9ca6-48a7de5b6b7f/changelog"
     },
     "USL48B": {
@@ -1262,6 +2401,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.8,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/51f6524a-923a-4681-ac3f-a9788813755e/changelog"
     },
@@ -1271,6 +2421,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 820.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/06f3d569-9ce5-4701-a5b7-ce1be14386ca/changelog"
     },
     "USL48PB": {
@@ -1278,6 +2439,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 820.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/feba904f-15cf-430b-82c2-c886d26062c6/changelog"
     },
@@ -1288,6 +2460,16 @@
         "guide": "https://ui.com/qig/usw-lite-8-poe",
         "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 99.6,
+          "depth": 163.7,
+          "height": 31.7
+        },
+        "weight_kg": 0.295,
+        "max_power_w": 60.0,
+        "form_factor": "Compact desktop, wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7cdc1161-fd6f-4550-bbb6-3dd259dc929d/changelog"
     },
     "USL8LP": {
@@ -1296,6 +2478,16 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-lite-8-poe",
         "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 99.6,
+          "depth": 163.7,
+          "height": 31.7
+        },
+        "weight_kg": 0.295,
+        "max_power_w": 60.0,
+        "form_factor": "Compact desktop, wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/e6fef6f9-16af-422c-b3f6-4b36f5b2474c/changelog"
     },
@@ -1309,6 +2501,16 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-8-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop, wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/6edda40c-ede7-4e94-a17a-98e0fa1ee9eb/changelog"
     },
     "USLP8P": {
@@ -1316,6 +2518,16 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop, wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4345dd46-e992-45d0-afb9-72ca1221dfc7/changelog"
     },
@@ -1328,6 +2540,16 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop, wall"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/3c6f8d93-8fc6-4d6e-89bb-0e19f37f431d/changelog"
     },
@@ -1342,6 +2564,16 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-8-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop, wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/efae96b5-09d0-4fb1-a215-b4587fd1a453/changelog"
     },
     "USMINI": {
@@ -1349,6 +2581,16 @@
       "url": "https://store.ui.com/us/en/products/usw-flex-mini",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 107.0,
+          "depth": 70.0,
+          "height": 21.0
+        },
+        "weight_kg": 0.15,
+        "max_power_w": 2.5,
+        "form_factor": "Compact desktop"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4cafc8c9-4830-41cf-afc4-ae678c19afed/changelog"
     },
@@ -1358,6 +2600,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 107.0,
+          "depth": 70.0,
+          "height": 21.0
+        },
+        "weight_kg": 0.15,
+        "max_power_w": 2.5,
+        "form_factor": "Compact desktop"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/096c0b64-0711-449e-b812-9efeb6af54ca/changelog"
     },
     "USMULT": {
@@ -1365,6 +2617,17 @@
       "url": "https://store.ui.com/us/en/products/usw-wan",
       "docs": {
         "guide": "https://ui.com/qig/usw-wan"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 120.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.2,
+        "max_power_w": 13.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/daee7da6-5c97-4abc-832d-ef682b176e42/changelog"
     },
@@ -1382,6 +2645,15 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usp-rps",
         "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 325.6,
+          "height": 43.7
+        },
+        "weight_kg": 5.5,
+        "max_power_w": 995.0
       }
     },
     "USPM16": {
@@ -1389,6 +2661,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 1.95,
+        "max_power_w": 25.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/940135de-b84d-4376-85ba-e581fa8ce55b/changelog"
     },
@@ -1398,6 +2681,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 210.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/531c7744-74cc-4a6f-839d-f78fc13f883c/changelog"
     },
     "USPM24": {
@@ -1405,6 +2699,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.2,
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/5f110576-e1c3-4792-b048-aed48832983d/changelog"
     },
@@ -1414,6 +2719,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24-poe"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/401a48ce-12ae-4925-b281-4b565774bbf9/changelog"
     },
     "USPM48": {
@@ -1422,6 +2738,17 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.8,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/36afbb25-596d-40a4-afff-b386d4312de5/changelog"
     },
     "USPM48P": {
@@ -1429,6 +2756,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 820.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0b1939dd-5e9e-4d04-95c9-1c9c85acde48/changelog"
     },
@@ -1449,6 +2787,15 @@
         "guide": "https://dl.ui.com/qig/usp-rps",
         "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 325.6,
+          "height": 43.7
+        },
+        "weight_kg": 5.5,
+        "max_power_w": 995.0
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/5e77b5df-40af-44f4-bae6-f969c3346ea7/changelog"
     },
     "USPRPSP": {
@@ -1458,6 +2805,15 @@
         "guide": "https://dl.ui.com/qig/usp-rps",
         "datasheet": "https://dl.ui.com/datasheets/unifi/USP-RPS_DS.pdf"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 325.6,
+          "height": 43.7
+        },
+        "weight_kg": 5.5,
+        "max_power_w": 995.0
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/3fb054b0-168f-44b4-8d48-ae309552352d/changelog"
     },
     "USW-16-POE": {
@@ -1465,6 +2821,17 @@
       "url": "https://store.ui.com/us/en/products/usw-16-poe",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-16-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.8,
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-24": {
@@ -1473,6 +2840,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-24_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.7,
+        "max_power_w": 25.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-24-POE": {
@@ -1481,14 +2859,36 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-24-poe",
         "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 200.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.0,
+        "max_power_w": 120.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-48": {
       "name": "Switch 48",
       "url": "https://store.ui.com/us/en/products/usw-48",
       "docs": {
-        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
-        "guide": "https://dl.ui.com/qig/usw-48"
+        "guide": "https://dl.ui.com/qig/usw-48",
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.9,
+        "max_power_w": 40.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-48-POE": {
@@ -1497,6 +2897,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-48-poe",
         "datasheet": "https://dl.ui.com/ds/usw_poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.5,
+        "max_power_w": 240.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Aggregation": {
@@ -1504,6 +2915,17 @@
       "url": "https://store.ui.com/us/en/products/usw-aggregation",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-aggregation"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 120.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.6,
+        "max_power_w": 36.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Enterprise-24-PoE": {
@@ -1512,6 +2934,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/enterprise-24-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 460.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Enterprise-48-PoE": {
@@ -1520,6 +2953,17 @@
       "docs": {
         "guide": "http://ui.com/qig/enterprise-48-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 870.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Enterprise-8-PoE": {
@@ -1528,6 +2972,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/enterprise-8-poe",
         "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.4,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop"
       }
     },
     "USW-Flex": {
@@ -1536,6 +2990,16 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/USW-Flex_DS.pdf",
         "guide": "https://dl.ui.com/qig/usw-flex"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 122.5,
+          "depth": 107.1,
+          "height": 28.0
+        },
+        "weight_kg": 0.23,
+        "max_power_w": 51.0,
+        "form_factor": "Compact desktop, wall, pole"
       }
     },
     "USW-Flex-2.5G-5": {
@@ -1543,6 +3007,16 @@
       "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-5",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-flex-2.5g-5/index.html#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 117.1,
+          "depth": 90.0,
+          "height": 21.2
+        },
+        "weight_kg": 0.206,
+        "max_power_w": 6.4,
+        "form_factor": "Compact desktop"
       }
     },
     "USW-Flex-2.5G-8": {
@@ -1550,6 +3024,16 @@
       "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8",
       "docs": {
         "guide": "https://ui.com/qig/usw-flex-2.5g-8"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 212.9,
+          "depth": 76.0,
+          "height": 33.5
+        },
+        "weight_kg": 0.395,
+        "max_power_w": 14.0,
+        "form_factor": "Compact Desktop, wall, DIN, magnetic"
       }
     },
     "USW-Flex-2.5G-8-PoE": {
@@ -1557,6 +3041,16 @@
       "url": "https://store.ui.com/us/en/products/usw-flex-2-5g-8-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-flex-2.5g-8-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 212.9,
+          "depth": 99.4,
+          "height": 33.5
+        },
+        "weight_kg": 0.567,
+        "max_power_w": 210.0,
+        "form_factor": "Compact Desktop, wall, DIN, magnetic"
       }
     },
     "USW-Flex-Mini": {
@@ -1564,6 +3058,16 @@
       "url": "https://store.ui.com/us/en/products/usw-flex-mini",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-flex-mini/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 107.0,
+          "depth": 70.0,
+          "height": 21.0
+        },
+        "weight_kg": 0.15,
+        "max_power_w": 2.5,
+        "form_factor": "Compact desktop"
       }
     },
     "USW-Flex-Utility": {
@@ -1571,6 +3075,14 @@
       "url": "https://store.ui.com/us/en/products/usw-flexutility",
       "docs": {
         "datasheet": "https://dl.ui.com/datasheets/unifi/USW-Flex_DS.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 249.0,
+          "depth": 218.0,
+          "height": 60.0
+        },
+        "weight_kg": 0.74
       }
     },
     "USW-Flex-XG": {
@@ -1579,6 +3091,16 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/flex-xg",
         "datasheet": "https://dl.ui.com/ds/usw-flex-xg_ds"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 135.0,
+          "depth": 185.0,
+          "height": 32.0
+        },
+        "weight_kg": 1.2,
+        "max_power_w": 25.0,
+        "form_factor": "Compact desktop, wall"
       }
     },
     "USW-Lite-16-PoE": {
@@ -1587,6 +3109,16 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-lite-16-poe.pdf",
         "guide": "https://ui.com/qig/usw-lite-16-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 192.0,
+          "depth": 185.0,
+          "height": 44.0
+        },
+        "weight_kg": 1.2,
+        "max_power_w": 60.0,
+        "form_factor": "Compact desktop, wall"
       }
     },
     "USW-Lite-8-PoE": {
@@ -1595,6 +3127,16 @@
       "docs": {
         "guide": "https://ui.com/qig/usw-lite-8-poe",
         "datasheet": "https://dl.ui.com/ds/usw-lite-8-poe.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 99.6,
+          "depth": 163.7,
+          "height": 31.7
+        },
+        "weight_kg": 0.295,
+        "max_power_w": 60.0,
+        "form_factor": "Compact desktop, wall"
       }
     },
     "USW-Mission-Critical": {
@@ -1602,6 +3144,17 @@
       "url": "https://store.ui.com/us/en/products/usw-mission-critical",
       "docs": {
         "guide": "https://dl.ui.com/qig/mission-critical"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 480.0,
+          "height": 44.0
+        },
+        "weight_kg": 9.0,
+        "max_power_w": 240.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-24": {
@@ -1610,6 +3163,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-pro-24_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 3.5,
+        "max_power_w": 30.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-24-POE": {
@@ -1618,6 +3182,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-pro-24-poe_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-24-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.3,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-48": {
@@ -1626,6 +3201,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-pro-48_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-48"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.0,
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-48-POE": {
@@ -1634,6 +3220,17 @@
       "docs": {
         "datasheet": "https://dl.ui.com/ds/usw-pro-48-poe_ds.pdf",
         "guide": "https://dl.ui.com/qig/usw-pro-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 660.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-8-PoE": {
@@ -1641,6 +3238,16 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-8-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-8-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 248.0,
+          "height": 44.0
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 150.0,
+        "form_factor": "Compact desktop, wall"
       }
     },
     "USW-Pro-Aggregation": {
@@ -1649,6 +3256,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/aggregation-pro",
         "datasheet": "https://dl.ui.com/ds/usw-pro-aggregation_ds.pdf"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.6,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-HD-24": {
@@ -1656,6 +3274,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-hd-24",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-hd-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.2,
+        "max_power_w": 60.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-HD-24-PoE": {
@@ -1663,6 +3292,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-hd-24-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-hd-24-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 660.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-16": {
@@ -1670,6 +3310,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-16",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 1.95,
+        "max_power_w": 25.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-16-PoE": {
@@ -1677,6 +3328,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-16-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-16-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 325.1,
+          "depth": 160.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.1,
+        "max_power_w": 210.0,
+        "form_factor": "Rack mount (1U), desktop, wall",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-24": {
@@ -1684,6 +3346,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-24",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.2,
+        "max_power_w": 50.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-24-PoE": {
@@ -1691,6 +3364,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-24-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-24-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 5.1,
+        "max_power_w": 450.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-48": {
@@ -1698,6 +3382,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-48",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 325.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.8,
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-Max-48-PoE": {
@@ -1705,6 +3400,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-max-48-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-max-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 400.0,
+          "height": 44.0
+        },
+        "weight_kg": 6.2,
+        "max_power_w": 820.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-10-PoE": {
@@ -1712,6 +3418,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-10-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-10-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 285.0,
+          "height": 44.0
+        },
+        "weight_kg": 4.6,
+        "max_power_w": 520.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-24": {
@@ -1719,6 +3436,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-24",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-24"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 480.0,
+          "height": 44.0
+        },
+        "weight_kg": 7.2,
+        "max_power_w": 150.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-24-PoE": {
@@ -1726,6 +3454,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-24-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-24-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 480.0,
+          "height": 44.0
+        },
+        "weight_kg": 7.9,
+        "max_power_w": 870.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-48": {
@@ -1733,6 +3472,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-48",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-48"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 480.0,
+          "height": 44.0
+        },
+        "weight_kg": 7.5,
+        "max_power_w": 250.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-48-PoE": {
@@ -1740,6 +3490,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-48-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-48-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.0,
+          "depth": 480.0,
+          "height": 44.0
+        },
+        "weight_kg": 8.7,
+        "max_power_w": 280.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Pro-XG-8-PoE": {
@@ -1747,6 +3508,16 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-8-poe",
       "docs": {
         "guide": "https://ui.com/qig/usw-pro-xg-8-poe"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 210.4,
+          "depth": 173.8,
+          "height": 43.7
+        },
+        "weight_kg": 1.6,
+        "max_power_w": 210.0,
+        "form_factor": "Compact desktop, wall"
       }
     },
     "USW-Pro-XG-Aggregation": {
@@ -1754,6 +3525,17 @@
       "url": "https://store.ui.com/us/en/products/usw-pro-xg-aggregation",
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 480.0
+        },
+        "weight_kg": 7.1,
+        "max_power_w": 200.0,
+        "form_factor": "Rack Mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-Ultra": {
@@ -1773,6 +3555,17 @@
       "url": "https://store.ui.com/us/en/products/usw-wan",
       "docs": {
         "guide": "https://ui.com/qig/usw-wan"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 120.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.2,
+        "max_power_w": 13.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USW-WAN-RJ45": {
@@ -1780,6 +3573,17 @@
       "url": "https://store.ui.com/us/en/products/usw-wan-rj45",
       "docs": {
         "guide": "http://ui.com/qig/usw-wan-rj45"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 120.0,
+          "height": 43.7
+        },
+        "weight_kg": 2.3,
+        "max_power_w": 18.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "USWDA23": {
@@ -1873,6 +3677,17 @@
       "docs": {
         "guide": "https://dl.ui.com/qig/usw-pro-xg-aggregation/#index"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 480.0
+        },
+        "weight_kg": 7.1,
+        "max_power_w": 200.0,
+        "form_factor": "Rack Mount (1U)",
+        "rack_height_u": 1
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/fbfedb58-c0c3-4ffa-9f02-7e5e957815f2/changelog"
     },
     "USXG24": {
@@ -1884,6 +3699,15 @@
       "url": "https://store.ui.com/us/en/products/ut-ata",
       "docs": {
         "guide": "https://dl.ui.com/qig/ut-ata"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 131.5,
+          "depth": 110.7,
+          "height": 28.2
+        },
+        "weight_kg": 0.3,
+        "form_factor": "Flat/Angle Mount"
       }
     },
     "UT-G3-Handset": {
@@ -1891,6 +3715,14 @@
       "url": "https://store.ui.com/us/en/products/ut-g3-handset",
       "docs": {
         "guide": "https://ui.com/qig/ut-g3-handset"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 186.0,
+          "depth": 53.8,
+          "height": 54.7
+        },
+        "weight_kg": 0.18
       }
     },
     "UTP-G3-Touch-Enterprise": {
@@ -1906,6 +3738,16 @@
       "url": "https://store.ui.com/us/en/products/utp-g3-touch-wall",
       "docs": {
         "guide": "https://ui.com/qig/utp-g3-wall"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 254.4,
+          "depth": 202.5,
+          "height": 70.1
+        },
+        "weight_kg": 1.1,
+        "max_power_w": 11.0,
+        "form_factor": "Wall"
       }
     },
     "UTP-Touch-US": {
@@ -1921,6 +3763,15 @@
       "url": "https://store.ui.com/us/en/products/utr",
       "docs": {
         "guide": "https://ui.com/qig/utr"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 95.95,
+          "depth": 65.0,
+          "height": 12.5
+        },
+        "weight_kg": 0.089,
+        "max_power_w": 5.0
       }
     },
     "UTREA06": {
@@ -1932,17 +3783,36 @@
       "url": "https://store.ui.com/us/en/products/uwb-xg",
       "docs": {
         "guide": "https://ui.com/qig/uwb-xg"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 471.1,
+          "depth": 257.5,
+          "height": 94.3
+        },
+        "weight_kg": 3.2,
+        "max_power_w": 31.0,
+        "form_factor": "Wall, Pole (Mounts Included), VESA (Optional)"
       }
     },
     "UX": {
       "name": "UX",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4a3d956e-e728-492a-949a-325774e10ec2/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4d48a18e-523e-465a-b3d8-a3e4f87c6f14/changelog"
     },
     "UX7": {
       "name": "UniFi Express 7",
       "url": "https://store.ui.com/us/en/products/ux7",
       "docs": {
         "guide": "https://ui.com/qig/ux7"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 117.0,
+          "depth": 117.0,
+          "height": 42.5
+        },
+        "max_power_w": 22.0,
+        "form_factor": "Compact desktop"
       }
     },
     "UXBSDM": {
@@ -1950,6 +3820,15 @@
       "url": "https://store.ui.com/us/en/products/ux7",
       "docs": {
         "guide": "https://ui.com/qig/ux7"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 117.0,
+          "depth": 117.0,
+          "height": 42.5
+        },
+        "max_power_w": 22.0,
+        "form_factor": "Compact desktop"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/0dac0845-0288-43be-9ff3-a224f21f833f/changelog"
     },
@@ -1959,6 +3838,15 @@
       "docs": {
         "guide": "https://ui.com/qig/ucg-ultra"
       },
+      "specs": {
+        "dimensions_mm": {
+          "width": 141.8,
+          "depth": 127.6,
+          "height": 30.0
+        },
+        "max_power_w": 6.2,
+        "form_factor": "Compact desktop"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/1f9e6245-6339-41e1-971b-145b39ac4bcb/changelog"
     },
     "UXG-Enterprise": {
@@ -1966,6 +3854,16 @@
       "url": "https://store.ui.com/us/en/products/uxg-enterprise",
       "docs": {
         "guide": "https://ui.com/qig/uxg-enterprise"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 325.0
+        },
+        "max_power_w": 82.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UXG-Fiber": {
@@ -1973,6 +3871,15 @@
       "url": "https://store.ui.com/us/en/products/uxg-fiber",
       "docs": {
         "guide": "https://ui.com/qig/uxg-fiber"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 212.8,
+          "depth": 127.6,
+          "height": 30.0
+        },
+        "max_power_w": 25.0,
+        "form_factor": "Compact desktop"
       }
     },
     "UXG-Lite": {
@@ -1980,6 +3887,15 @@
       "url": "https://store.ui.com/us/en/products/uxg-lite",
       "docs": {
         "guide": "https://ui.com/qig/uxg-lite"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 98.0,
+          "depth": 98.0,
+          "height": 30.0
+        },
+        "max_power_w": 3.83,
+        "form_factor": "Compact desktop"
       }
     },
     "UXG-Max": {
@@ -1987,6 +3903,15 @@
       "url": "https://store.ui.com/us/en/products/uxg-max",
       "docs": {
         "guide": "https://ui.com/qig/uxg-max"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 141.8,
+          "depth": 127.6,
+          "height": 30.0
+        },
+        "max_power_w": 9.6,
+        "form_factor": "Compact desktop"
       }
     },
     "UXG-Pro": {
@@ -1994,6 +3919,16 @@
       "url": "https://store.ui.com/us/en/products/uxg-pro",
       "docs": {
         "guide": "https://ui.com/qig/uxg-pro"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 285.6
+        },
+        "max_power_w": 30.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       }
     },
     "UXGA6AA": {
@@ -2001,6 +3936,15 @@
       "url": "https://store.ui.com/us/en/products/ucg-industrial",
       "docs": {
         "guide": "https://ui.com/qig/ucg-industrial"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 307.9,
+          "depth": 203.5,
+          "height": 43.7
+        },
+        "max_power_w": 28.0,
+        "form_factor": "Wall-mounted\nCompact desktop (Table stand included)\nRack mount (Accessory sold separately)"
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/2fbd927b-2684-439f-8987-e244d09caa6a/changelog"
     },
@@ -2014,6 +3958,16 @@
       "url": "https://store.ui.com/us/en/products/uxg-enterprise",
       "docs": {
         "guide": "https://ui.com/qig/uxg-enterprise"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 325.0
+        },
+        "max_power_w": 82.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
       },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/af57c01e-c247-4584-9465-08aea690dc4d/changelog"
     },
