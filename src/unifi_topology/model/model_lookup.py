@@ -85,6 +85,15 @@ def lookup_model_specs(model: str) -> dict[str, Any]:
     return entry.get("specs", {}) if entry else {}
 
 
+def list_all_models() -> dict[str, dict[str, Any]]:
+    """Return the complete model lookup table.
+
+    Each key is a model code, and the value is a dict with keys like
+    ``name``, ``url``, ``docs``, ``specs``, and ``firmware_changelog``.
+    """
+    return dict(_load_models())
+
+
 def lookup_firmware_changelog(model: str) -> str:
     """Return the firmware release notes URL for a UniFi model code.
 

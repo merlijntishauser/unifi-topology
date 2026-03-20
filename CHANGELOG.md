@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `list_all_models()` public function to return the complete model lookup table with all model codes and their specs, docs, and URLs
+
 ## [1.3.1] (2026-03-19)
 
 ### Added

@@ -16,6 +16,7 @@ from .firewall_coerce import (
 )
 from .inventory import DeviceInfo, build_device_inventory
 from .model_lookup import (
+    list_all_models,
     lookup_firmware_changelog,
     lookup_model_docs,
     lookup_model_name,
@@ -53,6 +54,7 @@ __all__ = [
     "generate_mock_payload",
     "group_devices_by_type",
     "group_nodes_by_vlan",
+    "list_all_models",
     "lookup_firmware_changelog",
     "lookup_model_docs",
     "lookup_model_name",

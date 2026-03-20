@@ -3,6 +3,7 @@
 import pytest
 
 from unifi_topology.model.model_lookup import (
+    list_all_models,
     lookup_firmware_changelog,
     lookup_model_docs,
     lookup_model_name,
@@ -70,6 +71,31 @@ def test_firmware_changelog():
 
 def test_firmware_changelog_unknown():
     assert lookup_firmware_changelog("NONEXISTENT-999") == ""
+
+
+def test_list_all_models_returns_dict():
+    models = list_all_models()
+    assert isinstance(models, dict)
+    assert len(models) > 0
+
+
+def test_list_all_models_entries_have_name():
+    models = list_all_models()
+    for code, entry in models.items():
+        assert "name" in entry, f"Model {code} missing 'name' key"
+
+
+def test_list_all_models_contains_known_model():
+    models = list_all_models()
+    assert "USW-24" in models
+    assert models["USW-24"]["name"] == "Switch 24"
+
+
+def test_list_all_models_returns_copy():
+    models = list_all_models()
+    models["FAKE-MODEL"] = {"name": "Fake"}
+    fresh = list_all_models()
+    assert "FAKE-MODEL" not in fresh
 
 
 def test_model_name_fallback_in_coercion():
