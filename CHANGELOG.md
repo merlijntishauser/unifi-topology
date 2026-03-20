@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] (2026-03-20)
+
 ### Added
 - `list_all_models()` public function to return the complete model lookup table with all model codes and their specs, docs, and URLs
 
@@ -142,7 +144,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.4...v1.3.0
 [1.2.4]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.3...v1.2.4
