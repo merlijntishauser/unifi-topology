@@ -6,12 +6,20 @@ from collections.abc import Iterable
 
 from ._raw import RawRecord, nested_records
 from .connection import ConnectionInfo, classify_signal_quality
-from .helpers import get_field
+from .helpers import get_field, normalize_mac
 from .ports import extract_port_number
 
 
 def _client_nested_records(client: object) -> tuple[RawRecord, ...]:
     return tuple(nested_records(client, "uplink", "last_uplink"))
+
+
+def client_node_id(client: object) -> str | None:
+    """Get the client's own MAC address as a normalized node ID."""
+    mac = get_field(client, "mac")
+    if isinstance(mac, str) and mac.strip():
+        return normalize_mac(mac)
+    return None
 
 
 def client_uplink_mac(client: object) -> str | None:

@@ -4,19 +4,25 @@ from __future__ import annotations
 
 import unifi_topology as ut
 from tests.public_api_contract_helpers import sample_raw_devices
+from unifi_topology.model.helpers import normalize_mac
 
 
 def test_readme_style_render_workflow_smoke():
     devices = ut.normalize_devices(sample_raw_devices())
     node_types = ut.build_node_type_map(devices)
-    gateways = [name for name, node_type in node_types.items() if node_type == "gateway"]
+    # node_types keys are now MACs; find gateways by MAC
+    gateways = [mac for mac, node_type in node_types.items() if node_type == "gateway"]
     topology = ut.build_topology(
         devices,
         include_ports=True,
         only_unifi=False,
         gateways=gateways,
     )
-    gateway = next((device for device in devices if node_types.get(device.name) == "gateway"), None)
+    node_names = topology.node_names
+    gateway = next(
+        (device for device in devices if node_types.get(normalize_mac(device.mac)) == "gateway"),
+        None,
+    )
     wan_info = ut.extract_wan_info(gateway) if gateway else None
     theme = ut.resolve_svg_themes(theme_name="unifi")
 
@@ -26,6 +32,7 @@ def test_readme_style_render_workflow_smoke():
         theme=theme,
         options=ut.SvgOptions(),
         wan_info=wan_info,
+        node_names=node_names,
     )
 
     assert "<svg" in svg

@@ -17,38 +17,42 @@ from .topology import (
 )
 
 
-def _uplink_name(
+def _uplink_id(
     uplink: UplinkInfo | None,
     index: dict[str, str],
     *,
     only_unifi: bool,
 ) -> str | None:
-    """Get upstream device name from uplink info."""
+    """Get upstream device ID (MAC) from uplink info."""
     if not uplink:
         return None
-    resolved = _uplink_name_by_mac(uplink, index)
+    resolved = _uplink_id_by_mac(uplink, index)
     if resolved is not None:
         return resolved
-    return _uplink_name_fallback(uplink, only_unifi=only_unifi)
+    return _uplink_id_fallback(uplink, only_unifi=only_unifi)
 
 
-def _uplink_name_by_mac(uplink: UplinkInfo, index: dict[str, str]) -> str | None:
+def _uplink_id_by_mac(uplink: UplinkInfo, index: dict[str, str]) -> str | None:
     if not uplink.mac:
         return None
-    return index.get(normalize_mac(uplink.mac))
+    mac = normalize_mac(uplink.mac)
+    if mac in index:
+        return mac
+    return None
 
 
-def _uplink_name_fallback(uplink: UplinkInfo, *, only_unifi: bool) -> str | None:
-    if uplink.name:
-        return uplink.name
-    if not only_unifi and uplink.mac:
-        return uplink.mac
+def _uplink_id_fallback(uplink: UplinkInfo, *, only_unifi: bool) -> str | None:
+    if not only_unifi:
+        if uplink.mac:
+            return normalize_mac(uplink.mac)
+        if uplink.name:
+            return uplink.name
     return None
 
 
 def _maybe_add_uplink_link(
     device: Device,
-    upstream_name: str,
+    upstream_id: str,
     *,
     uplink: UplinkInfo | None,
     port_map: PortMap,
@@ -57,12 +61,13 @@ def _maybe_add_uplink_link(
     include_ports: bool,
 ) -> None:
     """Add uplink-based edge if not already seen."""
-    key = frozenset({device.name, upstream_name})
+    device_id = normalize_mac(device.mac)
+    key = frozenset({device_id, upstream_id})
     if key in seen:
         return
     if uplink and uplink.port is not None and include_ports:
-        port_map[(upstream_name, device.name)] = f"Port {uplink.port}"
-    raw_links.append((upstream_name, device.name))
+        port_map[(upstream_id, device_id)] = f"Port {uplink.port}"
+    raw_links.append((upstream_id, device_id))
     seen.add(key)
 
 
@@ -72,7 +77,7 @@ class EdgeInputs:
 
     devices: list[Device]
     index: dict[str, str]
-    device_by_name: dict[str, Device]
+    device_by_id: dict[str, Device]
 
 
 @dataclass
@@ -93,7 +98,7 @@ def prepare_edge_inputs(devices: Iterable[Device]) -> EdgeInputs:
     return EdgeInputs(
         devices=ordered_devices,
         index=_build_device_index(ordered_devices),
-        device_by_name={device.name: device for device in ordered_devices},
+        device_by_id={normalize_mac(d.mac): d for d in ordered_devices},
     )
 
 
@@ -108,16 +113,15 @@ def _sorted_lldp_entries(device: Device) -> list[LLDPEntry]:
     )
 
 
-def _lldp_peer_name(
+def _lldp_peer_id(
     lldp_entry: LLDPEntry,
     index: dict[str, str],
     *,
     only_unifi: bool,
 ) -> str | None:
     peer_mac = normalize_mac(lldp_entry.chassis_id)
-    peer_name = index.get(peer_mac)
-    if peer_name is not None:
-        return peer_name
+    if peer_mac in index:
+        return peer_mac
     if only_unifi:
         return None
     return lldp_entry.chassis_id
@@ -151,19 +155,20 @@ def _record_link(
 
 def _add_lldp_port_details(
     device: Device,
-    peer_name: str,
+    peer_id: str,
     lldp_entry: LLDPEntry,
     result: EdgeDiscoveryResult,
 ) -> None:
+    device_id = normalize_mac(device.mac)
     resolved_port_idx = _resolve_port_idx_from_lldp(lldp_entry, device.port_table)
     label = local_port_label(_lldp_label_entry(lldp_entry, resolved_port_idx))
     if label:
-        result.port_map[(device.name, peer_name)] = label
+        result.port_map[(device_id, peer_id)] = label
     if resolved_port_idx is None:
         return
     _populate_port_maps(
-        device.name,
-        peer_name,
+        device_id,
+        peer_id,
         resolved_port_idx,
         device.poe_ports,
         device.port_table,
@@ -180,13 +185,14 @@ def _collect_device_lldp_links(
     *,
     only_unifi: bool,
 ) -> bool:
+    device_id = normalize_mac(device.mac)
     has_link = False
     for lldp_entry in _sorted_lldp_entries(device):
-        peer_name = _lldp_peer_name(lldp_entry, index, only_unifi=only_unifi)
-        if peer_name is None:
+        peer_id = _lldp_peer_id(lldp_entry, index, only_unifi=only_unifi)
+        if peer_id is None:
             continue
-        _add_lldp_port_details(device, peer_name, lldp_entry, result)
-        has_link = _record_link(device.name, peer_name, result.raw_links, result.seen) or has_link
+        _add_lldp_port_details(device, peer_id, lldp_entry, result)
+        has_link = _record_link(device_id, peer_id, result.raw_links, result.seen) or has_link
     return has_link
 
 
@@ -214,31 +220,31 @@ def _collect_lldp_links(
     devices_with_lldp_edges: set[str] = set()
     for device in devices:
         if _collect_device_lldp_links(device, index, result, only_unifi=only_unifi):
-            devices_with_lldp_edges.add(device.name)
+            devices_with_lldp_edges.add(normalize_mac(device.mac))
     return devices_with_lldp_edges
 
 
 def _resolve_uplink_target(
     device: Device,
     index: dict[str, str],
-    device_by_name: dict[str, Device],
+    device_by_id: dict[str, Device],
     *,
     only_unifi: bool,
 ) -> tuple[UplinkInfo | None, str | None]:
     uplink = device.uplink or device.last_uplink
-    upstream_name = _uplink_name(uplink, index, only_unifi=only_unifi)
-    if not upstream_name:
+    upstream_id = _uplink_id(uplink, index, only_unifi=only_unifi)
+    if not upstream_id:
         return uplink, None
-    if only_unifi and upstream_name not in device_by_name:
+    if only_unifi and upstream_id not in device_by_id:
         return uplink, None
-    return uplink, upstream_name
+    return uplink, upstream_id
 
 
 def _collect_uplink_links(
     devices: list[Device],
     devices_with_lldp_edges: set[str],
     index: dict[str, str],
-    device_by_name: dict[str, Device],
+    device_by_id: dict[str, Device],
     port_map: PortMap,
     raw_links: list[tuple[str, str]],
     seen: set[frozenset[str]],
@@ -248,19 +254,19 @@ def _collect_uplink_links(
 ) -> None:
     """Collect edges from uplink data (fallback for devices without LLDP)."""
     for device in devices:
-        if device.name in devices_with_lldp_edges:
+        if normalize_mac(device.mac) in devices_with_lldp_edges:
             continue
-        uplink, upstream_name = _resolve_uplink_target(
+        uplink, upstream_id = _resolve_uplink_target(
             device,
             index,
-            device_by_name,
+            device_by_id,
             only_unifi=only_unifi,
         )
-        if not upstream_name:
+        if not upstream_id:
             continue
         _maybe_add_uplink_link(
             device,
-            upstream_name,
+            upstream_id,
             uplink=uplink,
             port_map=port_map,
             raw_links=raw_links,
@@ -292,7 +298,7 @@ def discover_edge_links(
         inputs.devices,
         devices_with_lldp_edges,
         inputs.index,
-        inputs.device_by_name,
+        inputs.device_by_id,
         result.port_map,
         result.raw_links,
         result.seen,

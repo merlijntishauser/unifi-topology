@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unifi_topology.model.classify import classify_client_type
 from unifi_topology.model.clients import build_node_type_map
+from unifi_topology.model.helpers import normalize_mac
 
 
 def test_classify_client_type_by_unifi_product_line():
@@ -37,11 +38,11 @@ def test_classify_client_type_unifi_takes_priority():
 
 def test_build_node_type_map_classifies_clients():
     clients = [
-        {"name": "Living Room TV", "is_wired": True},
-        {"name": "Sonos One", "is_wired": True},
-        {"name": "Generic Client", "is_wired": True},
+        {"name": "Living Room TV", "mac": "11:22:33:44:55:01", "is_wired": True},
+        {"name": "Sonos One", "mac": "11:22:33:44:55:02", "is_wired": True},
+        {"name": "Generic Client", "mac": "11:22:33:44:55:03", "is_wired": True},
     ]
     node_types = build_node_type_map([], clients)
-    assert node_types["Living Room TV"] == "tv"
-    assert node_types["Sonos One"] == "speaker"
-    assert node_types["Generic Client"] == "client"
+    assert node_types[normalize_mac("11:22:33:44:55:01")] == "tv"
+    assert node_types[normalize_mac("11:22:33:44:55:02")] == "speaker"
+    assert node_types[normalize_mac("11:22:33:44:55:03")] == "client"

@@ -5,6 +5,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 from unifi_topology.model.edges import build_edges
+from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.topology_coerce import coerce_device
 
 
@@ -52,4 +53,4 @@ def test_build_edges_only_unifi_false_includes_unknown_uplink():
         uplink_mac="cc",
     )
     edges = build_edges([coerce_device(device)], only_unifi=False)
-    assert (edges[0].left, edges[0].right) == ("cc", "Switch")
+    assert (edges[0].left, edges[0].right) == ("cc", normalize_mac("aa"))

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from tests.edge_discovery_helpers import make_device, make_port
 from unifi_topology.model.edges import build_edges, build_port_map
+from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology import UplinkInfo
 
@@ -29,7 +30,7 @@ def test_build_port_map_from_lldp():
     )
     peer = make_device("Switch B", "aa:bb:cc:dd:ee:02")
     port_map = build_port_map([switch, peer])
-    assert ("Switch A", "Switch B") in port_map
+    assert (normalize_mac("aa:bb:cc:dd:ee:01"), normalize_mac("aa:bb:cc:dd:ee:02")) in port_map
 
 
 def test_build_port_map_from_uplink():
@@ -40,7 +41,7 @@ def test_build_port_map_from_uplink():
         uplink=UplinkInfo(mac="bb", name="Gateway", port=3),
     )
     port_map = build_port_map([gateway, switch])
-    assert port_map[("Gateway", "Switch")] == "Port 3"
+    assert port_map[(normalize_mac("bb"), normalize_mac("aa"))] == "Port 3"
 
 
 def test_build_port_map_only_unifi_false():
@@ -50,7 +51,7 @@ def test_build_port_map_only_unifi_false():
         lldp_info=[LLDPEntry("cc:dd:ee:ff:00:11", "Port 1", local_port_idx=1)],
     )
     port_map = build_port_map([switch], only_unifi=False)
-    assert ("Switch", "cc:dd:ee:ff:00:11") in port_map
+    assert (normalize_mac("aa"), "cc:dd:ee:ff:00:11") in port_map
 
 
 def test_build_edges_trunk_detection():

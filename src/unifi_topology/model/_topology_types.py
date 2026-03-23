@@ -119,6 +119,7 @@ class TopologyResult:
 
     raw_edges: list[Edge]
     tree_edges: list[Edge]
+    node_names: dict[str, str] = field(default_factory=dict)
 
 
 # Type aliases for maps used in edge building

@@ -5,15 +5,30 @@ from __future__ import annotations
 from collections.abc import Callable
 
 
-def compose_port_label(left: str, right: str, port_map: dict[tuple[str, str], str]) -> str | None:
+def _resolve_display_names(
+    left: str,
+    right: str,
+    node_names: dict[str, str] | None,
+) -> tuple[str, str]:
+    names = node_names or {}
+    return names.get(left, left), names.get(right, right)
+
+
+def compose_port_label(
+    left: str,
+    right: str,
+    port_map: dict[tuple[str, str], str],
+    node_names: dict[str, str] | None = None,
+) -> str | None:
+    left_name, right_name = _resolve_display_names(left, right, node_names)
     left_label = port_map.get((left, right))
     right_label = port_map.get((right, left))
     if left_label and right_label:
-        return f"{left}: {left_label} <-> {right}: {right_label}"
+        return f"{left_name}: {left_label} <-> {right_name}: {right_label}"
     if left_label:
-        return f"{left}: {left_label} <-> {right}: ?"
+        return f"{left_name}: {left_label} <-> {right_name}: ?"
     if right_label:
-        return f"{left}: ? <-> {right}: {right_label}"
+        return f"{left_name}: ? <-> {right_name}: {right_label}"
     return None
 
 

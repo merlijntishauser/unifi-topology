@@ -12,6 +12,7 @@ def test_build_client_edges_includes_connection_info_for_wireless():
     clients = [
         {
             "name": "Phone",
+            "mac": "11:22:33:44:55:01",
             "ap_mac": "aa:bb:cc:dd:ee:ff",
             "is_wired": False,
             "signal": -55,
@@ -35,7 +36,14 @@ def test_build_client_edges_includes_connection_info_for_wireless():
 
 def test_build_client_edges_no_connection_info_for_wired():
     device_index = {"aa:bb:cc:dd:ee:ff": "Switch A"}
-    clients = [{"name": "Laptop", "sw_mac": "aa:bb:cc:dd:ee:ff", "is_wired": True}]
+    clients = [
+        {
+            "name": "Laptop",
+            "mac": "11:22:33:44:55:02",
+            "sw_mac": "aa:bb:cc:dd:ee:ff",
+            "is_wired": True,
+        }
+    ]
     edges = build_client_edges(clients, device_index)
     assert len(edges) == 1
     assert edges[0].connection is None
@@ -46,6 +54,7 @@ def test_build_client_edges_connection_info_with_missing_fields():
     clients = [
         {
             "name": "Phone",
+            "mac": "11:22:33:44:55:03",
             "ap_mac": "aa:bb:cc:dd:ee:ff",
             "is_wired": False,
             "signal": -70,

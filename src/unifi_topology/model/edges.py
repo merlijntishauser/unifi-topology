@@ -9,6 +9,7 @@ from dataclasses import replace
 
 from . import _edge_build, _edge_discovery, _edge_ports
 from .classify import classify_device_type
+from .helpers import normalize_mac
 from .topology import (
     Device,
     Edge,
@@ -43,7 +44,7 @@ __all__ = [
     "_seed_tree_queue",
     "_tree_edges_from_parent",
     "_tree_parents",
-    "_uplink_name",
+    "_uplink_id",
     "_visit_tree_neighbor",
     "build_device_index",
     "build_edges",
@@ -65,7 +66,7 @@ _port_speed_by_idx = _edge_ports._port_speed_by_idx
 _port_vlans_by_idx = _edge_ports._port_vlans_by_idx
 _populate_port_maps = _edge_ports._populate_port_maps
 _collect_lldp_links = _edge_discovery._collect_lldp_links
-_uplink_name = _edge_discovery._uplink_name
+_uplink_id = _edge_discovery._uplink_id
 _maybe_add_uplink_link = _edge_discovery._maybe_add_uplink_link
 _collect_uplink_links = _edge_discovery._collect_uplink_links
 _build_ordered_edges = _edge_build._build_ordered_edges
@@ -104,8 +105,9 @@ def build_edges(
         discovery.poe_map,
         discovery.speed_map,
         discovery.vlan_map,
-        inputs.device_by_name,
+        inputs.device_by_id,
         include_ports=include_ports,
+        node_names=inputs.index,
     )
 
     poe_edges = sum(1 for edge in edges if edge.poe)
@@ -236,7 +238,10 @@ def build_topology(
     only_unifi: bool,
     gateways: list[str],
 ) -> TopologyResult:
-    """Build complete topology from devices."""
+    """Build complete topology from devices.
+
+    The ``gateways`` parameter accepts MAC addresses (normalized).
+    """
     normalized_devices = list(devices)
     lldp_entries = sum(len(device.lldp_info) for device in normalized_devices)
     logger.debug(
@@ -244,6 +249,7 @@ def build_topology(
         len(normalized_devices),
         lldp_entries,
     )
+    node_names = _build_device_index(normalized_devices)
     raw_edges = build_edges(normalized_devices, include_ports=include_ports, only_unifi=only_unifi)
     tree_edges = build_tree_edges_by_topology(raw_edges, gateways)
     logger.debug(
@@ -251,15 +257,15 @@ def build_topology(
         len(tree_edges),
         len(gateways),
     )
-    return TopologyResult(raw_edges=raw_edges, tree_edges=tree_edges)
+    return TopologyResult(raw_edges=raw_edges, tree_edges=tree_edges, node_names=dict(node_names))
 
 
 def group_devices_by_type(devices: Iterable[Device]) -> dict[str, list[str]]:
-    """Group devices by their type."""
+    """Group devices by their type. Values are normalized MAC addresses."""
     groups: dict[str, list[str]] = {"gateway": [], "switch": [], "ap": [], "other": []}
     for device in devices:
         group = classify_device_type(device)
-        groups[group].append(device.name)
+        groups[group].append(normalize_mac(device.mac))
     return groups
 
 

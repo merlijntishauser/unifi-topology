@@ -281,8 +281,9 @@ def _render_iso_edges(
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
     max_vlan_colors: int | None = None,
+    node_names: dict[str, str] | None = None,
 ) -> None:
-    _record_iso_edge_labels(edges, node_types, node_port_labels, node_port_prefix)
+    _record_iso_edge_labels(edges, node_types, node_port_labels, node_port_prefix, node_names)
     for edge in sorted(edges, key=lambda item: item.poe):
         if edge.left not in positions or edge.right not in positions:
             continue

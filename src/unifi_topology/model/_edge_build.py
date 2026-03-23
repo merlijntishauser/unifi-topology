@@ -7,9 +7,9 @@ from .labels import compose_port_label, order_edge_names
 from .topology import Device, Edge, PoeMap, PortMap, SpeedMap, VlanMap
 
 
-def _rank_for_name(name: str, device_by_name: dict[str, Device]) -> int:
+def _rank_for_id(node_id: str, device_by_id: dict[str, Device]) -> int:
     type_rank = {"gateway": 0, "switch": 1, "ap": 2, "other": 3}
-    device = device_by_name.get(name)
+    device = device_by_id.get(node_id)
     if not device:
         return 3
     return type_rank.get(classify_device_type(device), 3)
@@ -52,32 +52,33 @@ def _build_ordered_edges(
     poe_map: PoeMap,
     speed_map: SpeedMap,
     vlan_map: VlanMap,
-    device_by_name: dict[str, Device],
+    device_by_id: dict[str, Device],
     *,
     include_ports: bool,
+    node_names: dict[str, str] | None = None,
 ) -> list[Edge]:
     """Build ordered Edge objects from raw links."""
     edges: list[Edge] = []
-    for source_name, target_name in raw_links:
-        left_name = source_name
-        right_name = target_name
+    for source_id, target_id in raw_links:
+        left_id = source_id
+        right_id = target_id
         if include_ports:
-            left_name, right_name = order_edge_names(
-                left_name,
-                right_name,
+            left_id, right_id = order_edge_names(
+                left_id,
+                right_id,
                 port_map,
-                lambda name: _rank_for_name(name, device_by_name),
+                lambda nid: _rank_for_id(nid, device_by_id),
             )
-        vlans = _edge_vlans(left_name, right_name, vlan_map)
+        vlans = _edge_vlans(left_id, right_id, vlan_map)
         edges.append(
             Edge(
-                left=left_name,
-                right=right_name,
-                label=compose_port_label(left_name, right_name, port_map)
+                left=left_id,
+                right=right_id,
+                label=compose_port_label(left_id, right_id, port_map, node_names=node_names)
                 if include_ports
                 else None,
-                poe=_edge_poe(left_name, right_name, poe_map),
-                speed=_edge_speed(left_name, right_name, speed_map),
+                poe=_edge_poe(left_id, right_id, poe_map),
+                speed=_edge_speed(left_id, right_id, speed_map),
                 vlans=vlans,
                 active_vlans=(),
                 is_trunk=len(vlans) > 1,

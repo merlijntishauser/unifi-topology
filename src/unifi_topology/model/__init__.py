@@ -23,7 +23,7 @@ from .model_lookup import (
     lookup_model_specs,
     lookup_model_url,
 )
-from .topology import Device, Edge, TopologyResult, VpnTunnel, WanInfo
+from .topology import Device, Edge, TopologyResult, VpnTunnel, WanInfo, build_node_names
 from .topology_coerce import normalize_devices
 from .vpn import extract_vpn_tunnels
 from .wan import extract_wan_info
@@ -47,6 +47,7 @@ __all__ = [
     "build_client_edges",
     "build_device_index",
     "build_device_inventory",
+    "build_node_names",
     "build_node_type_map",
     "build_topology",
     "extract_vpn_tunnels",

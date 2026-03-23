@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from tests.topology_edge_helpers import DummyDevice
 from unifi_topology.model.edges import build_edges
+from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology_coerce import normalize_devices
 
@@ -27,7 +28,9 @@ def test_build_edges_orders_deterministically():
         [LLDPEntry("aa:bb:cc:dd:ee:02", "1")],
     )
     edges = build_edges(normalize_devices([dev_a, dev_b]))
-    assert [(edge.left, edge.right) for edge in edges] == [("Switch A", "Switch Z")]
+    assert [(edge.left, edge.right) for edge in edges] == [
+        (normalize_mac("aa:bb:cc:dd:ee:01"), normalize_mac("aa:bb:cc:dd:ee:02"))
+    ]
 
 
 def test_build_edges_includes_ports():

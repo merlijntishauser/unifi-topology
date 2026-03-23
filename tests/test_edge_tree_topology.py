@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from tests.edge_discovery_helpers import make_device
 from unifi_topology.model.edges import build_topology, build_tree_edges_by_topology
+from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology import Edge
 
@@ -56,7 +57,7 @@ def test_build_topology_with_gateways():
         [gateway, switch],
         include_ports=True,
         only_unifi=True,
-        gateways=["Gateway"],
+        gateways=[normalize_mac("aa")],
     )
     assert len(result.raw_edges) == 1
     assert len(result.tree_edges) == 1

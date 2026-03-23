@@ -8,7 +8,6 @@ from . import _client_access
 from .classify import (
     classify_client_type,
     classify_device_type,
-    client_display_name,
     client_is_unifi,
 )
 from .helpers import normalize_mac
@@ -18,6 +17,7 @@ _client_channel = _client_access._client_channel
 _client_is_wired = _client_access._client_is_wired
 _client_vlan = _client_access._client_vlan
 _extract_connection_info = _client_access._extract_connection_info
+client_node_id = _client_access.client_node_id
 client_uplink_mac = _client_access.client_uplink_mac
 client_uplink_port = _client_access.client_uplink_port
 
@@ -42,21 +42,23 @@ def client_matches_filters(client: object, *, client_mode: str, only_unifi: bool
 
 
 def _client_attachment(client: object, device_index: dict[str, str]) -> tuple[str, str] | None:
-    name = client_display_name(client)
+    cid = client_node_id(client)
+    if not cid:
+        return None
     uplink_mac = client_uplink_mac(client)
-    if not name or not uplink_mac:
+    if not uplink_mac:
         return None
-    device_name = device_index.get(normalize_mac(uplink_mac))
-    if not device_name:
+    device_id = normalize_mac(uplink_mac)
+    if device_id not in device_index:
         return None
-    return device_name, name
+    return device_id, cid
 
 
-def _client_edge_label(device_name: str, client_name: str, client: object) -> str | None:
+def _client_edge_label(device_display: str, client_display: str, client: object) -> str | None:
     uplink_port = client_uplink_port(client)
     if uplink_port is None:
         return None
-    return f"{device_name}: Port {uplink_port} <-> {client_name}"
+    return f"{device_display}: Port {uplink_port} <-> {client_display}"
 
 
 def _client_vlans(client: object) -> tuple[int, ...]:
@@ -67,18 +69,22 @@ def _client_vlans(client: object) -> tuple[int, ...]:
 
 
 def _client_edge(
-    device_name: str,
-    name: str,
+    device_id: str,
+    client_id: str,
     client: object,
     *,
     include_ports: bool,
+    node_names: dict[str, str] | None = None,
 ) -> Edge:
+    names = node_names or {}
+    device_display = names.get(device_id, device_id)
+    client_display = names.get(client_id, client_id)
     is_wireless = not _client_is_wired(client)
     vlans = _client_vlans(client)
     return Edge(
-        left=device_name,
-        right=name,
-        label=_client_edge_label(device_name, name, client) if include_ports else None,
+        left=device_id,
+        right=client_id,
+        label=_client_edge_label(device_display, client_display, client) if include_ports else None,
         wireless=is_wireless,
         channel=_client_channel(client) if is_wireless else None,
         vlans=vlans,
@@ -102,6 +108,7 @@ def build_client_edges(
     include_ports: bool = False,
     client_mode: str = "wired",
     only_unifi: bool = False,
+    node_names: dict[str, str] | None = None,
 ) -> list[Edge]:
     """Build edges from devices to their connected clients."""
     edges: list[Edge] = []
@@ -114,13 +121,21 @@ def build_client_edges(
             continue
         if not _add_attachment_key(seen, attachment):
             continue
-        device_name, name = attachment
-        edges.append(_client_edge(device_name, name, client, include_ports=include_ports))
+        device_id, client_id = attachment
+        edges.append(
+            _client_edge(
+                device_id,
+                client_id,
+                client,
+                include_ports=include_ports,
+                node_names=node_names,
+            )
+        )
     return edges
 
 
 def _device_node_types(devices: Iterable[Device]) -> dict[str, str]:
-    return {device.name: classify_device_type(device) for device in devices}
+    return {normalize_mac(device.mac): classify_device_type(device) for device in devices}
 
 
 def _client_node_types(
@@ -133,9 +148,9 @@ def _client_node_types(
     for client in clients:
         if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
             continue
-        name = client_display_name(client)
-        if name:
-            node_types[name] = classify_client_type(client)
+        cid = client_node_id(client)
+        if cid:
+            node_types[cid] = classify_client_type(client)
     return node_types
 
 
@@ -166,7 +181,7 @@ def build_client_port_map(
     client_mode: str,
     only_unifi: bool = False,
 ) -> ClientPortMap:
-    """Build a map of device names to their connected client ports."""
+    """Build a map of device IDs (MACs) to their connected client ports."""
     from .topology import build_device_index
 
     device_index = build_device_index(devices)
@@ -178,41 +193,45 @@ def build_client_port_map(
         uplink_port = client_uplink_port(client)
         if attachment is None or uplink_port is None:
             continue
-        device_name, name = attachment
-        port_map.setdefault(device_name, []).append((uplink_port, name))
+        device_id, client_id = attachment
+        port_map.setdefault(device_id, []).append((uplink_port, client_id))
     return port_map
 
 
-def collapse_client_edges(
+def _partition_client_edges(
     edges: list[Edge],
     node_types: dict[str, str],
-) -> tuple[list[Edge], dict[str, int]]:
-    """Collapse individual client edges into cluster nodes."""
+) -> tuple[list[Edge], dict[str, int], set[str]]:
     client_counts: dict[str, int] = {}
-    collapsed_edges: list[Edge] = []
+    non_client_edges: list[Edge] = []
     collapsed_clients: set[str] = set()
-
     for edge in edges:
         if node_types.get(edge.right) == "client":
             client_counts[edge.left] = client_counts.get(edge.left, 0) + 1
             collapsed_clients.add(edge.right)
         else:
-            collapsed_edges.append(edge)
+            non_client_edges.append(edge)
+    return non_client_edges, client_counts, collapsed_clients
 
-    for client_name in collapsed_clients:
-        node_types.pop(client_name, None)
 
-    for device_name, count in sorted(client_counts.items()):
-        cluster_name = f"{device_name} ({count} clients)"
-        collapsed_edges.append(
-            Edge(
-                left=device_name,
-                right=cluster_name,
-                label=None,
-                poe=False,
-                wireless=False,
-            )
-        )
-        node_types[cluster_name] = "client_cluster"
+def collapse_client_edges(
+    edges: list[Edge],
+    node_types: dict[str, str],
+    node_names: dict[str, str] | None = None,
+) -> tuple[list[Edge], dict[str, int]]:
+    """Collapse individual client edges into cluster nodes."""
+    names = node_names or {}
+    collapsed_edges, client_counts, collapsed_clients = _partition_client_edges(edges, node_types)
+
+    for client_id in collapsed_clients:
+        node_types.pop(client_id, None)
+
+    for device_id, count in sorted(client_counts.items()):
+        cluster_id = f"{device_id}__cluster"
+        device_display = names.get(device_id, device_id)
+        collapsed_edges.append(Edge(left=device_id, right=cluster_id))
+        node_types[cluster_id] = "client_cluster"
+        if node_names is not None:
+            node_names[cluster_id] = f"{device_display} ({count} clients)"
 
     return collapsed_edges, client_counts

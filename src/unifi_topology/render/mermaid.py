@@ -51,8 +51,8 @@ def _build_id_map(edges: Iterable[Edge], nodes: Iterable[str]) -> dict[str, str]
     return id_map
 
 
-def _node_ref(name: str, node_id: str) -> str:
-    return f'{node_id}["{_escape(name)}"]'
+def _node_ref(display_name: str, node_id: str) -> str:
+    return f'{node_id}["{_escape(display_name)}"]'
 
 
 def _group_nodes(groups: dict[str, list[str]] | None) -> list[str]:
@@ -70,13 +70,14 @@ def _render_group_sections(
     *,
     group_order: list[str] | None,
     id_map: dict[str, str],
+    node_names: dict[str, str] | None = None,
 ) -> None:
     ordered = group_order or list(groups.keys())
     for group_name in ordered:
         members = groups.get(group_name, [])
         if not members:
             continue
-        _render_single_group(lines, group_name, members, id_map)
+        _render_single_group(lines, group_name, members, id_map, node_names=node_names)
 
 
 def _render_single_group(
@@ -84,12 +85,15 @@ def _render_single_group(
     group_name: str,
     members: list[str],
     id_map: dict[str, str],
+    node_names: dict[str, str] | None = None,
 ) -> None:
+    names = node_names or {}
     group_id = _slugify(f"group_{group_name}")
     label = group_name.replace("_", " ").title()
     lines.append(f'  subgraph {group_id}["{_escape(label)}"];')
     for member in members:
-        lines.append(f"    {_node_ref(member, id_map[member])};")
+        display = names.get(member, member)
+        lines.append(f"    {_node_ref(display, id_map[member])};")
     lines.append("  end")
 
 
@@ -101,19 +105,29 @@ def _format_vlan_suffix(active_vlans: tuple[int, ...]) -> str:
     return f" [{vlan_str}]"
 
 
+def _edge_node_refs(
+    edge: Edge,
+    id_map: dict[str, str],
+    use_node_labels: bool,
+    node_names: dict[str, str] | None,
+) -> tuple[str, str]:
+    if not use_node_labels:
+        return id_map[edge.left], id_map[edge.right]
+    names = node_names or {}
+    left = _node_ref(names.get(edge.left, edge.left), id_map[edge.left])
+    right = _node_ref(names.get(edge.right, edge.right), id_map[edge.right])
+    return left, right
+
+
 def _render_single_edge(
     lines: list[str],
     edge: Edge,
     *,
     id_map: dict[str, str],
     use_node_labels: bool,
+    node_names: dict[str, str] | None = None,
 ) -> None:
-    if use_node_labels:
-        left = _node_ref(edge.left, id_map[edge.left])
-        right = _node_ref(edge.right, id_map[edge.right])
-    else:
-        left = id_map[edge.left]
-        right = id_map[edge.right]
+    left, right = _edge_node_refs(edge, id_map, use_node_labels, node_names)
     vlan_suffix = _format_vlan_suffix(edge.active_vlans)
     if edge.label or vlan_suffix:
         label = _escape(f"{edge.label or ''}{vlan_suffix}".strip())
@@ -128,11 +142,14 @@ def _render_edge_lines(
     *,
     id_map: dict[str, str],
     use_node_labels: bool,
+    node_names: dict[str, str] | None = None,
 ) -> tuple[list[int], list[int]]:
     poe_links: list[int] = []
     wireless_links: list[int] = []
     for index, edge in enumerate(edges):
-        _render_single_edge(lines, edge, id_map=id_map, use_node_labels=use_node_labels)
+        _render_single_edge(
+            lines, edge, id_map=id_map, use_node_labels=use_node_labels, node_names=node_names
+        )
         if edge.poe:
             poe_links.append(index)
         if edge.wireless:
@@ -247,16 +264,19 @@ def _find_gateway_name(node_types: dict[str, str] | None) -> str | None:
 def _render_wan_node(
     lines: list[str],
     wan_info: WanInfo,
-    gateway_name: str,
+    gateway_id: str,
     *,
     id_map: dict[str, str],
     use_node_labels: bool,
+    node_names: dict[str, str] | None = None,
 ) -> None:
     """Render a WAN upstream node connected to the gateway."""
+    names = node_names or {}
     wan_id = id_map["__wan__"]
     label = _escape(_build_wan_node_label(wan_info))
     lines.append(f'  {wan_id}(["{label}"]);')
-    gw = _node_ref(gateway_name, id_map[gateway_name]) if use_node_labels else id_map[gateway_name]
+    gateway_display = names.get(gateway_id, gateway_id)
+    gw = _node_ref(gateway_display, id_map[gateway_id]) if use_node_labels else id_map[gateway_id]
     lines.append(f"  {wan_id} --- {gw};")
     lines.append(f"  class {wan_id} node_wan;")
 
@@ -286,16 +306,21 @@ def render_mermaid(
     groups: dict[str, list[str]] | None = None,
     group_order: list[str] | None = None,
     node_types: dict[str, str] | None = None,
+    node_names: dict[str, str] | None = None,
     theme: MermaidTheme = DEFAULT_THEME,
     wan_info: WanInfo | None = None,
 ) -> str:
     edge_list = list(edges)
-    gateway_name = _resolve_wan_gateway(wan_info, node_types)
-    extra_nodes = ["__wan__"] if gateway_name else []
+    gateway_id = _resolve_wan_gateway(wan_info, node_types)
+    extra_nodes = ["__wan__"] if gateway_id else []
     id_map = _build_id_map(edge_list, [*_group_nodes(groups), *extra_nodes])
     lines = _build_mermaid_header(direction, theme)
-    _add_wan_section(lines, wan_info, gateway_name, id_map=id_map, groups=groups)
-    _add_groups_and_edges(lines, edge_list, groups, group_order, node_types, id_map, theme)
+    _add_wan_section(
+        lines, wan_info, gateway_id, id_map=id_map, groups=groups, node_names=node_names
+    )
+    _add_groups_and_edges(
+        lines, edge_list, groups, group_order, node_types, id_map, theme, node_names=node_names
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -307,12 +332,15 @@ def _add_groups_and_edges(
     node_types: dict[str, str] | None,
     id_map: dict[str, str],
     theme: MermaidTheme,
+    node_names: dict[str, str] | None = None,
 ) -> None:
     if groups:
-        _render_group_sections(lines, groups, group_order=group_order, id_map=id_map)
+        _render_group_sections(
+            lines, groups, group_order=group_order, id_map=id_map, node_names=node_names
+        )
     use_node_labels = not groups
     poe_links, wireless_links = _render_edge_lines(
-        lines, edge_list, id_map=id_map, use_node_labels=use_node_labels
+        lines, edge_list, id_map=id_map, use_node_labels=use_node_labels, node_names=node_names
     )
     if node_types:
         _render_node_classes(lines, node_types=node_types, id_map=id_map, theme=theme)
@@ -331,18 +359,20 @@ def _build_mermaid_header(direction: str, theme: MermaidTheme) -> list[str]:
 def _add_wan_section(
     lines: list[str],
     wan_info: WanInfo | None,
-    gateway_name: str | None,
+    gateway_id: str | None,
     *,
     id_map: dict[str, str],
     groups: dict[str, list[str]] | None,
+    node_names: dict[str, str] | None = None,
 ) -> None:
-    if wan_info and gateway_name:
+    if wan_info and gateway_id:
         _render_wan_node(
             lines,
             wan_info,
-            gateway_name,
+            gateway_id,
             id_map=id_map,
             use_node_labels=not groups,
+            node_names=node_names,
         )
 
 

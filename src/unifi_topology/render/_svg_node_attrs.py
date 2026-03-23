@@ -6,13 +6,13 @@ from html import escape as _escape_html
 
 
 def _base_node_attrs(
-    name: str,
+    node_id: str,
     node_type: str,
     group_name: str | None,
 ) -> dict[str, str]:
     attrs: dict[str, str] = {
         "class": "unm-node",
-        "data-node-id": name,
+        "data-node-id": node_id,
         "data-node-type": node_type,
     }
     if group_name:
@@ -39,11 +39,11 @@ def _render_node_attrs(attrs: dict[str, str]) -> str:
 
 def _svg_node_group_attrs(
     node_data: dict[str, dict[str, str]] | None,
-    name: str,
+    node_id: str,
     node_type: str,
     group_name: str | None = None,
 ) -> str:
-    attrs = _base_node_attrs(name, node_type, group_name)
-    if node_data and (extra := node_data.get(name)):
+    attrs = _base_node_attrs(node_id, node_type, group_name)
+    if node_data and (extra := node_data.get(node_id)):
         attrs = _merge_node_attrs(attrs, extra)
     return _render_node_attrs(attrs)

@@ -92,8 +92,8 @@ def _port_vlans_by_idx(port_table: list[PortInfo], port_idx: int) -> tuple[int, 
 
 
 def _populate_port_maps(
-    device_name: str,
-    peer_name: str,
+    device_id: str,
+    peer_id: str,
     port_idx: int,
     poe_ports: dict[int, bool],
     port_table: list[PortInfo],
@@ -103,10 +103,10 @@ def _populate_port_maps(
 ) -> None:
     """Populate PoE, speed, and VLAN maps for an edge."""
     if port_idx in poe_ports:
-        poe_map[(device_name, peer_name)] = poe_ports[port_idx]
+        poe_map[(device_id, peer_id)] = poe_ports[port_idx]
     port_speed = _port_speed_by_idx(port_table, port_idx)
     if port_speed is not None:
-        speed_map[(device_name, peer_name)] = port_speed
+        speed_map[(device_id, peer_id)] = port_speed
     port_vlans = _port_vlans_by_idx(port_table, port_idx)
     if port_vlans:
-        vlan_map[(device_name, peer_name)] = port_vlans
+        vlan_map[(device_id, peer_id)] = port_vlans

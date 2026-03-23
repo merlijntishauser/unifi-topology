@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] (2026-03-23)
+
+### Changed
+- **BREAKING:** Node identification switched from device names to normalized MAC addresses throughout the pipeline (fixes #31)
+  - `Edge.left` / `Edge.right` now contain normalized MAC addresses instead of device names
+  - `build_node_type_map()` returns a MAC-keyed dict instead of name-keyed
+  - `build_topology()` `gateways` parameter now expects MAC addresses
+  - `group_devices_by_type()` returns MAC lists instead of name lists
+  - `collapse_client_edges()` cluster IDs changed from `"{name} ({n} clients)"` to `"{mac}__cluster"`; accepts optional `node_names` parameter
+  - `build_client_edges()` accepts optional `node_names` parameter for label generation
+  - `build_client_port_map()` returns MAC-keyed dict
+  - SVG `data-node-id` attributes now contain MAC addresses
+  - `render_svg()`, `render_svg_isometric()`, `render_mermaid()`, `render_dual()` accept optional `node_names` parameter for display labels
+- Internal edge discovery uses MAC-based lookups: `_uplink_name` renamed to `_uplink_id`, `_lldp_peer_name` renamed to `_lldp_peer_id`, `EdgeInputs.device_by_name` renamed to `EdgeInputs.device_by_id`
+
+### Added
+- `build_node_names(devices, clients)` function to build a combined MAC-to-display-name mapping for all nodes
+- `TopologyResult.node_names` field providing device MAC-to-name lookup from topology building
+
+### Fixed
+- Devices with duplicate display names no longer collapse into a single node (fixes #31)
+
 ## [1.3.2] (2026-03-20)
 
 ### Added
@@ -144,7 +166,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.2...v2.0.0
 [1.3.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.2.4...v1.3.0

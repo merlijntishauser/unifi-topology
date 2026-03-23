@@ -17,15 +17,25 @@ from .svg_labels import (
 class EdgeLabelContext:
     compact_label: str
     upstream_part: str
+    left_name: str
+    right_name: str
 
 
-def _edge_label_context(edge: Edge) -> EdgeLabelContext | None:
+def _edge_label_context(
+    edge: Edge,
+    node_names: dict[str, str] | None = None,
+) -> EdgeLabelContext | None:
     raw_label = edge.label
     if not raw_label:
         return None
+    names = node_names or {}
+    left_name = names.get(edge.left, edge.left)
+    right_name = names.get(edge.right, edge.right)
     return EdgeLabelContext(
-        compact_label=_compact_edge_label(raw_label, left_node=edge.left, right_node=edge.right),
+        compact_label=_compact_edge_label(raw_label, left_node=left_name, right_node=right_name),
         upstream_part=raw_label.split("<->", 1)[0].strip(),
+        left_name=left_name,
+        right_name=right_name,
     )
 
 

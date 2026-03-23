@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from tests.edge_discovery_helpers import make_device
 from unifi_topology.model.edges import _primary_vlan_for_node, group_devices_by_type
+from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.topology import Edge
 
 
@@ -13,10 +14,10 @@ def test_group_devices_by_type_all_types():
     ap = make_device("AP", "cc", device_type="uap")
     other = make_device("Cam", "dd", device_type="camera")
     groups = group_devices_by_type([gw, sw, ap, other])
-    assert "GW" in groups["gateway"]
-    assert "SW" in groups["switch"]
-    assert "AP" in groups["ap"]
-    assert "Cam" in groups["other"]
+    assert normalize_mac("aa") in groups["gateway"]
+    assert normalize_mac("bb") in groups["switch"]
+    assert normalize_mac("cc") in groups["ap"]
+    assert normalize_mac("dd") in groups["other"]
 
 
 def test_group_devices_by_type_empty():

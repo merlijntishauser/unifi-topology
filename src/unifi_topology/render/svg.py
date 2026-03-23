@@ -128,8 +128,11 @@ def _render_svg_topology(
     node_data: dict[str, dict[str, str]] | None,
     theme: SvgTheme,
     groups: dict[str, list[str]] | None,
+    node_names: dict[str, str] | None = None,
 ) -> None:
-    node_port_labels, _ = _render_svg_edges(lines, edges, positions, node_types, options, theme)
+    node_port_labels, _ = _render_svg_edges(
+        lines, edges, positions, node_types, options, theme, node_names=node_names
+    )
     _render_svg_nodes(
         lines,
         positions,
@@ -140,6 +143,7 @@ def _render_svg_topology(
         node_data,
         theme,
         groups=groups,
+        node_names=node_names,
     )
 
 
@@ -148,6 +152,7 @@ def render_svg(
     *,
     node_types: dict[str, str],
     node_data: dict[str, dict[str, str]] | None = None,
+    node_names: dict[str, str] | None = None,
     options: SvgOptions | None = None,
     theme: SvgTheme = DEFAULT_THEME,
     groups: dict[str, list[str]] | None = None,
@@ -190,6 +195,7 @@ def render_svg(
         node_data=node_data,
         theme=theme,
         groups=groups,
+        node_names=node_names,
     )
     _render_svg_gateway_overlays(
         lines=lines,
@@ -303,15 +309,18 @@ def _render_svg_nodes(
     theme: SvgTheme,
     *,
     groups: dict[str, list[str]] | None = None,
+    node_names: dict[str, str] | None = None,
 ) -> None:
+    names = node_names or {}
     node_to_group = _build_node_to_group_map(groups) if groups else {}
-    for name, (x, y) in positions.items():
-        node_type = node_types.get(name, "other")
-        group_name = node_to_group.get(name)
-        group_attrs = _svg_node_group_attrs(node_data, name, node_type, group_name)
+    for node_id, (x, y) in positions.items():
+        display_name = names.get(node_id, node_id)
+        node_type = node_types.get(node_id, "other")
+        group_name = node_to_group.get(node_id)
+        group_attrs = _svg_node_group_attrs(node_data, node_id, node_type, group_name)
         _append_svg_node_frame(
             lines,
-            name=name,
+            name=display_name,
             x=x,
             y=y,
             node_type=node_type,
@@ -326,7 +335,7 @@ def _render_svg_nodes(
             icons=icons,
             options=options,
         )
-        port_label = node_port_labels.get(name)
+        port_label = node_port_labels.get(node_id)
         _append_svg_node_port_label(
             lines,
             port_label=port_label,
@@ -337,7 +346,7 @@ def _render_svg_nodes(
         )
         _append_svg_node_label(
             lines,
-            name=name,
+            name=display_name,
             text_x=text_x,
             text_y=_node_label_y(y, has_port_label=bool(port_label), options=options),
             theme=theme,
@@ -368,6 +377,7 @@ def render_dual(
     edges: list[Edge],
     *,
     node_types: dict[str, str],
+    node_names: dict[str, str] | None = None,
     options: SvgOptions | None = None,
     theme: SvgTheme = DEFAULT_THEME,
     vlan_names: dict[int, str] | None = None,
@@ -393,6 +403,7 @@ def render_dual(
     return _svg_dual_render.render_dual_svgs(
         edges,
         node_types=node_types,
+        node_names=node_names,
         options=options,
         theme=theme,
         wan_info=wan_info,

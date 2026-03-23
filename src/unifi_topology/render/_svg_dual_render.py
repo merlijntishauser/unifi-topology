@@ -105,6 +105,7 @@ def render_dual_svgs(
     edges: list[Edge],
     *,
     node_types: dict[str, str],
+    node_names: dict[str, str] | None = None,
     options: SvgOptions,
     theme: SvgTheme,
     wan_info: WanInfo | None,
@@ -115,6 +116,7 @@ def render_dual_svgs(
     physical_svg = render_fn(
         edges,
         node_types=node_types,
+        node_names=node_names,
         options=dataclasses.replace(options, layout_mode="physical"),
         theme=theme,
         wan_info=wan_info,
@@ -126,6 +128,7 @@ def render_dual_svgs(
     vlan_svg = render_fn(
         edges,
         node_types=node_types,
+        node_names=node_names,
         options=dataclasses.replace(options, layout_mode="grouped"),
         theme=theme,
         groups=dual_groups.groups,

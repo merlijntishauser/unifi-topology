@@ -305,6 +305,7 @@ def _node_depth(port_label: str | None, layout: IsoLayout) -> float:
 def _render_iso_node(
     lines: list[str],
     *,
+    node_id: str,
     name: str,
     x: float,
     y: float,
@@ -323,7 +324,7 @@ def _render_iso_node(
     is_client = node_type in ("client", "client_cluster")
     node_depth = _node_depth(port_label, layout)
 
-    group_attrs = _svg_node_group_attrs(None, name, node_type)
+    group_attrs = _svg_node_group_attrs(None, node_id, node_type)
     lines.append(f"<g{group_attrs}>")
     lines.append(f"<title>{_escape_text(name)}</title>")
     top, left, right = _iso_node_polygons(x, y, tile_w, tile_h, node_depth)
@@ -382,6 +383,7 @@ def _render_iso_nodes(
     *,
     positions: dict[str, tuple[float, float]],
     node_types: dict[str, str],
+    node_names: dict[str, str] | None = None,
     icons: dict[str, str],
     options: SvgOptions,
     layout: IsoLayout,
@@ -389,17 +391,19 @@ def _render_iso_nodes(
     node_port_prefix: dict[str, str],
     theme: SvgTheme,
 ) -> None:
-    for name, (x, y) in positions.items():
+    names = node_names or {}
+    for node_id, (x, y) in positions.items():
         _render_iso_node(
             lines,
-            name=name,
+            node_id=node_id,
+            name=names.get(node_id, node_id),
             x=x,
             y=y,
-            node_type=node_types.get(name, "other"),
+            node_type=node_types.get(node_id, "other"),
             icons=icons,
             options=options,
-            port_label=node_port_labels.get(name),
-            port_prefix=node_port_prefix.get(name),
+            port_label=node_port_labels.get(node_id),
+            port_prefix=node_port_prefix.get(node_id),
             layout=layout,
             theme=theme,
         )

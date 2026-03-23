@@ -65,8 +65,10 @@ def test_unifi_fixture_client_ports_contract():
     devices = normalize_devices(_load_devices_fixture())
     clients = _load_clients_fixture()
     client_ports = build_client_port_map(devices, clients, client_mode="all")
-    rows = client_ports.get("Core Switch", [])
-    assert (5, "Desk PC") in rows
+    # Keys are now normalized MACs; "Core Switch" has MAC aa:bb:cc:dd:ee:02
+    rows = client_ports.get("aa:bb:cc:dd:ee:02", [])
+    # Values are (port, client_mac) tuples; "Desk PC" has MAC aa:bb:cc:dd:ee:10
+    assert (5, "aa:bb:cc:dd:ee:10") in rows
 
 
 def test_fixture_data_round_trip_contract():

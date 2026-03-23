@@ -47,6 +47,45 @@ def build_device_index(devices: Iterable[Device]) -> dict[str, str]:
     return index
 
 
+def _client_node_names(
+    clients: Iterable[object],
+    *,
+    client_mode: str,
+    only_unifi: bool,
+) -> dict[str, str]:
+    from ._client_access import client_node_id
+    from .classify import client_display_name
+    from .clients import client_matches_filters
+
+    names: dict[str, str] = {}
+    for client in clients:
+        if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
+            continue
+        node_id = client_node_id(client)
+        if node_id:
+            names[node_id] = client_display_name(client) or node_id
+    return names
+
+
+def build_node_names(
+    devices: Iterable[Device],
+    clients: Iterable[object] | None = None,
+    *,
+    client_mode: str = "wired",
+    only_unifi: bool = False,
+) -> dict[str, str]:
+    """Build a map of node IDs (MACs) to display names.
+
+    Combines device and client name mappings into a single lookup.
+    Device keys are ``normalize_mac(device.mac)``, client keys are
+    ``normalize_mac(client["mac"])``.
+    """
+    names = build_device_index(devices)
+    if clients:
+        names.update(_client_node_names(clients, client_mode=client_mode, only_unifi=only_unifi))
+    return names
+
+
 # --- Topology class for serialization and diff ---
 
 
@@ -128,4 +167,5 @@ __all__ = [
     "VlanMap",
     # Functions
     "build_device_index",
+    "build_node_names",
 ]

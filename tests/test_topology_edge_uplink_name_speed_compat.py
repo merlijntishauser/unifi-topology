@@ -1,14 +1,14 @@
-"""Compatibility tests for edge uplink name and speed helpers."""
+"""Compatibility tests for edge uplink ID and speed helpers."""
 
 from __future__ import annotations
 
-from unifi_topology.model.edges import _port_speed_by_idx, _uplink_name
+from unifi_topology.model.edges import _port_speed_by_idx, _uplink_id
 from unifi_topology.model.topology import PortInfo, UplinkInfo
 
 
-def test_uplink_name_prefers_name_over_mac():
+def test_uplink_id_returns_none_when_only_unifi_and_not_in_index():
     uplink = UplinkInfo(mac="aa", name="Core Switch", port=None)
-    assert _uplink_name(uplink, {}, only_unifi=True) == "Core Switch"
+    assert _uplink_id(uplink, {}, only_unifi=True) is None
 
 
 def test_port_speed_by_idx_reads_speed():
