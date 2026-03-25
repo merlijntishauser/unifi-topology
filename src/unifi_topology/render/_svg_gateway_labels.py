@@ -64,13 +64,21 @@ def _format_wan_interface_line(
     return wan.label or prefix
 
 
+def _wan_ip_lines(wan: WanInterface) -> list[str]:
+    """Build IP address label lines, preferring public IP when available."""
+    if wan.public_ip and wan.public_ip != wan.ip_address:
+        return [wan.public_ip]
+    if wan.ip_address:
+        return [wan.ip_address]
+    return []
+
+
 def _build_single_wan_label_lines(wan: WanInterface) -> list[str]:
     label_lines = [wan.label or "WAN1"]
     speed_line = _format_wan_speed_line(wan, include_speed=True)
     if speed_line:
         label_lines.append(speed_line)
-    if wan.ip_address:
-        label_lines.append(wan.ip_address)
+    label_lines.extend(_wan_ip_lines(wan))
     return label_lines
 
 
@@ -80,8 +88,8 @@ def _build_dual_wan_label_lines(wan_info: WanInfo) -> list[str]:
         label_lines.append(_format_wan_interface_line(wan_info.wan1, "WAN1", is_dual=True))
     if wan_info.wan2:
         label_lines.append(_format_wan_interface_line(wan_info.wan2, "WAN2", is_dual=True))
-    if wan_info.wan1 and wan_info.wan1.ip_address:
-        label_lines.append(wan_info.wan1.ip_address)
+    if wan_info.wan1:
+        label_lines.extend(_wan_ip_lines(wan_info.wan1))
     return label_lines
 
 

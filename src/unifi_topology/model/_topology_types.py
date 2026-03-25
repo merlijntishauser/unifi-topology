@@ -61,6 +61,7 @@ class Device:
     version: str = ""
     in_gateway_mode: bool | None = None
     network_table: list[dict[str, Any]] = field(default_factory=list)
+    public_ip: str | None = None
 
 
 @dataclass(frozen=True)
@@ -90,6 +91,7 @@ class WanInterface:
     enabled: bool
     label: str | None = None
     isp_speed: str | None = None
+    public_ip: str | None = None
 
 
 @dataclass(frozen=True)

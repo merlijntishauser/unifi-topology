@@ -66,6 +66,7 @@ def _build_wan_interface(
     isp_speed: str | None,
     *,
     enabled_override: bool | None = None,
+    public_ip: str | None = None,
 ) -> WanInterface:
     """Build a WAN interface from port info."""
     speed = _normalize_wan_speed(port.speed)
@@ -80,6 +81,7 @@ def _build_wan_interface(
         enabled=enabled,
         label=label,
         isp_speed=isp_speed,
+        public_ip=public_ip,
     )
 
 
@@ -126,7 +128,9 @@ def _extract_wan1(
     wan1_port = _find_wan1_port(device.port_table)
     if wan1_port is None:
         return None
-    return _build_wan_interface(wan1_port, 1, device.ip, wan1_label, wan1_isp_speed)
+    return _build_wan_interface(
+        wan1_port, 1, device.ip, wan1_label, wan1_isp_speed, public_ip=device.public_ip
+    )
 
 
 def _extract_wan2(

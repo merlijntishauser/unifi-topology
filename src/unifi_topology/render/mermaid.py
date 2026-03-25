@@ -238,8 +238,13 @@ def _wan_speed_parts(wan: WanInterface) -> list[str]:
     return speed_parts
 
 
-def _build_wan_node_label(wan_info: WanInfo) -> str:
-    """Build a concise label for the WAN node."""
+def _wan_ip_label(wan: WanInterface) -> str | None:
+    if wan.public_ip and wan.public_ip != wan.ip_address:
+        return wan.public_ip
+    return wan.ip_address
+
+
+def _wan_label_parts(wan_info: WanInfo) -> list[str]:
     parts: list[str] = []
     is_dual = wan_info.wan2 is not None
     if wan_info.wan1:
@@ -248,6 +253,16 @@ def _build_wan_node_label(wan_info: WanInfo) -> str:
         if parts:
             parts.append("|")
         parts.extend(_format_wan_interface(wan_info.wan2, "WAN2", is_dual=is_dual))
+    return parts
+
+
+def _build_wan_node_label(wan_info: WanInfo) -> str:
+    """Build a concise label for the WAN node."""
+    parts = _wan_label_parts(wan_info)
+    if wan_info.wan1:
+        ip_label = _wan_ip_label(wan_info.wan1)
+        if ip_label:
+            parts.append(ip_label)
     return " ".join(parts)
 
 

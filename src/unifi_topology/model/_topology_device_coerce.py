@@ -96,6 +96,10 @@ def _gateway_mode(device: DeviceSource) -> bool | None:
     return raw_gw_mode if isinstance(raw_gw_mode, bool) else None
 
 
+def _public_ip(device: DeviceSource) -> str | None:
+    return RawRecord(device).text("connect_request_ip")
+
+
 def _get_lldp_info(device: DeviceSource) -> object | None:
     """Try multiple field names to get LLDP info from device."""
     for field_name in ("lldp_info", "lldp", "lldp_table"):
@@ -176,6 +180,7 @@ def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None 
         version=_device_text(version),
         in_gateway_mode=in_gateway_mode,
         network_table=network_table,
+        public_ip=_public_ip(device),
     )
 
 
