@@ -57,7 +57,7 @@ def _load_models() -> dict[str, dict[str, Any]]:
     if overrides:
         _apply_spec_overrides(models, overrides)
     _cache = models
-    return models
+    return _cache  # type: ignore[return-value]  # narrowing lost after global assignment
 
 
 def _find_entry(model: str) -> dict[str, Any] | None:

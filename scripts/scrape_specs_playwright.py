@@ -105,8 +105,8 @@ def _extract_spec_value(page: Page, label: str) -> str | None:
                 parts = text.split("\n")
                 if len(parts) >= 2:
                     return parts[-1].strip()
-    except Exception:
-        pass
+    except Exception:  # noqa: BLE001 -- page structure varies; skip on any DOM error
+        return None
     return None
 
 
@@ -164,8 +164,8 @@ def _scrape_product_specs(page: Page, slug: str) -> dict[str, Any]:
         if tech_btn.is_visible(timeout=5000):
             tech_btn.click()
             time.sleep(1)
-    except Exception:
-        pass
+    except Exception:  # noqa: BLE001 -- tab may not exist on all product pages
+        pass  # proceed without the Technical tab; specs may still be visible
 
     raw_specs = _extract_specs_from_snapshot(page)
     if not raw_specs:
