@@ -100,7 +100,7 @@ jobs:
           python -m pip install -e . -c constraints.txt
           python -m pip install -r requirements-dev.txt -c constraints.txt
       - name: Dependency audit
-        run: pip-audit
+        run: pip-audit --ignore-vuln CVE-2026-4539  # pygments 2.19.2 -- no fix available yet
 
   test-unit:
     runs-on: ubuntu-latest

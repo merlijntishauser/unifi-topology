@@ -33,7 +33,7 @@ complexity:
 	@./scripts/check_complexity.sh 5
 
 audit:
-	$(VENV)/pip-audit
+	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539
 
 # Testing
 test:
@@ -67,7 +67,7 @@ ci:
 	@./scripts/check_complexity.sh 5
 	@echo ""
 	@echo "=== Dependency Audit ==="
-	$(VENV)/pip-audit
+	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539
 	@echo ""
 	@echo "=== Tests ==="
 	$(VENV)/pytest -q
