@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-03-25
+
 ### Added
 - `Device.public_ip` and `WanInterface.public_ip` fields exposing the `connect_request_ip` from the UniFi API, showing the actual public IP under CGNAT instead of the carrier-assigned address (closes #33)
 - Playwright-based specs scraper for products where the store JSON API no longer provides technical specifications (closes #32)
@@ -177,7 +179,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.2...v2.0.0
 [1.3.2]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.0...v1.3.1
