@@ -14,8 +14,34 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_MODELS_PATH = Path(__file__).resolve().parent.parent / "assets" / "models.json"
+_ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+_MODELS_PATH = _ASSETS_DIR / "models.json"
+_OVERRIDES_PATH = _ASSETS_DIR / "specs_overrides.json"
 _cache: dict[str, dict[str, Any]] | None = None
+
+
+def _load_json(path: Path) -> dict[str, Any]:
+    try:
+        return json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _apply_spec_overrides(
+    models: dict[str, dict[str, Any]],
+    overrides: dict[str, dict[str, Any]],
+) -> None:
+    """Merge spec overrides into models that lack specs (by URL slug)."""
+    for entry in models.values():
+        if entry.get("specs"):
+            continue
+        url = entry.get("url", "")
+        if not url:
+            continue
+        slug = url.rsplit("/", 1)[-1]
+        specs = overrides.get(slug)
+        if specs:
+            entry["specs"] = specs
 
 
 def _load_models() -> dict[str, dict[str, Any]]:
@@ -23,13 +49,15 @@ def _load_models() -> dict[str, dict[str, Any]]:
     global _cache  # noqa: PLW0603
     if _cache is not None:
         return _cache
-    try:
-        data: dict[str, Any] = json.loads(_MODELS_PATH.read_text())
-        _cache = data.get("models", {})
-    except (OSError, json.JSONDecodeError):
+    data = _load_json(_MODELS_PATH)
+    models = data.get("models", {})
+    if not models:
         logger.debug("Could not load model lookup table from %s", _MODELS_PATH)
-        _cache = {}
-    return _cache or {}
+    overrides = _load_json(_OVERRIDES_PATH).get("specs", {})
+    if overrides:
+        _apply_spec_overrides(models, overrides)
+    _cache = models
+    return models
 
 
 def _find_entry(model: str) -> dict[str, Any] | None:

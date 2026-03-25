@@ -1,0 +1,296 @@
+{
+  "_meta": {
+    "description": "Manual specs overrides for models where the store JSON API does not provide technicalSpecification data. Keyed by product slug."
+  },
+  "specs": {
+    "e7-audience-indoor": {
+      "dimensions_mm": {
+        "width": 474.1,
+        "depth": 239.4,
+        "height": 42.2
+      },
+      "weight_kg": 3.2,
+      "max_power_w": 51.0,
+      "form_factor": "Wall, Pole (Mounts Included)\nVESA (Optional)"
+    },
+    "e7-audience-us": {
+      "dimensions_mm": {
+        "width": 474.1,
+        "depth": 265.5,
+        "height": 42.2
+      },
+      "weight_kg": 3.3,
+      "max_power_w": 51.0,
+      "form_factor": "Wall, Pole (Mounts Included)\nVESA (Optional)"
+    },
+    "e7-campus-indoor": {
+      "dimensions_mm": {
+        "width": 250.0,
+        "depth": 250.0,
+        "height": 45.5
+      },
+      "weight_kg": 2.2,
+      "max_power_w": 44.0,
+      "form_factor": "Wall, Pole (Mounts Included)\nVESA (Optional)"
+    },
+    "e7-campus-us": {
+      "dimensions_mm": {
+        "width": 250.0,
+        "depth": 250.0,
+        "height": 45.5
+      },
+      "weight_kg": 2.2,
+      "max_power_w": 44.0,
+      "form_factor": "Wall, Pole (Mounts Included)\nVESA (Optional)"
+    },
+    "ecs-24-poe": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 496.0,
+        "height": 43.7
+      },
+      "weight_kg": 9.46,
+      "max_power_w": 400.0,
+      "form_factor": "Rack Mount (1U, Full-Depth)",
+      "rack_height_u": 1
+    },
+    "ecs-24s-poe": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 496.0,
+        "height": 44.0
+      },
+      "weight_kg": 9.2,
+      "max_power_w": 400.0,
+      "form_factor": "Rack Mount (1U, Full-Depth)",
+      "rack_height_u": 1
+    },
+    "ecs-48-poe": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 496.0,
+        "height": 43.7
+      },
+      "weight_kg": 9.46,
+      "max_power_w": 400.0,
+      "form_factor": "Rack Mount (1U, Full-Depth)",
+      "rack_height_u": 1
+    },
+    "ecs-48s-poe": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 496.0,
+        "height": 44.0
+      },
+      "weight_kg": 9.5,
+      "max_power_w": 400.0,
+      "form_factor": "Rack Mount (1U, Full-Depth)",
+      "rack_height_u": 1
+    },
+    "u-lte": {
+      "dimensions_mm": {
+        "width": 66.0,
+        "depth": 202.12,
+        "height": 32.2
+      },
+      "weight_kg": 0.316,
+      "form_factor": "Wall mount or foot stand (Included)"
+    },
+    "u-lte-backup-pro": {
+      "dimensions_mm": {
+        "width": 66.0,
+        "depth": 202.0,
+        "height": 32.0
+      },
+      "weight_kg": 0.336,
+      "form_factor": "Wall mount or foot stand (Included)"
+    },
+    "u5g-max": {
+      "dimensions_mm": {
+        "width": 180.0,
+        "depth": 109.0,
+        "height": 33.8
+      },
+      "weight_kg": 0.41,
+      "max_power_w": 14.5,
+      "form_factor": "Desktop stand, wall, window mount (Included)"
+    },
+    "u5g-max-outdoor": {
+      "dimensions_mm": {
+        "width": 220.0,
+        "depth": 165.0,
+        "height": 66.9
+      },
+      "weight_kg": 1.2,
+      "max_power_w": 14.5,
+      "form_factor": "Pole mount, wall mount (Included)"
+    },
+    "ucg-fiber": {
+      "dimensions_mm": {
+        "width": 212.8,
+        "depth": 127.6,
+        "height": 30.0
+      },
+      "weight_kg": 0.734,
+      "max_power_w": 29.4,
+      "form_factor": "Compact desktop"
+    },
+    "ucg-max": {
+      "dimensions_mm": {
+        "width": 141.8,
+        "depth": 127.6,
+        "height": 30.0
+      },
+      "weight_kg": 0.519,
+      "max_power_w": 16.1,
+      "form_factor": "Compact desktop"
+    },
+    "ucg-max-ns": {
+      "dimensions_mm": {
+        "width": 141.8,
+        "depth": 127.6,
+        "height": 30.0
+      },
+      "weight_kg": 0.519,
+      "max_power_w": 16.1,
+      "form_factor": "Compact desktop"
+    },
+    "uck-g2-ssd": {
+      "dimensions_mm": {
+        "width": 131.2,
+        "depth": 134.2,
+        "height": 27.1
+      },
+      "weight_kg": 0.56,
+      "max_power_w": 9.6,
+      "form_factor": "Compact Desktop"
+    },
+    "umr-industrial-us": {
+      "dimensions_mm": {
+        "width": 114.5,
+        "depth": 93.6,
+        "height": 32.0
+      },
+      "weight_kg": 0.395,
+      "max_power_w": 12.5,
+      "form_factor": "DIN rail, Wall, Pole (Mounts Included)"
+    },
+    "umr-ultra-us": {
+      "dimensions_mm": {
+        "width": 84.0,
+        "depth": 82.0,
+        "height": 26.0
+      },
+      "weight_kg": 0.2,
+      "max_power_w": 5.7,
+      "form_factor": "DIN rail, Wall (Mounts Included)"
+    },
+    "umr-us": {
+      "dimensions_mm": {
+        "width": 190.0,
+        "depth": 89.8,
+        "height": 28.8
+      },
+      "weight_kg": 0.303,
+      "max_power_w": 9.0,
+      "form_factor": "DIN rail, Wall (Mounts Included)"
+    },
+    "ups-2u-us": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 300.0,
+        "height": 87.4
+      },
+      "weight_kg": 14.0,
+      "form_factor": "Rack mount (2U)",
+      "rack_height_u": 2
+    },
+    "usp-pdu-hd": {
+      "dimensions_mm": {
+        "width": 1485.0,
+        "depth": 56.0,
+        "height": 55.0
+      },
+      "weight_kg": 6.3
+    },
+    "usp-pdu-pro": {
+      "dimensions_mm": {
+        "width": 442.4,
+        "depth": 106.0,
+        "height": 87.4
+      },
+      "weight_kg": 3.5,
+      "max_power_w": 875.0
+    },
+    "usw-ultra": {
+      "dimensions_mm": {
+        "width": 203.0,
+        "depth": 76.0,
+        "height": 33.0
+      },
+      "weight_kg": 0.32,
+      "max_power_w": 210.0,
+      "form_factor": "Compact desktop, wall, magnetic"
+    },
+    "usw-ultra-210w": {
+      "dimensions_mm": {
+        "width": 203.0,
+        "depth": 76.0,
+        "height": 33.0
+      },
+      "weight_kg": 0.77,
+      "max_power_w": 210.0,
+      "form_factor": "Compact desktop, wall, magnetic"
+    },
+    "usw-ultra-60w": {
+      "dimensions_mm": {
+        "width": 203.0,
+        "depth": 76.0,
+        "height": 33.0
+      },
+      "weight_kg": 0.33,
+      "max_power_w": 210.0,
+      "form_factor": "Compact desktop, wall, magnetic"
+    },
+    "utp-g3-touch-enterprise": {
+      "dimensions_mm": {
+        "width": 256.5,
+        "depth": 185.3,
+        "height": 139.5
+      },
+      "weight_kg": 1.5,
+      "max_power_w": 11.0,
+      "form_factor": "Desktop"
+    },
+    "utp-g3-touch-pro": {
+      "dimensions_mm": {
+        "width": 165.4,
+        "depth": 185.3,
+        "height": 139.5
+      },
+      "weight_kg": 1.0,
+      "max_power_w": 10.0,
+      "form_factor": "Desktop"
+    },
+    "utp-touch": {
+      "dimensions_mm": {
+        "width": 166.0,
+        "depth": 183.0,
+        "height": 140.0
+      },
+      "weight_kg": 1.1,
+      "max_power_w": 8.0,
+      "form_factor": "Desktop"
+    },
+    "utp-touchmax-u": {
+      "dimensions_mm": {
+        "width": 255.0,
+        "depth": 183.0,
+        "height": 135.0
+      },
+      "weight_kg": 1.5,
+      "max_power_w": 15.0,
+      "form_factor": "Desktop"
+    }
+  }
+}

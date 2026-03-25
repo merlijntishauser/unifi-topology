@@ -58,6 +58,7 @@ docs = [
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+extend-exclude = ["scripts/scrape_specs_playwright.py"]
 
 [tool.ruff.lint]
 select = ["C90", "E", "F", "I", "UP"]

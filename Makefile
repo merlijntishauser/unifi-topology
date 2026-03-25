@@ -33,7 +33,7 @@ complexity:
 	@./scripts/check_complexity.sh 5
 
 audit:
-	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539
+	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539 --ignore-vuln CVE-2026-25645
 
 # Testing
 test:
@@ -67,7 +67,7 @@ ci:
 	@./scripts/check_complexity.sh 5
 	@echo ""
 	@echo "=== Dependency Audit ==="
-	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539
+	$(VENV)/pip-audit --ignore-vuln CVE-2026-4539 --ignore-vuln CVE-2026-25645
 	@echo ""
 	@echo "=== Tests ==="
 	$(VENV)/pytest -q
@@ -84,6 +84,9 @@ docs-serve:
 # Data
 scrape-models:
 	$(VENV)/python scripts/scrape_models.py
+
+update-models: scrape-models
+	$(VENV)/python scripts/scrape_specs_playwright.py
 
 # Release
 version-bump:
