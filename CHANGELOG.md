@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `lookup_model_specs()` now returns specs for 237/326 models (up from 195), including all current-gen Cloud Gateways and Switch Ultra devices (closes #32)
 - Cyclic import between `topology` and `clients` modules (CodeQL #194)
+- CodeQL alerts #197, #198, #199 (unused global variable, empty except clauses)
 
 ## [2.0.0] (2026-03-23)
 
