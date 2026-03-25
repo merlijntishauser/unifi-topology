@@ -47,23 +47,51 @@ def build_device_index(devices: Iterable[Device]) -> dict[str, str]:
     return index
 
 
+def _client_matches_mode(client: object, mode: str) -> bool:
+    from ._client_access import _client_is_wired
+
+    if mode == "all":
+        return True
+    wired = _client_is_wired(client)
+    return not wired if mode == "wireless" else wired
+
+
+def _client_name_entry(client: object) -> tuple[str, str] | None:
+    from ._client_access import client_node_id
+    from .classify import client_display_name
+
+    node_id = client_node_id(client)
+    if not node_id:
+        return None
+    return node_id, client_display_name(client) or node_id
+
+
+def _filtered_clients(
+    clients: Iterable[object],
+    client_mode: str,
+    only_unifi: bool,
+) -> Iterable[object]:
+    from .classify import client_is_unifi
+
+    for client in clients:
+        if not _client_matches_mode(client, client_mode):
+            continue
+        if only_unifi and not client_is_unifi(client):
+            continue
+        yield client
+
+
 def _client_node_names(
     clients: Iterable[object],
     *,
     client_mode: str,
     only_unifi: bool,
 ) -> dict[str, str]:
-    from ._client_access import client_node_id
-    from .classify import client_display_name
-    from .clients import client_matches_filters
-
     names: dict[str, str] = {}
-    for client in clients:
-        if not client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
-            continue
-        node_id = client_node_id(client)
-        if node_id:
-            names[node_id] = client_display_name(client) or node_id
+    for client in _filtered_clients(clients, client_mode, only_unifi):
+        entry = _client_name_entry(client)
+        if entry:
+            names[entry[0]] = entry[1]
     return names
 
 
