@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `Device.public_ip` and `WanInterface.public_ip` fields exposing the `connect_request_ip` from the UniFi API, showing the actual public IP under CGNAT instead of the carrier-assigned address (closes #33)
 - Playwright-based specs scraper for products where the store JSON API no longer provides technical specifications (closes #32)
 - `specs_overrides.json` with dimensions, weight, power, and form factor for 29 product pages covering 42 model entries (UCG-Fiber, UCG-Max, USW-Ultra series, ECS switches, phones, LTE, PDUs, and more)
 - `make update-models` target that runs both the JSON API scraper and the Playwright scraper
