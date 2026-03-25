@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Playwright-based specs scraper for products where the store JSON API no longer provides technical specifications (closes #32)
+- `specs_overrides.json` with dimensions, weight, power, and form factor for 29 product pages covering 42 model entries (UCG-Fiber, UCG-Max, USW-Ultra series, ECS switches, phones, LTE, PDUs, and more)
+- `make update-models` target that runs both the JSON API scraper and the Playwright scraper
+
+### Fixed
+- `lookup_model_specs()` now returns specs for 237/326 models (up from 195), including all current-gen Cloud Gateways and Switch Ultra devices (closes #32)
+- Cyclic import between `topology` and `clients` modules (CodeQL #194)
+
 ## [2.0.0] (2026-03-23)
 
 ### Changed
