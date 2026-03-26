@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Downgraded "missing LLDP info; using uplink fallback" log from WARNING to DEBUG to reduce noise for offline/seasonal devices (closes #34)
+
 ## [2.1.0] - 2026-03-25
 
 ### Added
