@@ -37,7 +37,8 @@ class TestCoerceDevice:
                 "uplink_device_name": "Switch",
             },
         }
-        device = coerce_device(raw)
+        with caplog.at_level("DEBUG"):
+            device = coerce_device(raw)
         assert device.name == "Test AP"
         assert "missing LLDP info" in caplog.text
 

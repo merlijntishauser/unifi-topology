@@ -120,7 +120,7 @@ def _resolve_lldp_info(
     if lldp_info is not None:
         return as_list(lldp_info)
     if uplink or last_uplink:
-        logger.warning("Device %s missing LLDP info; using uplink fallback", name)
+        logger.debug("Device %s missing LLDP info; using uplink fallback", name)
         return []
     raise ValueError(f"Device {name} missing LLDP info")
 
