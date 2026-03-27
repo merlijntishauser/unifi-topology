@@ -189,7 +189,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.2...HEAD
+[2.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/merlijntishauser/unifi-topology/compare/v1.3.2...v2.0.0
