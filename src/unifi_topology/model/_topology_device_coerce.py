@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ipaddress
 import logging
 from collections.abc import Iterable
 
@@ -97,7 +98,13 @@ def _gateway_mode(device: DeviceSource) -> bool | None:
 
 
 def _public_ip(device: DeviceSource) -> str | None:
-    return RawRecord(device).text("connect_request_ip")
+    ip = RawRecord(device).text("connect_request_ip")
+    if not ip:
+        return None
+    try:
+        return ip if ipaddress.ip_address(ip).is_global else None
+    except ValueError:
+        return None
 
 
 def _get_lldp_info(device: DeviceSource) -> object | None:
