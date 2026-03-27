@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-03-27
+
+### Fixed
+- Filter bogus `public_ip` values: reject loopback, private, link-local, and unspecified addresses from `connect_request_ip` so the renderer falls back to `ip_address` (closes #37)
+
 ## [2.1.1] - 2026-03-26
 
 ### Fixed
