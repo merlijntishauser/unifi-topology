@@ -100,7 +100,7 @@ jobs:
           python -m pip install -e . -c constraints.txt
           python -m pip install -r requirements-dev.txt -c constraints.txt
       - name: Dependency audit
-        run: pip-audit --ignore-vuln CVE-2026-4539 --ignore-vuln CVE-2026-25645
+        run: pip-audit
 
   test-unit:
     runs-on: ubuntu-latest
