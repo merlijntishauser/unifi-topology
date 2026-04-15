@@ -46,13 +46,13 @@ dev = [
   "pytest-cov==7.1.0",
   "pyright==1.1.408",
   "radon==6.0.1",
-  "ruff==0.15.9",
+  "ruff==0.15.10",
   "xenon==0.9.3",
   "pip-audit==2.10.0",
 ]
 docs = [
   "mkdocs-material==9.7.6",
-  "mkdocstrings[python]==1.0.3",
+  "mkdocstrings[python]==1.0.4",
 ]
 
 [tool.ruff]
