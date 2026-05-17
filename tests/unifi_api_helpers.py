@@ -26,6 +26,7 @@ class FakeSession:
         self.calls: list[tuple[str, str, dict]] = []
         self._responses = list(responses or [])
         self._index = 0
+        self.headers: dict[str, str] = {}
 
     def post(self, url, *, json=None, verify=True, timeout=None):
         self.calls.append(("POST", url, {"json": json, "verify": verify, "timeout": timeout}))

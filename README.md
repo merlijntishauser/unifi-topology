@@ -66,7 +66,7 @@ svg = render_svg(
 
 ### Adapters
 
-- `Config` -- Configuration from environment variables (`UNIFI_URL`, `UNIFI_USER`, `UNIFI_PASS`, etc.)
+- `Config` -- Configuration from environment variables (`UNIFI_URL`, `UNIFI_USER`/`UNIFI_PASS` or `UNIFI_API_KEY`, etc.)
 - `fetch_devices(config)` -- Fetch device list from UniFi controller
 - `fetch_clients(config)` -- Fetch active clients
 - `fetch_networks(config)` -- Fetch network/VLAN configuration

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- UniFi OS API-key authentication: set `Config(api_key=...)` (or `UNIFI_API_KEY` env var) to authenticate via the `X-API-KEY` header instead of username/password. Avoids cookie-based login retries that can trip `AUTHENTICATION_FAILED_LIMIT_REACHED` on the controller. `user`/`password` remain supported; configs must supply exactly one of the two auth modes (closes #47)
+
 ## [2.1.2] - 2026-03-27
 
 ### Fixed

@@ -111,9 +111,10 @@ class UnifiClient:
     def __init__(
         self,
         url: str,
-        username: str,
-        password: str,
+        username: str | None = None,
+        password: str | None = None,
         *,
+        api_key: str | None = None,
         is_udm_pro: bool = False,
         verify_ssl: bool = True,
         request_timeout: float | None = None,
@@ -121,6 +122,7 @@ class UnifiClient:
         self._url = url.rstrip("/")
         self._username = username
         self._password = password
+        self._api_key = api_key
         self._is_udm_pro = is_udm_pro
         self._verify_ssl = verify_ssl
         self._request_timeout = request_timeout if request_timeout and request_timeout > 0 else None
@@ -133,6 +135,12 @@ class UnifiClient:
 
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+        self._initialize_auth()
+
+    def _initialize_auth(self) -> None:
+        if self._api_key:
+            self._session.headers["X-API-KEY"] = self._api_key
+            return
         self._authenticate()
 
     # ------------------------------------------------------------------
@@ -172,6 +180,8 @@ class UnifiClient:
             headers=headers_factory() if headers_factory else None,
         )
         if response.status_code == 401:
+            if self._api_key:
+                raise UnifiAuthError("API key rejected (HTTP 401)")
             logger.debug("Got 401 on %s, re-authenticating", method)
             self._authenticate()
             response = self._request(

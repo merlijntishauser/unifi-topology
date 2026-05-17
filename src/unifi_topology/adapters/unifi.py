@@ -168,6 +168,7 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
         url=config.url,
         username=config.user,
         password=config.password,
+        api_key=config.api_key,
         is_udm_pro=is_udm_pro,
         verify_ssl=config.verify_ssl,
         request_timeout=_request_timeout_seconds(),
@@ -177,9 +178,14 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
 _client_cache: dict[tuple[str, str, bool], UnifiClient] = {}
 
 
+def _client_cache_key(config: Config, *, is_udm_pro: bool) -> tuple[str, str, bool]:
+    identity = config.user or config.api_key or ""
+    return (config.url, identity, is_udm_pro)
+
+
 def _get_or_create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
     """Get a cached client or create a new one."""
-    cache_key = (config.url, config.user, is_udm_pro)
+    cache_key = _client_cache_key(config, is_udm_pro=is_udm_pro)
     client = _client_cache.get(cache_key)
     if client is not None:
         return client
@@ -190,7 +196,7 @@ def _get_or_create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
 
 def _evict_client(config: Config, *, is_udm_pro: bool) -> None:
     """Remove a cached client entry."""
-    cache_key = (config.url, config.user, is_udm_pro)
+    cache_key = _client_cache_key(config, is_udm_pro=is_udm_pro)
     _client_cache.pop(cache_key, None)
 
 
