@@ -1,11 +1,11 @@
 python-dotenv==1.2.2
 PyYAML==6.0.3
 urllib3==2.7.0
-Faker==40.13.0
-pre-commit==4.5.1
+Faker==40.15.0
+pre-commit==4.6.0
 pytest==9.0.3
 pytest-cov==7.1.0
-ruff==0.15.9
-pyright==1.1.408
+ruff==0.15.11
+pyright==1.1.409
 setuptools==82.0.1
-wheel==0.46.3
+wheel==0.47.0
