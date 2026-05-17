@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-05-17
+
 ### Added
 - UniFi OS API-key authentication: set `Config(api_key=...)` (or `UNIFI_API_KEY` env var) to authenticate via the `X-API-KEY` header instead of username/password. Avoids cookie-based login retries that can trip `AUTHENTICATION_FAILED_LIMIT_REACHED` on the controller. `user`/`password` remain supported; configs must supply exactly one of the two auth modes (closes #47)
 
@@ -192,7 +194,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.2...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.2...v2.2.0
 [2.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.0.0...v2.1.0
