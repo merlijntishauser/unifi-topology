@@ -1,6 +1,8 @@
 python-dotenv==1.2.2
 PyYAML==6.0.3
 urllib3==2.7.0
+idna==3.16
+pymdown-extensions==10.21.3
 Faker==40.18.0
 pre-commit==4.6.0
 pytest==9.0.3
