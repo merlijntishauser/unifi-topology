@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+from html import escape as _escape_html
+
 from . import _svg_edge_labels, _svg_gateway_labels
 
 __all__ = [
@@ -10,6 +13,7 @@ __all__ = [
     "_build_vpn_label_lines",
     "_build_wan_label_lines",
     "_compact_edge_label",
+    "_escape_attr",
     "_escape_text",
     "_extract_device_name",
     "_extract_port_text",
@@ -25,8 +29,28 @@ __all__ = [
 ]
 
 
+# Characters illegal in any well-formed XML 1.0 document. Unlike the reserved
+# entities, these cannot be encoded by a character reference and must be removed
+# before serialization or the entire SVG becomes unparseable. The allowed
+# control characters #x9 (tab), #xA (newline) and #xD (carriage return) are
+# deliberately excluded from this set.
+_XML_INVALID = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F]")
+
+
+def _strip_xml_invalid(value: str) -> str:
+    """Remove characters that cannot appear in a well-formed XML document."""
+    return _XML_INVALID.sub("", value)
+
+
 def _escape_text(value: str) -> str:
-    return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    """Escape a string for use as XML text content (e.g. inside <text>/<tspan>)."""
+    cleaned = _strip_xml_invalid(value)
+    return cleaned.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _escape_attr(value: str) -> str:
+    """Escape a string for use as an XML attribute value (e.g. data-node-id)."""
+    return _escape_html(_strip_xml_invalid(value), quote=True)
 
 
 _extract_port_text = _svg_edge_labels._extract_port_text

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unifi_topology.render.svg_labels import (
     _compact_edge_label,
+    _escape_attr,
     _escape_text,
     _extract_device_name,
     _extract_port_text,
@@ -25,6 +26,34 @@ class TestEscapeText:
 
     def test_no_escape_needed(self):
         assert _escape_text("plain text") == "plain text"
+
+    def test_strips_xml_invalid_control_chars(self):
+        assert _escape_text("My\x03Phone") == "MyPhone"
+        assert _escape_text("a\x00b\x08c") == "abc"
+
+    def test_preserves_allowed_whitespace_controls(self):
+        assert _escape_text("keep\x09tab\x0anewline\x0dcr") == "keep\x09tab\x0anewline\x0dcr"
+
+    def test_combines_strip_and_escape(self):
+        assert _escape_text("A&\x03B") == "A&amp;B"
+
+
+class TestEscapeAttr:
+    def test_escapes_quotes_for_attribute_context(self):
+        assert _escape_attr('Node "A"') == "Node &quot;A&quot;"
+
+    def test_escapes_xml_entities(self):
+        assert _escape_attr("A & <B>") == "A &amp; &lt;B&gt;"
+
+    def test_strips_xml_invalid_control_chars(self):
+        assert _escape_attr("My\x03Phone") == "MyPhone"
+        assert _escape_attr("a\x00b\x08c") == "abc"
+
+    def test_preserves_allowed_whitespace_controls(self):
+        assert _escape_attr("keep\x09tab\x0anewline\x0dcr") == "keep\x09tab\x0anewline\x0dcr"
+
+    def test_combines_strip_and_escape(self):
+        assert _escape_attr('A&\x03"B') == "A&amp;&quot;B"
 
 
 class TestExtractPortText:

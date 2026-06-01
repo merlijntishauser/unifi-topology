@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Strip XML-invalid control characters (e.g. U+0003) from device/client names before SVG serialization. A single illegal character from a misencoded name previously produced an unparseable SVG, breaking the entire render for downstream consumers. Both text-content and attribute (`data-node-id`, `data-edge-left/right`, `data-group`) contexts are now sanitized (closes #51)
+
 ## [2.2.1] - 2026-05-25
 ### Added
 - Chores: updated dependencies

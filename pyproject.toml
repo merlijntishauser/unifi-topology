@@ -41,6 +41,7 @@ Changelog = "https://github.com/merlijntishauser/unifi-topology/blob/main/CHANGE
 [project.optional-dependencies]
 dev = [
   "Faker==40.19.1",
+  "defusedxml==0.7.1",
   "pre-commit==4.6.0",
   "pytest==9.0.3",
   "pytest-cov==7.1.0",

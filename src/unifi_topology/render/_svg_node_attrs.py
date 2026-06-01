@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from html import escape as _escape_html
+from .svg_labels import _escape_attr
 
 
 def _base_node_attrs(
@@ -34,7 +34,7 @@ def _merge_node_attrs(
 
 
 def _render_node_attrs(attrs: dict[str, str]) -> str:
-    return "".join(f' {key}="{_escape_html(value, quote=True)}"' for key, value in attrs.items())
+    return "".join(f' {key}="{_escape_attr(value)}"' for key, value in attrs.items())
 
 
 def _svg_node_group_attrs(

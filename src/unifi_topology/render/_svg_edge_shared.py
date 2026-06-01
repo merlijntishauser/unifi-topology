@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from html import escape as _escape_html
 
 from ..model.topology import Edge
+from .svg_labels import _escape_attr
 from .svg_theme import SvgTheme
 
 
@@ -44,8 +44,8 @@ def _edge_opacity(node_types: dict[str, str], edge: Edge) -> float:
 
 
 def _edge_base_attrs(edge: Edge) -> str:
-    left_attr = _escape_html(edge.left, quote=True)
-    right_attr = _escape_html(edge.right, quote=True)
+    left_attr = _escape_attr(edge.left)
+    right_attr = _escape_attr(edge.right)
     base_attrs = f'data-edge-left="{left_attr}" data-edge-right="{right_attr}"'
     vlan_attrs = _vlan_data_attrs(edge)
     if vlan_attrs:
