@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-06-01
+
 ### Fixed
 - Strip XML-invalid control characters (e.g. U+0003) from device/client names before SVG serialization. A single illegal character from a misencoded name previously produced an unparseable SVG, breaking the entire render for downstream consumers. Both text-content and attribute (`data-node-id`, `data-edge-left/right`, `data-group`) contexts are now sanitized (closes #51)
 
@@ -201,7 +203,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.2...v2.2.0
 [2.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.1...v2.1.2
