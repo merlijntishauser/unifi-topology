@@ -1,13 +1,13 @@
 python-dotenv==1.2.2
 PyYAML==6.0.3
 urllib3==2.7.0
-idna==3.17
+idna==3.18
 pymdown-extensions==10.21.3
-Faker==40.19.1
+Faker==40.21.0
 pre-commit==4.6.0
 pytest==9.0.3
 pytest-cov==7.1.0
-ruff==0.15.15
-pyright==1.1.409
+ruff==0.15.16
+pyright==1.1.410
 setuptools==82.0.1
 wheel==0.47.0
