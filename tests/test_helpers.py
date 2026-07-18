@@ -44,3 +44,19 @@ def test_as_int_string_invalid_returns_default():
     assert as_int("abc") == 0
     assert as_int("abc", default=99) == 99
     assert as_int("", default=5) == 5
+
+
+def test_normalize_mac_unifies_separators_and_case():
+    from unifi_topology.model.helpers import normalize_mac
+
+    canonical = "aa:bb:cc:dd:ee:ff"
+    assert normalize_mac("AA-BB-CC-DD-EE-FF") == canonical
+    assert normalize_mac("aa:bb:cc:dd:ee:ff") == canonical
+    assert normalize_mac("AABBCCDDEEFF") == canonical
+
+
+def test_normalize_mac_leaves_non_mac_strings_lowercased():
+    from unifi_topology.model.helpers import normalize_mac
+
+    assert normalize_mac("Core-Switch") == "core-switch"
+    assert normalize_mac("aa") == "aa"

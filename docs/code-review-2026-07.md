@@ -96,7 +96,7 @@ Priorities:
   `wan_id_lower in conf_id` means `"wan" in "wan2"`; WAN1 can resolve to the
   WAN2 port and both WanInfo slots point at the same physical port. Fix: exact
   match first, no bare substring.
-- [ ] **F16 MAC normalization inconsistent across edge discovery** -
+- [x] **F16 MAC normalization inconsistent across edge discovery** -
   `model/_edge_discovery.py:116-127` vs `:44-50`, `model/helpers.py:76-77`.
   LLDP peer IDs are emitted raw (case-sensitive) while uplink IDs are
   normalized - third-party peers duplicate as two nodes. `normalize_mac` does

@@ -124,7 +124,7 @@ def _lldp_peer_id(
         return peer_mac
     if only_unifi:
         return None
-    return lldp_entry.chassis_id
+    return peer_mac
 
 
 def _lldp_label_entry(lldp_entry: LLDPEntry, resolved_port_idx: int | None) -> LLDPEntry:

@@ -74,7 +74,16 @@ def first_string_field(obj: object, *keys: str) -> str | None:
 
 
 def normalize_mac(value: str) -> str:
-    return value.strip().lower()
+    """Normalize a MAC to lowercase colon-separated form.
+
+    Strings that are not 12 hex digits (e.g. a third-party device name used as
+    an LLDP chassis id) are only stripped and lowercased, not reformatted.
+    """
+    stripped = value.strip().lower()
+    hex_digits = stripped.replace(":", "").replace("-", "").replace(".", "")
+    if len(hex_digits) == 12 and all(c in "0123456789abcdef" for c in hex_digits):
+        return ":".join(hex_digits[i : i + 2] for i in range(0, 12, 2))
+    return stripped
 
 
 def get_field(obj: object, name: str) -> object | None:
