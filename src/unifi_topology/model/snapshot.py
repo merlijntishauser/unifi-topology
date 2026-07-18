@@ -127,6 +127,14 @@ def _typed_list[T](
     return [loader(value) for value in values if isinstance(value, dict)]
 
 
+def _vlan_tuple(data: dict[str, Any], key: str) -> tuple[Any, ...]:
+    """Read a list field into a tuple, tolerating a missing or null value."""
+    value = data.get(key)
+    if not isinstance(value, list | tuple):
+        return ()
+    return tuple(value)
+
+
 def _poe_ports_to_dict(poe_ports: dict[int, bool]) -> dict[str, bool]:
     return {str(key): value for key, value in poe_ports.items()}
 
@@ -196,7 +204,7 @@ def port_info_from_dict(data: dict[str, Any]) -> PortInfo:
         poe_power=data.get("poe_power"),
         up=data.get("up"),
         native_vlan=data.get("native_vlan"),
-        tagged_vlans=tuple(data.get("tagged_vlans", [])),
+        tagged_vlans=_vlan_tuple(data, "tagged_vlans"),
         wan_networkconf_id=data.get("wan_networkconf_id"),
     )
 
@@ -359,8 +367,8 @@ def edge_from_dict(data: dict[str, Any]) -> Edge:
         wireless=data.get("wireless", False),
         speed=data.get("speed"),
         channel=data.get("channel"),
-        vlans=tuple(data.get("vlans", [])),
-        active_vlans=tuple(data.get("active_vlans", [])),
+        vlans=_vlan_tuple(data, "vlans"),
+        active_vlans=_vlan_tuple(data, "active_vlans"),
         is_trunk=data.get("is_trunk", False),
         connection=_optional_from_dict(data, "connection", connection_info_from_dict),
     )

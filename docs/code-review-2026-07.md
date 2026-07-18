@@ -134,7 +134,7 @@ Priorities:
   `model/diff.py:467` vs `:443-445`. Two such devices collapse into one map
   slot and get compared against each other. Fix: return None key for falsy MAC
   like `_client_key` does, and skip.
-- [ ] **F24 Snapshot loaders crash on JSON `null` for list fields** -
+- [x] **F24 Snapshot loaders crash on JSON `null` for list fields** -
   `model/snapshot.py:198, 360-361`. `"vlans": null` raises TypeError; every
   other loader type-guards. Fix: guard the three list fields.
 
