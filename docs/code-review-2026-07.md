@@ -155,7 +155,7 @@ Priorities:
 - [x] **F27 Mermaid crashes when the gateway is in no edge/group** -
   `render/mermaid.py:289-294`. `id_map[gateway_id]` raises KeyError (verified).
   Fix: `id_map.get`, skip WAN rendering when the gateway has no node.
-- [ ] **F28 Mermaid escaping uses backslash escapes Mermaid does not support** -
+- [x] **F28 Mermaid escaping uses backslash escapes Mermaid does not support** -
   `render/mermaid.py:13-16`. One `"` in a device name breaks the whole diagram;
   `\n` renders literally. Fix: `#quot;` and `<br/>`; update the golden tests
   that currently pin the broken output.

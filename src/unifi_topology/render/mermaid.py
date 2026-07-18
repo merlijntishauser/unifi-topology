@@ -11,9 +11,10 @@ from .mermaid_theme import DEFAULT_THEME, MermaidTheme, class_defs
 
 
 def _escape(label: str) -> str:
+    # Mermaid quoted strings have no backslash escaping: a literal quote must be
+    # written as the HTML entity, and line breaks use <br/>.
     normalized = label.replace("\r\n", "\n").replace("\r", "\n")
-    escaped = normalized.replace("\\", "\\\\").replace("\n", "\\n")
-    return escaped.replace('"', '\\"')
+    return normalized.replace('"', "#quot;").replace("\n", "<br/>")
 
 
 def _normalize_chars(value: str) -> str:
