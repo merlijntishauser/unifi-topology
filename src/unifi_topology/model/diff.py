@@ -175,16 +175,29 @@ def _client_name_value(client: dict[str, Any]) -> Any:
     return client.get("name") or client.get("hostname")
 
 
+def _first_present(client: dict[str, Any], *keys: str) -> Any:
+    """Return the first value whose key is present and not None.
+
+    Uses ``is not None`` rather than truthiness so that a legitimate 0 (VLAN 0,
+    port 0) is not skipped in favour of a later, unrelated key.
+    """
+    for key in keys:
+        value = client.get(key)
+        if value is not None:
+            return value
+    return None
+
+
 def _client_vlan_value(client: dict[str, Any]) -> Any:
-    return client.get("vlan") or client.get("vlan_id")
+    return _first_present(client, "vlan", "vlan_id")
 
 
 def _client_uplink_mac_value(client: dict[str, Any]) -> Any:
-    return client.get("ap_mac") or client.get("sw_mac") or client.get("uplink_mac")
+    return _first_present(client, "ap_mac", "sw_mac", "uplink_mac")
 
 
 def _client_uplink_port_value(client: dict[str, Any]) -> Any:
-    return client.get("sw_port") or client.get("uplink_remote_port")
+    return _first_present(client, "sw_port", "uplink_remote_port")
 
 
 def _client_properties(client: dict[str, Any]) -> dict[str, Any]:

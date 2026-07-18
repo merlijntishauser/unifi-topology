@@ -97,3 +97,10 @@ class TestCompareTopologyClientsAndEdges:
         new_client["satisfaction"] = 90
         diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
         assert diff.events == []
+
+
+def test_client_vlan_zero_is_not_coalesced_away():
+    from unifi_topology.model.diff import _client_uplink_port_value, _client_vlan_value
+
+    assert _client_vlan_value({"vlan": 0, "vlan_id": 99}) == 0
+    assert _client_uplink_port_value({"sw_port": 0, "uplink_remote_port": 5}) == 0

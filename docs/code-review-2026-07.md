@@ -127,7 +127,7 @@ Priorities:
   193-205`. `signal`/`satisfaction` fluctuate every poll, emitting
   `client_node_changed` constantly. Fix: exclude volatile metrics from the
   compare set (consistent with `noise`/`tx_rate`/`rx_rate` already excluded).
-- [ ] **F22 Falsy `or`-coalescing breaks VLAN 0 / port 0** -
+- [x] **F22 Falsy `or`-coalescing breaks VLAN 0 / port 0** -
   `model/diff.py:181-190`. `client.get("vlan") or client.get("vlan_id")`
   falls through on legitimate 0. Fix: explicit `is None` chain.
 - [ ] **F23 Devices with empty MAC collide on diff key `""`** -
