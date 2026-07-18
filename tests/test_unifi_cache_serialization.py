@@ -67,5 +67,7 @@ def test_serialize_device_preserves_state_and_stats():
 
 
 def test_is_rate_limited_detects_429():
-    assert unifi._is_rate_limited(Exception("HTTP 429 Too Many Requests"))
-    assert not unifi._is_rate_limited(Exception("Invalid credentials"))
+    from unifi_topology.adapters.unifi_api import UnifiAuthError
+
+    assert unifi._is_rate_limited(UnifiAuthError("Too Many Requests", status_code=429))
+    assert not unifi._is_rate_limited(UnifiAuthError("Invalid credentials"))

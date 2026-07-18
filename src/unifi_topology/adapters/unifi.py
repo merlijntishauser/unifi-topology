@@ -249,7 +249,7 @@ def _connect_client(config: Config) -> UnifiClient:
 
 
 def _is_rate_limited(exc: Exception) -> bool:
-    return "429" in str(exc)
+    return getattr(exc, "status_code", None) == 429
 
 
 def _connect_and_fetch(

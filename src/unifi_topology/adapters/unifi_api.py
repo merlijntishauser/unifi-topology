@@ -88,6 +88,10 @@ def _swap_policy_indexes(
 class UnifiError(Exception):
     """Base class for all unifi-topology errors."""
 
+    def __init__(self, message: str, *, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
 
 class UnifiAuthError(UnifiError):
     """Authentication with the UniFi controller failed."""
@@ -173,7 +177,7 @@ class UnifiClient:
         payload: dict[str, object] | None = None,
         headers_factory: Callable[[], dict[str, str] | None] | None = None,
     ) -> requests.Response:
-        response = self._request(
+        response = self._safe_request(
             method,
             url,
             payload=payload,
@@ -181,16 +185,29 @@ class UnifiClient:
         )
         if response.status_code == 401:
             if self._api_key:
-                raise UnifiAuthError("API key rejected (HTTP 401)")
+                raise UnifiAuthError("API key rejected (HTTP 401)", status_code=401)
             logger.debug("Got 401 on %s, re-authenticating", method)
             self._authenticate()
-            response = self._request(
+            response = self._safe_request(
                 method,
                 url,
                 payload=payload,
                 headers=headers_factory() if headers_factory else None,
             )
         return response
+
+    def _safe_request(
+        self,
+        method: str,
+        url: str,
+        *,
+        payload: dict[str, object] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> requests.Response:
+        try:
+            return self._request(method, url, payload=payload, headers=headers)
+        except requests.RequestException as exc:
+            raise UnifiApiError(f"{method} {url} failed: {exc}") from exc
 
     @staticmethod
     def _parse_json(
@@ -257,8 +274,13 @@ class UnifiClient:
         if not response.ok:
             detail = self._error_detail(data)
             if detail:
-                raise UnifiAuthError(f"HTTP {response.status_code}: {detail}")
-            raise UnifiAuthError(f"Authentication failed (HTTP {response.status_code})")
+                raise UnifiAuthError(
+                    f"HTTP {response.status_code}: {detail}", status_code=response.status_code
+                )
+            raise UnifiAuthError(
+                f"Authentication failed (HTTP {response.status_code})",
+                status_code=response.status_code,
+            )
         payload_error = self._auth_payload_error(data)
         if payload_error is not None:
             raise UnifiAuthError(payload_error)
@@ -275,7 +297,10 @@ class UnifiClient:
         response = self._request_with_reauth("GET", url)
 
         if not response.ok:
-            raise UnifiApiError(f"GET {path} failed (HTTP {response.status_code})")
+            raise UnifiApiError(
+                f"GET {path} failed (HTTP {response.status_code})",
+                status_code=response.status_code,
+            )
 
         payload = self._parse_json(
             response,
@@ -302,7 +327,10 @@ class UnifiClient:
         response = self._request_with_reauth("GET", url)
 
         if not response.ok:
-            raise UnifiApiError(f"GET {path} failed (HTTP {response.status_code})")
+            raise UnifiApiError(
+                f"GET {path} failed (HTTP {response.status_code})",
+                status_code=response.status_code,
+            )
 
         payload = self._parse_json(
             response,
@@ -352,7 +380,10 @@ class UnifiClient:
                 detail = response.json()
             except ValueError:
                 detail = response.text
-            raise UnifiWriteError(f"PUT {path} failed (HTTP {response.status_code}): {detail}")
+            raise UnifiWriteError(
+                f"PUT {path} failed (HTTP {response.status_code}): {detail}",
+                status_code=response.status_code,
+            )
 
         result = self._parse_json(
             response,

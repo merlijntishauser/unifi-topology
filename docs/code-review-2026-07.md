@@ -61,7 +61,7 @@ Priorities:
   `adapters/unifi.py:114-136` vs `:277-286`. It omits `cache_key_extra`, but
   `fetch_devices` keys with `(str(detailed),)`; lookup misses, returns 0, no
   error. Fix: include the extra in the candidate paths.
-- [ ] **F09 `requests` exceptions leak through the `UnifiError` contract; rate
+- [x] **F09 `requests` exceptions leak through the `UnifiError` contract; rate
   limit detected by substring** - `adapters/unifi_api.py:150-166, 273-289`,
   `adapters/unifi.py:208-209`. Only login is wrapped; `fetch_devices()` against
   an unreachable host raises raw `requests.ConnectionError`. `_is_rate_limited`

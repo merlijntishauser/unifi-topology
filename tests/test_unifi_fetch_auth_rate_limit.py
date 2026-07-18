@@ -17,7 +17,7 @@ def test_rate_limited_auth_error_skips_legacy_retry(monkeypatch, tmp_path):
 
     def fake_create_client(config, *, is_udm_pro):
         calls["init_count"] += 1
-        raise UnifiAuthError("HTTP 429 Too Many Requests")
+        raise UnifiAuthError("Too Many Requests", status_code=429)
 
     monkeypatch.setattr(unifi, "_create_client", fake_create_client)
     cache_path = tmp_path / f"devices_{unifi._cache_key(config().url, config().site, 'True')}.json"
@@ -37,8 +37,9 @@ def test_rate_limited_auth_error_raises_without_cache(monkeypatch, tmp_path):
     monkeypatch.setenv("UNIFI_CACHE_TTL_SECONDS", "1")
 
     def fake_create_client(config, *, is_udm_pro):
-        raise UnifiAuthError("HTTP 429 Too Many Requests")
+        raise UnifiAuthError("Too Many Requests", status_code=429)
 
     monkeypatch.setattr(unifi, "_create_client", fake_create_client)
-    with pytest.raises(UnifiAuthError, match="429"):
+    with pytest.raises(UnifiAuthError) as excinfo:
         unifi.fetch_devices(config())
+    assert excinfo.value.status_code == 429
