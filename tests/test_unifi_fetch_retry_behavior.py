@@ -26,16 +26,12 @@ def test_fetch_devices_retries(monkeypatch, tmp_path):
     assert first_mapping(devices)["ok"] is True
 
 
-def test_call_with_retries_times_out(monkeypatch):
+def test_call_with_retries_propagates_final_error(monkeypatch):
     monkeypatch.setenv("UNIFI_RETRY_ATTEMPTS", "1")
     monkeypatch.setenv("UNIFI_RETRY_BACKOFF_SECONDS", "0")
-    monkeypatch.setenv("UNIFI_REQUEST_TIMEOUT_SECONDS", "0.01")
 
-    def slow_call():
-        import time
-
-        time.sleep(0.05)
-        return "ok"
+    def failing_call():
+        raise TimeoutError("request timed out")
 
     with pytest.raises(TimeoutError):
-        unifi._call_with_retries("slow", slow_call)
+        unifi._call_with_retries("slow", failing_call)

@@ -57,6 +57,6 @@ def test_retry_backoff_invalid_uses_default(monkeypatch):
     assert unifi._retry_backoff_seconds() == 0.5
 
 
-def test_request_timeout_invalid_returns_none(monkeypatch):
+def test_request_timeout_invalid_uses_default(monkeypatch):
     monkeypatch.setenv("UNIFI_REQUEST_TIMEOUT_SECONDS", "nope")
-    assert unifi._request_timeout_seconds() is None
+    assert unifi._request_timeout_seconds() == 30.0

@@ -34,7 +34,7 @@ Priorities:
 - [x] **F04 `Config.__repr__` leaks password and API key** -
   `adapters/config.py:43-50`. Plain dataclass fields appear in repr/str/
   tracebacks/pytest output. Fix: `field(repr=False)` on `password`, `api_key`.
-- [ ] **F05 No default HTTP timeout; `_call_with_timeout` cannot enforce one** -
+- [x] **F05 No default HTTP timeout; `_call_with_timeout` cannot enforce one** -
   `adapters/_retry.py:35-55`, `adapters/unifi_api.py:164-165`. With the env var
   unset every request runs with `timeout=None` (hangs forever); the
   ThreadPoolExecutor wrapper blocks in `__exit__` until the hung call finishes

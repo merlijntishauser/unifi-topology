@@ -25,7 +25,6 @@ __all__ = [
     "_cache_lock_path",
     "_cache_ttl_seconds",
     "_call_with_retries",
-    "_call_with_timeout",
     "_connect_and_fetch",
     "_create_client",
     "_device_lldp_value",
@@ -90,7 +89,6 @@ _serialize_port_entry = _cache_impl._serialize_port_entry
 _serialize_port_table = _cache_impl._serialize_port_table
 _serialize_uplink = _cache_impl._serialize_uplink
 
-_call_with_timeout = _retry_impl._call_with_timeout
 _request_timeout_seconds = _retry_impl._request_timeout_seconds
 _retry_attempts = _retry_impl._retry_attempts
 _retry_backoff_seconds = _retry_impl._retry_backoff_seconds
@@ -139,11 +137,10 @@ def invalidate_cache(
 def _call_with_retries[T](operation: str, func: Callable[[], T]) -> T:
     attempts = _retry_attempts()
     backoff = _retry_backoff_seconds()
-    timeout = _request_timeout_seconds()
     last_exc: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
-            return _call_with_timeout(operation, func, timeout)
+            return func()
         except Exception as exc:  # noqa: BLE001 - surface full error after retries
             last_exc = exc
             _log_retry_failure(operation, attempt, attempts, exc)
