@@ -115,7 +115,7 @@ Priorities:
   restored; `_classify_ux_type` then reclassifies an AP-mode UX as a gateway
   after restore. Fix: serialize + restore; add a fields-introspection
   round-trip test that catches any future dropped field.
-- [ ] **F19 Snapshot `version` is write-only** - `model/topology.py:135,
+- [x] **F19 Snapshot `version` is write-only** - `model/topology.py:135,
   141-160`. Pre-2.0 name-keyed snapshots deserialize blindly and diff as
   everything-changed. Fix: validate version on load, raise on mismatch.
 - [ ] **F20 All edge events hardcode `entity_type="device"`** -

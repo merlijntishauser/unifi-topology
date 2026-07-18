@@ -117,6 +117,19 @@ def build_node_names(
 # --- Topology class for serialization and diff ---
 
 
+# Snapshot schema version. Bump when the serialized shape or node-id scheme
+# changes so that from_dict can refuse snapshots it cannot interpret.
+_SNAPSHOT_VERSION = 1
+
+
+def _check_snapshot_version(version: object) -> None:
+    if not isinstance(version, int) or version > _SNAPSHOT_VERSION:
+        raise ValueError(
+            f"Unsupported snapshot version: {version!r} "
+            f"(this library supports up to {_SNAPSHOT_VERSION})"
+        )
+
+
 @dataclass
 class Topology:
     """A complete network topology snapshot for serialization and comparison."""
@@ -131,7 +144,7 @@ class Topology:
         from .snapshot import client_to_dict, device_to_dict, edge_to_dict
 
         return {
-            "version": 1,
+            "version": _SNAPSHOT_VERSION,
             "timestamp": self.timestamp,
             "devices": [device_to_dict(d) for d in self.devices],
             "clients": [client_to_dict(c) for c in self.clients],  # type: ignore[arg-type]
@@ -142,6 +155,8 @@ class Topology:
     def from_dict(cls, data: dict[str, object]) -> Topology:
         """Deserialize topology from a dictionary."""
         from .snapshot import client_from_dict, device_from_dict, edge_from_dict
+
+        _check_snapshot_version(data.get("version", _SNAPSHOT_VERSION))
 
         devices_data = data.get("devices", [])
         clients_data = data.get("clients", [])
