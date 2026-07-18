@@ -110,7 +110,7 @@ Priorities:
 
 ### Snapshot / diff
 
-- [ ] **F18 Round-trip drops `Device.in_gateway_mode`, flipping UX
+- [x] **F18 Round-trip drops `Device.in_gateway_mode`, flipping UX
   classification** - `model/snapshot.py:154-169, 290-307`. Not serialized nor
   restored; `_classify_ux_type` then reclassifies an AP-mode UX as a gateway
   after restore. Fix: serialize + restore; add a fields-introspection

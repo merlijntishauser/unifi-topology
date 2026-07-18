@@ -165,6 +165,7 @@ def _device_base_dict(device: Device) -> dict[str, Any]:
         "uplink": _optional_to_dict(device.uplink, uplink_info_to_dict),
         "last_uplink": _optional_to_dict(device.last_uplink, uplink_info_to_dict),
         "version": device.version,
+        "in_gateway_mode": device.in_gateway_mode,
         "public_ip": device.public_ip,
     }
 
@@ -302,6 +303,7 @@ def device_from_dict(data: dict[str, Any]) -> Device:
         uplink=_optional_from_dict(data, "uplink", uplink_info_from_dict),
         last_uplink=_optional_from_dict(data, "last_uplink", uplink_info_from_dict),
         version=data.get("version", ""),
+        in_gateway_mode=data.get("in_gateway_mode"),
         network_table=_network_table_from_dict(data),
         public_ip=data.get("public_ip"),
     )

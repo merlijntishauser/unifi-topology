@@ -90,3 +90,49 @@ class TestDeviceNetworkTable:
             network_table=[],
         )
         assert "network_table" not in device_to_dict(device)
+
+
+def test_in_gateway_mode_survives_round_trip():
+    for mode in (True, False, None):
+        device = Device(
+            name="ux",
+            model_name="",
+            model="",
+            mac="aa:bb:cc:dd:ee:ff",
+            ip="",
+            type="uxg",
+            lldp_info=[],
+            port_table=[],
+            poe_ports={},
+            uplink=None,
+            last_uplink=None,
+            version="",
+            in_gateway_mode=mode,
+        )
+        restored = device_from_dict(device_to_dict(device))
+        assert restored.in_gateway_mode is mode
+
+
+def test_device_round_trip_preserves_all_fields():
+    import dataclasses
+
+    device = Device(
+        name="ux",
+        model_name="M",
+        model="m",
+        mac="aa:bb:cc:dd:ee:ff",
+        ip="10.0.0.1",
+        type="uxg",
+        lldp_info=[],
+        port_table=[],
+        poe_ports={},
+        uplink=None,
+        last_uplink=None,
+        version="1.2.3",
+        in_gateway_mode=False,
+        network_table=[],
+        public_ip="1.2.3.4",
+    )
+    restored = device_from_dict(device_to_dict(device))
+    for field in dataclasses.fields(Device):
+        assert getattr(restored, field.name) == getattr(device, field.name), field.name
