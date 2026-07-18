@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .svg_icons import _safe_node_type
 from .svg_labels import _escape_attr
 
 
@@ -13,7 +14,7 @@ def _base_node_attrs(
     attrs: dict[str, str] = {
         "class": "unm-node",
         "data-node-id": node_id,
-        "data-node-type": node_type,
+        "data-node-type": _safe_node_type(node_type),
     }
     if group_name:
         attrs["data-group"] = group_name

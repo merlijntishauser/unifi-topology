@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from .svg_icons import _TYPE_COLORS
+from .svg_icons import _TYPE_COLORS, _safe_node_type
 from .svg_iso_geometry import (
     IsoLayout,
     _iso_front_text_position,
@@ -317,8 +317,9 @@ def _render_iso_node(
     layout: IsoLayout,
     theme: SvgTheme,
 ) -> None:
-    fill, stroke = _TYPE_COLORS.get(node_type, _TYPE_COLORS["other"])
-    fill = f"url(#iso-node-{node_type})"
+    safe_type = _safe_node_type(node_type)
+    _, stroke = _TYPE_COLORS[safe_type]
+    fill = f"url(#iso-node-{safe_type})"
     tile_w = layout.tile_width
     tile_h = layout.tile_height
     is_client = node_type in ("client", "client_cluster")

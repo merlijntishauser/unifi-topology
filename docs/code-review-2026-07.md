@@ -15,7 +15,7 @@ Priorities:
 
 ## P0 - Critical
 
-- [ ] **F01 SVG attribute injection via `node_types` (verified XSS)** -
+- [x] **F01 SVG attribute injection via `node_types` (verified XSS)** -
   `render/svg.py:231`, `render/_svg_iso_node_render.py:321`. `node_type` is
   interpolated raw into `fill="url(#node-{node_type})"`; a crafted type string
   produces a working `onload` handler in the emitted SVG (verified by

@@ -97,6 +97,12 @@ _TYPE_COLORS = {
     "other": ("#e3e3e3", "#7b7b7b"),
 }
 
+
+def _safe_node_type(node_type: str) -> str:
+    """Restrict a node type to the known set so it is safe to interpolate."""
+    return node_type if node_type in _TYPE_COLORS else "other"
+
+
 # Type ordering for layout sorting
 _TYPE_ORDER = [
     "gateway",

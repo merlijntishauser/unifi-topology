@@ -9,6 +9,7 @@ from .svg_edges import _render_svg_edges
 from .svg_icons import (
     _TYPE_COLORS,
     _load_icons,
+    _safe_node_type,
 )
 from .svg_labels import (
     _escape_text,
@@ -219,7 +220,8 @@ def _append_svg_node_frame(
     group_attrs: str,
     options: SvgOptions,
 ) -> None:
-    _, stroke = _TYPE_COLORS.get(node_type, _TYPE_COLORS["other"])
+    safe_type = _safe_node_type(node_type)
+    _, stroke = _TYPE_COLORS[safe_type]
     lines.append(f"<g{group_attrs}>")
     lines.append(f"<title>{_escape_text(name)}</title>")
     lines.append(
@@ -228,7 +230,7 @@ def _append_svg_node_frame(
     )
     lines.append(
         f'<rect x="{x}" y="{y}" width="{options.node_width}" height="{options.node_height}" '
-        f'rx="6" ry="6" fill="url(#node-{node_type})" stroke="{stroke}" stroke-width="1"/>'
+        f'rx="6" ry="6" fill="url(#node-{safe_type})" stroke="{stroke}" stroke-width="1"/>'
     )
 
 
