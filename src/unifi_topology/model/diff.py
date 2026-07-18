@@ -450,6 +450,10 @@ def _describe_edge_changed(edge: Edge, changes: dict[str, dict[str, Any]]) -> st
 # --- Entity comparison specs ---
 
 
+def _device_key(device: Device) -> Hashable | None:
+    return normalize_mac(device.mac) if device.mac else None
+
+
 def _client_key(client: dict[str, Any]) -> Hashable | None:
     mac = client.get("mac")
     return normalize_mac(mac) if mac else None
@@ -474,7 +478,7 @@ def _compare_optional_entities[T](
 _DEVICE_SPEC: EntityCompareSpec[Device] = EntityCompareSpec(
     entity_type="device",
     event_prefix="node",
-    key=lambda d: normalize_mac(d.mac),
+    key=_device_key,
     sort_key=lambda k: k,
     name=lambda d: d.name,
     identifier=lambda _d, k: str(k),

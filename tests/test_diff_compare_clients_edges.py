@@ -104,3 +104,17 @@ def test_client_vlan_zero_is_not_coalesced_away():
 
     assert _client_vlan_value({"vlan": 0, "vlan_id": 99}) == 0
     assert _client_uplink_port_value({"sw_port": 0, "uplink_remote_port": 5}) == 0
+
+
+def test_devices_with_empty_mac_do_not_collide():
+    import dataclasses
+
+    from unifi_topology.model.diff import _device_key
+
+    dev_a = dataclasses.replace(sample_device(), mac="", name="A")
+    dev_b = dataclasses.replace(sample_device(), mac="", name="B")
+    assert _device_key(dev_a) is None
+    assert _device_key(dev_b) is None
+    # Two empty-mac devices must not be compared against each other.
+    diff = compare_topologies([dev_a], [dev_b])
+    assert diff.events == []

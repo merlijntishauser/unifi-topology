@@ -130,7 +130,7 @@ Priorities:
 - [x] **F22 Falsy `or`-coalescing breaks VLAN 0 / port 0** -
   `model/diff.py:181-190`. `client.get("vlan") or client.get("vlan_id")`
   falls through on legitimate 0. Fix: explicit `is None` chain.
-- [ ] **F23 Devices with empty MAC collide on diff key `""`** -
+- [x] **F23 Devices with empty MAC collide on diff key `""`** -
   `model/diff.py:467` vs `:443-445`. Two such devices collapse into one map
   slot and get compared against each other. Fix: return None key for falsy MAC
   like `_client_key` does, and skip.
