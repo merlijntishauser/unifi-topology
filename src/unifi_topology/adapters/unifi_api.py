@@ -412,10 +412,35 @@ class UnifiClient:
         return self._put_v2(path, policy)
 
     def swap_firewall_policy_order(self, site: str, policy_id_a: str, policy_id_b: str) -> None:
-        """Swap the index (priority) of two firewall policies."""
+        """Swap the index (priority) of two firewall policies.
+
+        The two PUTs are not transactional. If the second fails, the first is
+        rolled back so both policies keep their original indexes. A failed
+        rollback leaves the policies with duplicate indexes and is reported.
+        """
         path = f"/v2/api/site/{site}/firewall-policies"
         all_policies = self._get_v2(path)
         policy_a, policy_b = _require_policy_pair(all_policies, policy_id_a, policy_id_b)
         updated_a, updated_b = _swap_policy_indexes(policy_a, policy_b)
         self._put_v2(f"{path}/{policy_id_a}", updated_a)
-        self._put_v2(f"{path}/{policy_id_b}", updated_b)
+        try:
+            self._put_v2(f"{path}/{policy_id_b}", updated_b)
+        except UnifiError as exc:
+            self._rollback_policy_index(path, policy_id_a, policy_a, cause=exc)
+
+    def _rollback_policy_index(
+        self,
+        path: str,
+        policy_id: str,
+        original: dict[str, object],
+        *,
+        cause: UnifiError,
+    ) -> None:
+        try:
+            self._put_v2(f"{path}/{policy_id}", original)
+        except UnifiError as rollback_exc:
+            raise UnifiWriteError(
+                f"Policy swap failed and rollback of {policy_id} also failed; "
+                f"policies may have duplicate indexes: {rollback_exc}"
+            ) from cause
+        raise UnifiWriteError(f"Policy swap failed and was rolled back: {cause}") from cause

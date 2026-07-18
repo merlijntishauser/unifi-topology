@@ -46,3 +46,26 @@ def test_swap_firewall_policy_order_missing(monkeypatch):
     client = make_client(monkeypatch, session, is_udm_pro=True)
     with pytest.raises(UnifiWriteError, match="Policy not found: pb"):
         client.swap_firewall_policy_order("default", "pa", "pb")
+
+
+def test_swap_firewall_policy_order_rolls_back_on_second_put_failure(monkeypatch):
+    auth_resp = FakeResponse(json_data={"isSuperAdmin": True}, headers={"X-CSRF-Token": "tok"})
+    list_resp = FakeResponse(
+        json_data=[
+            {"_id": "pa", "index": 1, "name": "A"},
+            {"_id": "pb", "index": 2, "name": "B"},
+        ]
+    )
+    put_a_resp = FakeResponse(json_data={"_id": "pa", "index": 2})
+    put_b_fail = FakeResponse(status_code=500, ok=False)
+    rollback_resp = FakeResponse(json_data={"_id": "pa", "index": 1})
+    session = FakeSession([auth_resp, list_resp, put_a_resp, put_b_fail, rollback_resp])
+    client = make_client(monkeypatch, session, is_udm_pro=True)
+
+    with pytest.raises(UnifiWriteError):
+        client.swap_firewall_policy_order("default", "pa", "pb")
+
+    # A rollback PUT restoring pa's original index must have been attempted.
+    assert session.calls[4][0] == "PUT"
+    assert "/firewall-policies/pa" in session.calls[4][1]
+    assert session.calls[4][2]["json"]["index"] == 1

@@ -73,7 +73,7 @@ Priorities:
   ValueError fallback re-runs the same failing call; `fetch_cached` builds the
   cache plan outside its try block. Fix: degrade to no-cache on cache-dir
   failure.
-- [ ] **F11 `swap_firewall_policy_order` is non-atomic** -
+- [x] **F11 `swap_firewall_policy_order` is non-atomic** -
   `adapters/unifi_api.py:383-390`. If the second PUT fails, both policies hold
   the same index with no rollback. Fix: attempt rollback of the first PUT on
   failure; document partial-failure semantics.
