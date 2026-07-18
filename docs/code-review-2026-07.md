@@ -152,7 +152,7 @@ Priorities:
   index 0 but edge styling still counts from 0, styling the wrong links
   (verified). Fix: offset indices by the number of pre-emitted edges; add a
   WAN+PoE test.
-- [ ] **F27 Mermaid crashes when the gateway is in no edge/group** -
+- [x] **F27 Mermaid crashes when the gateway is in no edge/group** -
   `render/mermaid.py:289-294`. `id_map[gateway_id]` raises KeyError (verified).
   Fix: `id_map.get`, skip WAN rendering when the gateway has no node.
 - [ ] **F28 Mermaid escaping uses backslash escapes Mermaid does not support** -

@@ -392,7 +392,7 @@ def _add_wan_section(
     node_names: dict[str, str] | None = None,
 ) -> int:
     """Render the WAN node/edge if applicable; return the number of edges emitted."""
-    if wan_info and gateway_id:
+    if wan_info and gateway_id and gateway_id in id_map:
         _render_wan_node(
             lines,
             wan_info,

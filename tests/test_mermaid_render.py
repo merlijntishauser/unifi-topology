@@ -268,3 +268,15 @@ def test_wan_offsets_poe_linkstyle_index():
     # The WAN link occupies index 0, so the PoE edge is Mermaid link index 1.
     assert "linkStyle 1 stroke:#1e88e5" in output
     assert "linkStyle 0 stroke:#1e88e5" not in output
+
+
+def test_wan_gateway_not_in_edges_does_not_crash():
+    wan1 = WanInterface(port_idx=1, link_speed=1000, ip_address=None, enabled=True)
+    wan_info = WanInfo(wan1=wan1)
+    # Gateway "GW" is typed but appears in no edge and no group.
+    output = render_mermaid(
+        [Edge("A", "B")],
+        node_types={"GW": "gateway", "A": "switch", "B": "ap"},
+        wan_info=wan_info,
+    )
+    assert "graph LR" in output
