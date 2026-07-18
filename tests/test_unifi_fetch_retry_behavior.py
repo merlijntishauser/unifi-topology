@@ -35,3 +35,35 @@ def test_call_with_retries_propagates_final_error(monkeypatch):
 
     with pytest.raises(TimeoutError):
         unifi._call_with_retries("slow", failing_call)
+
+
+def test_auth_errors_are_not_retried(monkeypatch):
+    from unifi_topology.adapters.unifi_api import UnifiAuthError
+
+    monkeypatch.setenv("UNIFI_RETRY_ATTEMPTS", "3")
+    monkeypatch.setenv("UNIFI_RETRY_BACKOFF_SECONDS", "0")
+    calls = {"count": 0}
+
+    def failing():
+        calls["count"] += 1
+        raise UnifiAuthError("bad credentials")
+
+    with pytest.raises(UnifiAuthError):
+        unifi._call_with_retries("auth", failing)
+    assert calls["count"] == 1
+
+
+def test_transient_errors_are_retried(monkeypatch):
+    import requests
+
+    monkeypatch.setenv("UNIFI_RETRY_ATTEMPTS", "3")
+    monkeypatch.setenv("UNIFI_RETRY_BACKOFF_SECONDS", "0")
+    calls = {"count": 0}
+
+    def failing():
+        calls["count"] += 1
+        raise requests.ConnectionError("network down")
+
+    with pytest.raises(requests.ConnectionError):
+        unifi._call_with_retries("fetch", failing)
+    assert calls["count"] == 3

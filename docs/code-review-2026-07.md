@@ -45,7 +45,7 @@ Priorities:
 
 ### Adapters
 
-- [ ] **F06 Retries hammer non-transient failures (account lockout risk)** -
+- [x] **F06 Retries hammer non-transient failures (account lockout risk)** -
   `adapters/unifi.py:139-153`. `_call_with_retries` retries bare `Exception`,
   including `UnifiAuthError` and 4xx, up to 20 times with backoff; repeated bad
   logins can lock the controller account. Fix: retry only transient errors

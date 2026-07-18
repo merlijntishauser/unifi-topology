@@ -35,6 +35,7 @@ __all__ = [
     "_get_or_create_client",
     "_is_cache_dir_safe",
     "_is_rate_limited",
+    "_is_retryable",
     "_load_cache",
     "_load_cache_with_age",
     "_log_retry_failure",
@@ -89,6 +90,7 @@ _serialize_port_entry = _cache_impl._serialize_port_entry
 _serialize_port_table = _cache_impl._serialize_port_table
 _serialize_uplink = _cache_impl._serialize_uplink
 
+_is_retryable = _retry_impl._is_retryable
 _request_timeout_seconds = _retry_impl._request_timeout_seconds
 _retry_attempts = _retry_impl._retry_attempts
 _retry_backoff_seconds = _retry_impl._retry_backoff_seconds
@@ -143,6 +145,8 @@ def _call_with_retries[T](operation: str, func: Callable[[], T]) -> T:
             return func()
         except Exception as exc:  # noqa: BLE001 - surface full error after retries
             last_exc = exc
+            if not _is_retryable(exc):
+                raise
             _log_retry_failure(operation, attempt, attempts, exc)
             _sleep_before_retry(attempt, attempts, backoff)
     if last_exc:
