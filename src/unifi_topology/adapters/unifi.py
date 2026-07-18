@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from collections.abc import Callable, Iterator, Sequence
-from contextlib import contextmanager
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from ..model.vlans import build_vlan_info, normalize_networks
@@ -96,19 +95,7 @@ _retry_attempts = _retry_impl._retry_attempts
 _retry_backoff_seconds = _retry_impl._retry_backoff_seconds
 
 
-@contextmanager
-def _cache_lock(path: Path) -> Iterator[None]:
-    lock_path = _cache_lock_path(path)
-    lock_path.parent.mkdir(parents=True, exist_ok=True)
-    with lock_path.open("a+", encoding="utf-8") as lock_file:
-        try:
-            _acquire_cache_lock(lock_file)
-            yield
-        finally:
-            try:
-                _release_cache_lock(lock_file)
-            except OSError:
-                logger.debug("Failed to release cache lock %s", lock_path)
+_cache_lock = _cache_impl._cache_lock
 
 
 # Extra cache-key parts used by some fetchers, keyed by cache prefix. Kept in

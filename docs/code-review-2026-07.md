@@ -205,7 +205,7 @@ Priorities:
   ~50 underscore-private helpers re-exported in `__all__` in three different
   idioms; tests import them, freezing internals as de-facto API. Point tests at
   the real modules; export only public names.
-- [ ] **F37 Remove adapter facades re-exporting privates** -
+- [~] **F37 Remove adapter facades re-exporting privates** (partial: dedup done) -
   `adapters/unifi.py:20-97`, `adapters/_cache.py`. ~35 private names in
   `__all__`, plus a line-for-line duplicated `_cache_lock` context manager
   (`unifi.py:99-111` vs `_cache_store.py:60-72`). Tests import from the real
