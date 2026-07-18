@@ -65,3 +65,13 @@ def test_config_from_env_requires_dotenv_for_env_file(monkeypatch):
     monkeypatch.setattr(builtins, "__import__", fake_import)
     with pytest.raises(ValueError, match="python-dotenv required"):
         Config.from_env(env_file="custom.env")
+
+
+def test_config_repr_masks_password():
+    config = Config(url="https://c", site="default", user="admin", password="s3cret")
+    assert "s3cret" not in repr(config)
+
+
+def test_config_repr_masks_api_key():
+    config = Config(url="https://c", site="default", api_key="key-abc123")
+    assert "key-abc123" not in repr(config)

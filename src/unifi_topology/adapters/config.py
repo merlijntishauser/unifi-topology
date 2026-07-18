@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from ..paths import resolve_env_file
@@ -45,8 +45,8 @@ class Config:
     url: str
     site: str
     user: str | None = None
-    password: str | None = None
-    api_key: str | None = None
+    password: str | None = field(default=None, repr=False)
+    api_key: str | None = field(default=None, repr=False)
     verify_ssl: bool = True
 
     def __post_init__(self) -> None:

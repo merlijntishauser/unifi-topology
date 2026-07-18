@@ -31,7 +31,7 @@ Priorities:
   `html.escape` instead of the project's `_escape_attr` (which strips
   XML-invalid chars); `groups={"bad\x01name": ...}` breaks the document
   (verified). Fix: use `_escape_attr`.
-- [ ] **F04 `Config.__repr__` leaks password and API key** -
+- [x] **F04 `Config.__repr__` leaks password and API key** -
   `adapters/config.py:43-50`. Plain dataclass fields appear in repr/str/
   tracebacks/pytest output. Fix: `field(repr=False)` on `password`, `api_key`.
 - [ ] **F05 No default HTTP timeout; `_call_with_timeout` cannot enforce one** -
