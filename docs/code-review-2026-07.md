@@ -81,7 +81,7 @@ Priorities:
   `adapters/unifi_api.py:286-289, 42-43`. `{"data": null}` or a dict payload
   flows into model code as `Any`, failing far from the cause. Fix: isinstance
   check, raise `UnifiApiError` on shape mismatch.
-- [ ] **F13 PyPI publish not gated on CI** - `.github/workflows/publish.yml`.
+- [x] **F13 PyPI publish not gated on CI** - `.github/workflows/publish.yml`.
   Tag push builds and publishes regardless of CI outcome. Fix: run the test
   suite in the publish workflow before build/upload.
 
