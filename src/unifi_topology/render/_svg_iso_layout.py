@@ -175,13 +175,15 @@ def _iso_grid_line(
     start: tuple[float, float],
     end: tuple[float, float],
     grid_color: str,
+    offset_x: float,
+    offset_y: float,
 ) -> str:
     x1, y1 = _iso_project(layout, *start)
     x2, y2 = _iso_project(layout, *end)
-    x1 += layout.padding
-    y1 += layout.padding
-    x2 += layout.padding
-    y2 += layout.padding
+    x1 += offset_x
+    y1 += offset_y
+    x2 += offset_x
+    y2 += offset_y
     return (
         f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{grid_color}" stroke-width="0.6"/>'
     )
@@ -190,6 +192,8 @@ def _iso_grid_line(
 def _iso_grid_lines(
     grid_positions: dict[str, tuple[float, float]],
     layout: IsoLayout,
+    offset_x: float,
+    offset_y: float,
     grid_color: str = "#efefef",
 ) -> list[str]:
     extents = _iso_grid_extents(grid_positions)
@@ -200,13 +204,23 @@ def _iso_grid_lines(
     for gx in range(gx_start, gx_end + 1):
         grid_lines.append(
             _iso_grid_line(
-                layout, (float(gx), float(gy_start)), (float(gx), float(gy_end)), grid_color
+                layout,
+                (float(gx), float(gy_start)),
+                (float(gx), float(gy_end)),
+                grid_color,
+                offset_x,
+                offset_y,
             )
         )
     for gy in range(gy_start, gy_end + 1):
         grid_lines.append(
             _iso_grid_line(
-                layout, (float(gx_start), float(gy)), (float(gx_end), float(gy)), grid_color
+                layout,
+                (float(gx_start), float(gy)),
+                (float(gx_end), float(gy)),
+                grid_color,
+                offset_x,
+                offset_y,
             )
         )
     return grid_lines
@@ -217,8 +231,10 @@ def _render_iso_grid(
     grid_positions: dict[str, tuple[float, float]],
     layout: IsoLayout,
     theme: SvgTheme,
+    offset_x: float,
+    offset_y: float,
 ) -> None:
-    grid_lines = _iso_grid_lines(grid_positions, layout, theme.grid_color)
+    grid_lines = _iso_grid_lines(grid_positions, layout, offset_x, offset_y, theme.grid_color)
     if grid_lines:
         lines.append('<g class="iso-grid" opacity="0.7">')
         lines.extend(grid_lines)

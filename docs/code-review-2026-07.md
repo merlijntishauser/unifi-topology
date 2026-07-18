@@ -175,7 +175,7 @@ Priorities:
   30px below the gateway (the tree root, at the top), covering the switches;
   reserved height is appended to the canvas bottom instead (verified). Fix:
   apply an offset like the WAN path (`apply_wan_offset`) does.
-- [ ] **F32 Isometric floor grid not aligned with node tiles** -
+- [x] **F32 Isometric floor grid not aligned with node tiles** -
   `render/_svg_iso_layout.py:79-87, 173-187, 215-225`. Grid lines translate by
   `(padding, padding)` while tiles translate by `(offset_x, offset_y)`; the
   delta is not a lattice vector (verified numerically). Fix: pass the node

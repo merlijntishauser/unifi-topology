@@ -248,7 +248,14 @@ def render_svg_isometric(
         offset_y=layout_positions.offset_y,
         theme=theme,
     )
-    _render_iso_grid(lines, grid_positions, layout, theme)
+    _render_iso_grid(
+        lines,
+        grid_positions,
+        layout,
+        theme,
+        layout_positions.offset_x,
+        layout_positions.offset_y,
+    )
     _render_iso_nodes_and_edges(
         lines,
         edges,
