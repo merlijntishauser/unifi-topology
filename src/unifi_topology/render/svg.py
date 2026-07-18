@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
 from . import _svg_dual_render, _svg_render_flow
-from ._svg_render_common import finish_svg_document, render_at_gateway, start_svg_document
+from ._svg_render_common import finish_svg_document, start_svg_document
 from .svg_edges import _render_svg_edges
 from .svg_icons import (
     _TYPE_COLORS,
@@ -18,17 +18,11 @@ from .svg_labels import (
 from .svg_layout import (
     GroupBounds,
     _build_node_to_group_map,
-    _layout_grouped_nodes,
-    _layout_nodes,
     _svg_node_group_attrs,
 )
 from .svg_theme import DEFAULT_THEME, SvgOptions, SvgTheme
-from .svg_vpn import _render_vpn_tunnels, _vpn_box_height_estimate
 from .svg_wan import (
-    _apply_wan_offset,
-    _find_gateway_position,
     _render_group_boundaries,
-    _render_wan_upstream,
 )
 
 DualRenderGroups = _svg_dual_render.DualRenderGroups
@@ -52,10 +46,6 @@ def _compute_svg_layout(
         group_order,
         wan_info,
         vpn_tunnels,
-        layout_grouped_nodes=_layout_grouped_nodes,
-        layout_nodes=_layout_nodes,
-        apply_wan_offset=_apply_wan_offset,
-        vpn_box_height_estimate=_vpn_box_height_estimate,
     )
     return (
         layout.positions,
@@ -63,33 +53,6 @@ def _compute_svg_layout(
         layout.width,
         layout.height,
         layout.use_grouped,
-    )
-
-
-def _render_svg_gateway_overlays(
-    *,
-    lines: list[str],
-    wan_info: WanInfo | None,
-    vpn_tunnels: list[VpnTunnel] | None,
-    node_types: dict[str, str],
-    positions: dict[str, tuple[float, float]],
-    options: SvgOptions,
-    theme: SvgTheme,
-    canvas_height: float,
-) -> None:
-    _svg_render_flow.render_svg_gateway_overlays(
-        lines=lines,
-        wan_info=wan_info,
-        vpn_tunnels=vpn_tunnels,
-        node_types=node_types,
-        positions=positions,
-        options=options,
-        theme=theme,
-        render_at_gateway=render_at_gateway,
-        find_gateway_position=_find_gateway_position,
-        render_wan_upstream=_render_wan_upstream,
-        render_vpn_tunnels=_render_vpn_tunnels,
-        canvas_height=canvas_height,
     )
 
 
@@ -200,7 +163,7 @@ def render_svg(
         groups=groups,
         node_names=node_names,
     )
-    _render_svg_gateway_overlays(
+    _svg_render_flow.render_svg_gateway_overlays(
         lines=lines,
         wan_info=wan_info,
         vpn_tunnels=vpn_tunnels,

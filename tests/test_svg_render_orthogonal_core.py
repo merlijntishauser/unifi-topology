@@ -49,7 +49,9 @@ def test_render_svg_adds_elbow_for_vertical_links():
 
 
 def test_render_svg_handles_missing_positions(monkeypatch):
-    monkeypatch.setattr(svg_module, "_layout_nodes", lambda _e, _n, _o: ({}, 0, 0))
+    from unifi_topology.render import _svg_render_flow
+
+    monkeypatch.setattr(_svg_render_flow, "_layout_nodes", lambda _e, _n, _o: ({}, 0, 0))
     output = svg_module.render_svg([Edge("A", "B")], node_types={"A": "switch", "B": "switch"})
     assert 'stroke="url(#link' not in output
 

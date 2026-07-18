@@ -196,7 +196,7 @@ Priorities:
   `adapters/_fetch.py:97-119`. Ten module functions passed as parameters by the
   sole caller with the obvious implementations; keep only the
   `connect_and_fetch` seam. Removes ~40 lines of plumbing.
-- [ ] **F35 Delete the callable-injection layer in `_svg_render_flow`** -
+- [x] **F35 Delete the callable-injection layer in `_svg_render_flow`** -
   `render/_svg_render_flow.py:101-193`. Eight `Callable` params, one caller,
   always the same bindings, no cycle avoided. Import directly; removes ~80
   lines and two indirection hops.
