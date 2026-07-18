@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from ..model._client_access import client_node_id
 from ..model.classify import client_display_name
 from ..model.clients import (
     build_client_port_map,
@@ -204,16 +205,56 @@ def _build_port_maps(
 ) -> tuple[dict[tuple[str, str], str], dict[str, list[tuple[int, str]]] | None]:
     if not include_ports:
         return {}, None
-    port_map = build_port_map(devices, only_unifi=False)
+    name_of = build_device_index(devices)
+    port_map = _port_map_by_name(build_port_map(devices, only_unifi=False), name_of)
     client_port_map = None
     if clients and show_clients:
-        client_port_map = build_client_port_map(
+        raw_client_map = build_client_port_map(
             devices,
             clients,
             client_mode=client_mode,
             only_unifi=only_unifi,
         )
+        client_port_map = _client_port_map_by_name(
+            raw_client_map, name_of, _client_name_index(clients)
+        )
     return port_map, client_port_map
+
+
+def _client_name_index(clients: Iterable[object]) -> dict[str, str]:
+    """Map each client's node id (MAC) to its display name."""
+    index: dict[str, str] = {}
+    for client in clients:
+        node_id = client_node_id(client)
+        if node_id:
+            index[node_id] = client_display_name(client) or node_id
+    return index
+
+
+def _port_map_by_name(
+    port_map: dict[tuple[str, str], str],
+    name_of: dict[str, str],
+) -> dict[tuple[str, str], str]:
+    """Rewrite a MAC-keyed device port map to use display names."""
+    return {
+        (name_of.get(src, src), name_of.get(dst, dst)): label
+        for (src, dst), label in port_map.items()
+    }
+
+
+def _client_port_map_by_name(
+    client_map: dict[str, list[tuple[int, str]]],
+    name_of: dict[str, str],
+    client_names: dict[str, str],
+) -> dict[str, list[tuple[int, str]]]:
+    """Rewrite a MAC-keyed client port map to device/client display names."""
+    result: dict[str, list[tuple[int, str]]] = {}
+    for device_id, rows in client_map.items():
+        device_name = name_of.get(device_id, device_id)
+        result[device_name] = [
+            (port, client_names.get(client_id, client_id)) for port, client_id in rows
+        ]
+    return result
 
 
 def _render_lldp_table(

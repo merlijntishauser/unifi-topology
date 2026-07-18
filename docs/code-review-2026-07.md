@@ -140,7 +140,7 @@ Priorities:
 
 ### Renderers
 
-- [ ] **F25 LLDP/markdown port tables lost all connection and client data
+- [x] **F25 LLDP/markdown port tables lost all connection and client data
   (v2 MAC-key regression)** - `render/lldp.py:196-216`,
   `render/_markdown_connections.py:14-34`. `build_port_map` returns MAC-keyed
   maps but lookups are by device name; connected devices and clients vanish
