@@ -111,6 +111,18 @@ def _cache_lock(path: Path) -> Iterator[None]:
                 logger.debug("Failed to release cache lock %s", lock_path)
 
 
+# Extra cache-key parts used by some fetchers, keyed by cache prefix. Kept in
+# sync with the cache_key_extra passed by the fetch_* functions so that
+# invalidate_cache targets the same files.
+_PREFIX_CACHE_KEY_EXTRAS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "devices": (("True",), ("False",)),
+}
+
+
+def _cache_key_extras(prefix: str) -> tuple[tuple[str, ...], ...]:
+    return _PREFIX_CACHE_KEY_EXTRAS.get(prefix, ((),))
+
+
 def invalidate_cache(
     config: Config,
     *,
@@ -124,8 +136,11 @@ def invalidate_cache(
     site_name = site or config.site
     removed = 0
     for prefix in prefixes:
-        cache_path = _cache_dir() / f"{prefix}_{_cache_key(config.url, site_name)}.json"
-        if cache_path.exists():
+        for extra in _cache_key_extras(prefix):
+            key = _cache_key(config.url, site_name, *extra)
+            cache_path = _cache_dir() / f"{prefix}_{key}.json"
+            if not cache_path.exists():
+                continue
             try:
                 with _cache_lock(cache_path):
                     cache_path.unlink(missing_ok=True)

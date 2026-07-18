@@ -31,3 +31,14 @@ def test_invalidate_cache_multiple_prefixes(monkeypatch, tmp_path):
         unifi._save_cache(cache_path, [{"data": True}])
     removed = unifi.invalidate_cache(config, prefixes=("fw_policies", "fw_zones"))
     assert removed == 2
+
+
+def test_invalidate_cache_removes_devices_entry(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    config = make_config()
+    cache_path = tmp_path / f"devices_{unifi._cache_key(config.url, config.site, 'True')}.json"
+    unifi._save_cache(cache_path, [{"mac": "aa"}])
+    assert cache_path.exists()
+    removed = unifi.invalidate_cache(config, prefixes=("devices",))
+    assert removed == 1
+    assert not cache_path.exists()

@@ -57,7 +57,7 @@ Priorities:
   UniFi's 429 rate limiting. Fix: memoize auth style per URL. Also chain or log
   the original UDM error when legacy fallback also fails (currently swallowed,
   `unifi.py:227-231`).
-- [ ] **F08 `invalidate_cache` silently cannot invalidate `devices` entries** -
+- [x] **F08 `invalidate_cache` silently cannot invalidate `devices` entries** -
   `adapters/unifi.py:114-136` vs `:277-286`. It omits `cache_key_extra`, but
   `fetch_devices` keys with `(str(detailed),)`; lookup misses, returns 0, no
   error. Fix: include the extra in the candidate paths.
