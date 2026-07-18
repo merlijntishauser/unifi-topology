@@ -24,7 +24,10 @@ def _string_or_none(value: object) -> str | None:
 def _coerce_local_port_idx(value: object) -> int | None:
     if value is None:
         return None
-    return int(str(value))
+    try:
+        return int(str(value))
+    except ValueError:
+        return None
 
 
 def coerce_lldp(entry: object) -> LLDPEntry:

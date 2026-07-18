@@ -87,7 +87,7 @@ Priorities:
 
 ### Model
 
-- [ ] **F14 `normalize_devices` is all-or-nothing; bare `int()` in LLDP
+- [x] **F14 `normalize_devices` is all-or-nothing; bare `int()` in LLDP
   coercion** - `model/lldp.py:24-27`, `model/_topology_device_coerce.py:119-141`.
   One LLDP entry with a non-numeric `local_port_idx`, or one device missing
   name/LLDP/uplink data, aborts normalization for the whole site. Fix: guard

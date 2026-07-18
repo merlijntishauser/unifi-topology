@@ -70,3 +70,22 @@ class TestNormalizeDevices:
         assert len(devices) == 2
         assert devices[0].name == "A"
         assert devices[1].name == "B"
+
+    def test_skips_malformed_device_and_logs(self, caplog):
+        import logging
+
+        raw_devices = [
+            {"name": "A", "mac": "00:00:00:00:00:01", "lldp_info": []},
+            {"name": "B"},  # missing mac -> malformed
+        ]
+        with caplog.at_level(logging.WARNING):
+            devices = normalize_devices(raw_devices)
+        assert [d.name for d in devices] == ["A"]
+        assert any("skipping" in r.message.lower() for r in caplog.records)
+
+
+def test_coerce_lldp_tolerates_non_numeric_local_port_idx():
+    from unifi_topology.model.lldp import coerce_lldp
+
+    entry = coerce_lldp({"chassis_id": "aa", "port_id": "1", "local_port_idx": "eth0"})
+    assert entry.local_port_idx is None

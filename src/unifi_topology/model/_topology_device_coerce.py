@@ -194,5 +194,15 @@ def coerce_device(device: DeviceSource, network_vlan_map: dict[str, int] | None 
 def normalize_devices(
     devices: Iterable[DeviceSource], network_vlan_map: dict[str, int] | None = None
 ) -> list[Device]:
-    """Coerce raw device dicts/objects into typed :class:`Device` instances."""
-    return [coerce_device(device, network_vlan_map) for device in devices]
+    """Coerce raw device dicts/objects into typed :class:`Device` instances.
+
+    Devices that cannot be coerced (missing identity or LLDP/uplink data) are
+    skipped and logged, so one malformed record does not abort the whole site.
+    """
+    result: list[Device] = []
+    for device in devices:
+        try:
+            result.append(coerce_device(device, network_vlan_map))
+        except ValueError as exc:
+            logger.warning("Skipping malformed device: %s", exc)
+    return result
