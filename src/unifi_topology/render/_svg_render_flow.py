@@ -159,9 +159,10 @@ def render_svg_gateway_overlays(
         None,
     ],
     render_vpn_tunnels: Callable[
-        [list[str], list[VpnTunnel], tuple[float, float], SvgOptions, SvgTheme],
+        [list[str], list[VpnTunnel], tuple[float, float], SvgOptions, SvgTheme, float],
         None,
     ],
+    canvas_height: float,
 ) -> None:
     render_at_gateway(
         lines=lines,
@@ -189,5 +190,6 @@ def render_svg_gateway_overlays(
             gateway_pos,
             options,
             theme,
+            canvas_height,
         ),
     )

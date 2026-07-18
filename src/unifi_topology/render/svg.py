@@ -75,6 +75,7 @@ def _render_svg_gateway_overlays(
     positions: dict[str, tuple[float, float]],
     options: SvgOptions,
     theme: SvgTheme,
+    canvas_height: float,
 ) -> None:
     _svg_render_flow.render_svg_gateway_overlays(
         lines=lines,
@@ -88,6 +89,7 @@ def _render_svg_gateway_overlays(
         find_gateway_position=_find_gateway_position,
         render_wan_upstream=_render_wan_upstream,
         render_vpn_tunnels=_render_vpn_tunnels,
+        canvas_height=canvas_height,
     )
 
 
@@ -206,6 +208,7 @@ def render_svg(
         positions=positions,
         options=options,
         theme=theme,
+        canvas_height=height,
     )
     return finish_svg_document(lines)
 

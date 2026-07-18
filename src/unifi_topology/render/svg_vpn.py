@@ -82,10 +82,14 @@ def _render_vpn_tunnels(
     gateway_position: tuple[float, float],
     options: SvgOptions,
     theme: SvgTheme,
+    canvas_height: float | None = None,
 ) -> None:
     """Render VPN tunnel visualization (orthogonal view).
 
-    Positions a VPN box below the gateway node, connected by a dashed line.
+    Positions a VPN box in the reserved space at the bottom of the canvas,
+    connected to the gateway by a dashed line. Placing it there (rather than
+    directly below the gateway, which is the tree root at the top) keeps it
+    clear of the level-1 nodes.
     """
     gx, gy = gateway_position
     font_size = options.font_size
@@ -95,9 +99,11 @@ def _render_vpn_tunnels(
         label_lines, font_size
     )
 
-    # Position box below the gateway
     box_x = gx + options.node_width / 2 - box_width / 2
-    box_y = gy + options.node_height + 30
+    if canvas_height is not None:
+        box_y = canvas_height - box_height - 20
+    else:
+        box_y = gy + options.node_height + 30
 
     # Connection points
     gw_cx = gx + options.node_width / 2

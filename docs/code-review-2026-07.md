@@ -170,7 +170,7 @@ Priorities:
   embeds `render_device_port_details`, which prepends the Details table already
   rendered above (verified). Fix: render the port tables without the details
   block.
-- [ ] **F31 Orthogonal VPN overlay box overlaps level-1 nodes** -
+- [x] **F31 Orthogonal VPN overlay box overlaps level-1 nodes** -
   `render/svg_vpn.py:98-99`, `render/_svg_render_flow.py:81-90`. Box is placed
   30px below the gateway (the tree root, at the top), covering the switches;
   reserved height is appended to the canvas bottom instead (verified). Fix:
