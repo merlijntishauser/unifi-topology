@@ -94,3 +94,9 @@ def test_port_table_shows_connected_client_name():
     row = _port_row(output, "Port 3")
     assert "Laptop" in row
     assert "cc:dd:ee:ff:00:11" not in row
+
+
+def test_ports_section_does_not_duplicate_details_table():
+    output = render_lldp_md([_switch()], include_ports=True)
+    # The device details table must appear once, not once per section.
+    assert output.count("Details") == 1

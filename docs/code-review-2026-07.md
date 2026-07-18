@@ -165,7 +165,7 @@ Priorities:
   `_markdown_connections.py:76-82` escapes multi-client `<li>` content with
   `html.escape` (does not escape `|`), inconsistent with the single-client
   path - use markdown escaping for both.
-- [ ] **F30 LLDP output duplicates the full Details table per device** -
+- [x] **F30 LLDP output duplicates the full Details table per device** -
   `render/lldp.py:271-286`, `render/markdown.py:91-99`. `_render_ports_section`
   embeds `render_device_port_details`, which prepends the Details table already
   rendered above (verified). Fix: render the port tables without the details

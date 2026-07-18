@@ -99,6 +99,17 @@ def render_device_port_details(
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_device_port_table(
+    device: Device,
+    port_map: PortMap,
+    *,
+    client_ports: ClientPortMap | None = None,
+) -> str:
+    """Render only the per-port table for a device, without the details table."""
+    lines = _render_device_ports(device, port_map, client_ports)
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def _render_device_ports(
     device: Device,
     port_map: PortMap,

@@ -19,7 +19,7 @@ from ..model.topology import Device
 from ._device_summary import poe_summary, port_summary, uplink_summary
 from ._markdown_tables import escape_markdown, markdown_table_lines
 from ._templating import render_template
-from .markdown import render_device_port_details
+from .markdown import render_device_port_table
 
 
 def _lldp_sort_key(entry: LLDPEntry) -> tuple[int, str, str]:
@@ -322,7 +322,7 @@ def _render_ports_section(
         [
             "### Ports",
             "",
-            render_device_port_details(device, port_map, client_ports=client_port_map).strip(),
+            render_device_port_table(device, port_map, client_ports=client_port_map).strip(),
         ]
     ).rstrip()
 
