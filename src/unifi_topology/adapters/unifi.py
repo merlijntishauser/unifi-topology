@@ -178,6 +178,11 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
 
 _client_cache: dict[tuple[str, str, bool], UnifiClient] = {}
 
+# Remembers which auth style (True=UDM Pro, False=legacy) authenticated for a
+# controller URL, so a legacy controller is not re-probed with a doomed UDM
+# login on every fetch (which trips rate limiting).
+_auth_style_cache: dict[str, bool] = {}
+
 
 def _client_cache_key(config: Config, *, is_udm_pro: bool) -> tuple[str, str, bool]:
     identity = config.user or config.api_key or ""
@@ -202,8 +207,30 @@ def _evict_client(config: Config, *, is_udm_pro: bool) -> None:
 
 
 def clear_client_cache() -> None:
-    """Clear all cached client sessions."""
+    """Clear all cached client sessions and the remembered auth styles."""
     _client_cache.clear()
+    _auth_style_cache.clear()
+
+
+def _connect_client(config: Config) -> UnifiClient:
+    """Authenticate, preferring the remembered auth style for this URL."""
+    remembered = _auth_style_cache.get(config.url)
+    if remembered is not None:
+        return _get_or_create_client(config, is_udm_pro=remembered)
+    try:
+        client = _get_or_create_client(config, is_udm_pro=True)
+    except UnifiAuthError as exc:
+        if _is_rate_limited(exc):
+            raise
+        logger.debug("UDM Pro authentication failed, retrying legacy auth")
+        try:
+            client = _get_or_create_client(config, is_udm_pro=False)
+        except UnifiAuthError as legacy_exc:
+            raise legacy_exc from exc
+        _auth_style_cache[config.url] = False
+        return client
+    _auth_style_cache[config.url] = True
+    return client
 
 
 def _is_rate_limited(exc: Exception) -> bool:
@@ -223,14 +250,7 @@ def _connect_and_fetch(
 
     Reuses cached client sessions per config to avoid repeated logins.
     """
-    try:
-        client = _get_or_create_client(config, is_udm_pro=True)
-    except UnifiAuthError as exc:
-        if _is_rate_limited(exc):
-            raise
-        logger.debug("UDM Pro authentication failed, retrying legacy auth")
-        client = _get_or_create_client(config, is_udm_pro=False)
-
+    client = _connect_client(config)
     return _call_with_retries(operation, fetch_fn(client))
 
 

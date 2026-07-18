@@ -50,7 +50,7 @@ Priorities:
   including `UnifiAuthError` and 4xx, up to 20 times with backoff; repeated bad
   logins can lock the controller account. Fix: retry only transient errors
   (connection/timeout/5xx/429-aware).
-- [ ] **F07 Every fetch against a legacy controller performs a doomed UDM login
+- [x] **F07 Every fetch against a legacy controller performs a doomed UDM login
   first** - `adapters/unifi.py:212-233`. Failed-auth clients are never cached,
   so each `fetch_*` re-POSTs a failing `/api/auth/login` then falls back;
   `fetch_payload` triggers 3 failed logins - the exact pattern that trips
