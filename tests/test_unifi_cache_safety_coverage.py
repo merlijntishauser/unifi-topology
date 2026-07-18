@@ -53,3 +53,14 @@ def test_cache_dir_without_pytest_env(monkeypatch):
     monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
     monkeypatch.delenv("UNIFI_CACHE_DIR", raising=False)
     assert ".cache/unifi_network_maps" in str(unifi._cache_dir())
+
+
+def test_cache_dir_never_raises_when_resolution_fails(monkeypatch):
+    from unifi_topology.adapters import _cache_store
+
+    def always_fail(_value):
+        raise ValueError("Cache directory parent must not be a symlink: /var")
+
+    monkeypatch.setattr(_cache_store, "resolve_cache_dir", always_fail)
+    result = _cache_store._cache_dir()
+    assert isinstance(result, Path)

@@ -68,7 +68,7 @@ Priorities:
   checks `"429" in str(exc)` (misfires on hosts/ports containing 429). Fix:
   wrap all HTTP calls into the `UnifiError` hierarchy carrying an HTTP status
   attribute; check the status, not the string.
-- [ ] **F10 Symlinked `.cache` in CWD makes every fetch raise, even with
+- [x] **F10 Symlinked `.cache` in CWD makes every fetch raise, even with
   `use_cache=False`** - `adapters/_cache_store.py:22-31`, `_fetch.py:37`. The
   ValueError fallback re-runs the same failing call; `fetch_cached` builds the
   cache plan outside its try block. Fix: degrade to no-cache on cache-dir

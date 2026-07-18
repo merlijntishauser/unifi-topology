@@ -28,7 +28,16 @@ def _cache_dir() -> Path:
         return resolve_cache_dir(value)
     except ValueError as exc:
         logger.warning("Invalid UNIFI_CACHE_DIR (%s); using default: %s", value, exc)
-        return resolve_cache_dir(".cache/unifi_network_maps")
+    if value != default_dir:
+        try:
+            return resolve_cache_dir(default_dir)
+        except ValueError as exc:
+            logger.warning(
+                "Default cache dir unusable (%s); caching disabled: %s", default_dir, exc
+            )
+    # Best-effort fallback so fetching degrades to no-cache instead of raising;
+    # _is_cache_dir_safe and _save_cache still gate any actual read/write.
+    return Path(default_dir).expanduser().resolve(strict=False)
 
 
 def _cache_lock_path(path: Path) -> Path:
