@@ -103,7 +103,7 @@ Priorities:
   not unify `-`/`:`/bare separators, so dash-format LLDP chassis IDs never
   match the device index. Fix: canonicalize separators in `normalize_mac`;
   normalize LLDP peer IDs.
-- [ ] **F17 `_client_is_wired` uses `bool()` on possibly-string field** -
+- [x] **F17 `_client_is_wired` uses `bool()` on possibly-string field** -
   `model/_client_access.py:69-71`. `bool("false")` is True: wireless clients
   misclassified as wired, flipping mode filters and connection extraction. Fix:
   use `as_bool` like the rest of the codebase.

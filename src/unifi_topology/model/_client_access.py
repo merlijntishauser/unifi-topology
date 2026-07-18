@@ -6,7 +6,7 @@ from collections.abc import Iterable
 
 from ._raw import RawRecord, nested_records
 from .connection import ConnectionInfo, classify_signal_quality
-from .helpers import get_field, normalize_mac
+from .helpers import as_bool, get_field, normalize_mac
 from .ports import extract_port_number
 
 
@@ -68,7 +68,7 @@ def client_uplink_port(client: object) -> int | None:
 
 def _client_is_wired(client: object) -> bool:
     """Check if client is wired."""
-    return bool(get_field(client, "is_wired"))
+    return as_bool(get_field(client, "is_wired"))
 
 
 def _client_channel(client: object) -> int | None:
