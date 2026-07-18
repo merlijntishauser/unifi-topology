@@ -20,13 +20,15 @@ def _normalize_wan_speed(speed: int | None) -> int | None:
 
 
 def _find_wan_port_by_assignment(port_table: list[PortInfo], wan_id: str) -> PortInfo | None:
-    """Find a WAN port by its wan_networkconf_id assignment."""
+    """Find a WAN port by its exact wan_networkconf_id assignment.
+
+    Matching is exact: a bare-substring match would let the base "WAN" search
+    grab a "WAN2"-assigned port, collapsing both interfaces onto one port.
+    """
     wan_id_lower = wan_id.lower()
     for port in port_table:
-        if port.wan_networkconf_id:
-            conf_id = port.wan_networkconf_id.lower()
-            if conf_id == wan_id_lower or wan_id_lower in conf_id:
-                return port
+        if port.wan_networkconf_id and port.wan_networkconf_id.lower() == wan_id_lower:
+            return port
     return None
 
 

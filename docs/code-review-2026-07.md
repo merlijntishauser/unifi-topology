@@ -92,7 +92,7 @@ Priorities:
   One LLDP entry with a non-numeric `local_port_idx`, or one device missing
   name/LLDP/uplink data, aborts normalization for the whole site. Fix: guard
   the int coercion; skip-and-log malformed devices.
-- [ ] **F15 WAN1 lookup substring-matches WAN2** - `model/wan.py:22-48`.
+- [x] **F15 WAN1 lookup substring-matches WAN2** - `model/wan.py:22-48`.
   `wan_id_lower in conf_id` means `"wan" in "wan2"`; WAN1 can resolve to the
   WAN2 port and both WanInfo slots point at the same physical port. Fix: exact
   match first, no bare substring.
