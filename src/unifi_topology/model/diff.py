@@ -197,8 +197,8 @@ def _client_properties(client: dict[str, Any]) -> dict[str, Any]:
         "uplink_mac": _client_uplink_mac_value(client),
         "uplink_port": _client_uplink_port_value(client),
         "channel": client.get("channel"),
-        "signal": client.get("signal"),
-        "satisfaction": client.get("satisfaction"),
+        # signal/satisfaction are intentionally excluded: they fluctuate every
+        # poll and would emit a client_node_changed event on nearly every diff.
     }
 
 

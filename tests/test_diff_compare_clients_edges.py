@@ -88,3 +88,12 @@ class TestCompareTopologyClientsAndEdges:
         diff = compare_topologies([], [], old_edges=[], new_edges=[sample_edge()])
         assert diff.filter(entity_types={"device"}).events == []
         assert len(diff.filter(entity_types={"edge"}).events) == 1
+
+    def test_signal_only_change_is_not_reported(self):
+        old_client = sample_client()
+        old_client["signal"] = -50
+        new_client = dict(old_client)
+        new_client["signal"] = -55
+        new_client["satisfaction"] = 90
+        diff = compare_topologies([], [], old_clients=[old_client], new_clients=[new_client])
+        assert diff.events == []

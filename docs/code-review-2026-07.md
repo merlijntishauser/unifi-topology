@@ -123,7 +123,7 @@ Priorities:
   `filter(entity_types={"client"})` silently excludes client edges and the
   `client_edge_*` summary counts are dead code. Fix: classify edge entity type
   by endpoint.
-- [ ] **F21 Volatile wireless metrics cause diff churn** - `model/diff.py:
+- [x] **F21 Volatile wireless metrics cause diff churn** - `model/diff.py:
   193-205`. `signal`/`satisfaction` fluctuate every poll, emitting
   `client_node_changed` constantly. Fix: exclude volatile metrics from the
   compare set (consistent with `noise`/`tx_rate`/`rx_rate` already excluded).
