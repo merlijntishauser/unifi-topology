@@ -295,15 +295,7 @@ def _fetch_cached(
         api_call=api_call,
         serialize=serialize,
         cache_key_extra=cache_key_extra,
-        cache_dir=_cache_dir,
-        cache_key=_cache_key,
-        is_cache_dir_safe=_is_cache_dir_safe,
-        cache_ttl_seconds=_cache_ttl_seconds,
-        load_cache=_load_cache,
-        load_cache_with_age=_load_cache_with_age,
-        save_cache=_save_cache,
         connect_and_fetch=_connect_and_fetch,
-        logger=logger,
     )
 
 

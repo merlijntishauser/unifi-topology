@@ -192,7 +192,7 @@ Priorities:
   fallback is silently lossy; `_CLIENT_RELEVANT_KEYS` omits top-level
   `fw_version` (degrades inventory firmware after round-trip);
   `Topology.from_dict` should isinstance-guard list fields.
-- [ ] **F34 Delete the parameter-injection layer in `_fetch.fetch_cached`** -
+- [x] **F34 Delete the parameter-injection layer in `_fetch.fetch_cached`** -
   `adapters/_fetch.py:97-119`. Ten module functions passed as parameters by the
   sole caller with the obvious implementations; keep only the
   `connect_and_fetch` seam. Removes ~40 lines of plumbing.

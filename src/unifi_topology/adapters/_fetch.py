@@ -7,8 +7,24 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from ._cache_store import (
+    _cache_dir,
+    _cache_key,
+    _cache_ttl_seconds,
+    _is_cache_dir_safe,
+    _load_cache,
+    _load_cache_with_age,
+    _save_cache,
+)
 from .config import Config
 from .unifi_api import UnifiClient
+
+logger = logging.getLogger(__name__)
+
+ConnectAndFetch = Callable[
+    [Config, str, Callable[[UnifiClient], Callable[[], Sequence[object]]]],
+    Sequence[object],
+]
 
 
 @dataclass(frozen=True)
@@ -28,14 +44,11 @@ def _build_fetch_plan(
     cache_prefix: str,
     operation: str,
     cache_key_extra: Sequence[str],
-    cache_dir: Callable[[], Path],
-    cache_key: Callable[..., str],
-    is_cache_dir_safe: Callable[[Path], bool],
 ) -> _FetchPlan:
     site_name = site or config.site
     key_parts = (config.url, site_name, *cache_key_extra)
-    cache_path = cache_dir() / f"{cache_prefix}_{cache_key(*key_parts)}.json"
-    cache_safe = use_cache and is_cache_dir_safe(cache_path.parent)
+    cache_path = _cache_dir() / f"{cache_prefix}_{_cache_key(*key_parts)}.json"
+    cache_safe = use_cache and _is_cache_dir_safe(cache_path.parent)
     return _FetchPlan(
         operation=operation,
         site_name=site_name,
@@ -45,32 +58,20 @@ def _build_fetch_plan(
     )
 
 
-def _load_fresh_cache(
-    plan: _FetchPlan,
-    *,
-    ttl_seconds: int,
-    load_cache: Callable[[Path, int], Sequence[object] | None],
-    logger: logging.Logger,
-) -> Sequence[object] | None:
+def _load_fresh_cache(plan: _FetchPlan, *, ttl_seconds: int) -> Sequence[object] | None:
     if not plan.cache_safe:
         return None
-    cached = load_cache(plan.cache_path, ttl_seconds)
+    cached = _load_cache(plan.cache_path, ttl_seconds)
     if cached is None:
         return None
     logger.debug("Using cached %s (%d)", plan.operation, len(cached))
     return cached
 
 
-def _load_stale_cache(
-    plan: _FetchPlan,
-    *,
-    exc: Exception,
-    load_cache_with_age: Callable[[Path], tuple[Sequence[object] | None, float | None]],
-    logger: logging.Logger,
-) -> Sequence[object] | None:
+def _load_stale_cache(plan: _FetchPlan, *, exc: Exception) -> Sequence[object] | None:
     if not plan.cache_safe:
         return None
-    stale_cached, cache_age = load_cache_with_age(plan.cache_path)
+    stale_cached, cache_age = _load_cache_with_age(plan.cache_path)
     if stale_cached is None:
         return None
     logger.warning(
@@ -87,11 +88,10 @@ def _save_fetched_data(
     *,
     data: Sequence[object],
     serialize: Callable[[Sequence[object]], Sequence[object]] | None,
-    save_cache: Callable[[Path, Sequence[object]], None],
 ) -> None:
     if not plan.use_cache:
         return
-    save_cache(plan.cache_path, serialize(data) if serialize else data)
+    _save_cache(plan.cache_path, serialize(data) if serialize else data)
 
 
 def fetch_cached(
@@ -104,18 +104,7 @@ def fetch_cached(
     api_call: Callable[[UnifiClient, str], Callable[[], Sequence[object]]],
     serialize: Callable[[Sequence[object]], Sequence[object]] | None = None,
     cache_key_extra: Sequence[str] = (),
-    cache_dir: Callable[[], Path],
-    cache_key: Callable[..., str],
-    is_cache_dir_safe: Callable[[Path], bool],
-    cache_ttl_seconds: Callable[[], int],
-    load_cache: Callable[[Path, int], Sequence[object] | None],
-    load_cache_with_age: Callable[[Path], tuple[Sequence[object] | None, float | None]],
-    save_cache: Callable[[Path, Sequence[object]], None],
-    connect_and_fetch: Callable[
-        [Config, str, Callable[[UnifiClient], Callable[[], Sequence[object]]]],
-        Sequence[object],
-    ],
-    logger: logging.Logger,
+    connect_and_fetch: ConnectAndFetch,
 ) -> Sequence[object]:
     """Fetch a resource with fresh-cache and stale-cache fallback handling."""
     plan = _build_fetch_plan(
@@ -125,16 +114,8 @@ def fetch_cached(
         cache_prefix=cache_prefix,
         operation=operation,
         cache_key_extra=cache_key_extra,
-        cache_dir=cache_dir,
-        cache_key=cache_key,
-        is_cache_dir_safe=is_cache_dir_safe,
     )
-    cached = _load_fresh_cache(
-        plan,
-        ttl_seconds=cache_ttl_seconds(),
-        load_cache=load_cache,
-        logger=logger,
-    )
+    cached = _load_fresh_cache(plan, ttl_seconds=_cache_ttl_seconds())
     if cached is not None:
         return cached
 
@@ -144,16 +125,11 @@ def fetch_cached(
     try:
         data = connect_and_fetch(config, operation, _make_fetch)
     except Exception as exc:  # noqa: BLE001 - preserve stale-cache fallback
-        stale_cached = _load_stale_cache(
-            plan,
-            exc=exc,
-            load_cache_with_age=load_cache_with_age,
-            logger=logger,
-        )
+        stale_cached = _load_stale_cache(plan, exc=exc)
         if stale_cached is not None:
             return stale_cached
         raise
 
-    _save_fetched_data(plan, data=data, serialize=serialize, save_cache=save_cache)
+    _save_fetched_data(plan, data=data, serialize=serialize)
     logger.debug("Fetched %d %s", len(data), operation)
     return data
