@@ -118,7 +118,7 @@ Priorities:
 - [x] **F19 Snapshot `version` is write-only** - `model/topology.py:135,
   141-160`. Pre-2.0 name-keyed snapshots deserialize blindly and diff as
   everything-changed. Fix: validate version on load, raise on mismatch.
-- [ ] **F20 All edge events hardcode `entity_type="device"`** -
+- [x] **F20 All edge events hardcode `entity_type="device"`** -
   `model/diff.py:493, 150-152`. Contradicts the documented contract;
   `filter(entity_types={"client"})` silently excludes client edges and the
   `client_edge_*` summary counts are dead code. Fix: classify edge entity type

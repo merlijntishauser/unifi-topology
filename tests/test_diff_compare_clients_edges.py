@@ -79,3 +79,12 @@ class TestCompareTopologyClientsAndEdges:
         event_types = {event.event_type for event in diff.events}
         assert "node_added" in event_types
         assert "node_removed" in event_types
+
+    def test_edge_added_has_edge_entity_type(self):
+        diff = compare_topologies([], [], old_edges=[], new_edges=[sample_edge()])
+        assert diff.events[0].entity_type == "edge"
+
+    def test_edge_events_excluded_by_device_filter(self):
+        diff = compare_topologies([], [], old_edges=[], new_edges=[sample_edge()])
+        assert diff.filter(entity_types={"device"}).events == []
+        assert len(diff.filter(entity_types={"edge"}).events) == 1

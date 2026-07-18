@@ -25,7 +25,7 @@ class TopologyChangeEvent:
     """One of: node_added, node_removed, node_changed, edge_added, edge_removed, edge_changed"""
 
     entity_type: str
-    """'device' or 'client'"""
+    """'device', 'client', or 'edge'"""
 
     identifier: str
     """MAC address - stable identifier across renames"""
@@ -146,13 +146,10 @@ def _build_summary(events: list[TopologyChangeEvent]) -> str:
     _add_count_part(parts, counts.get("client_node_removed", 0), "client", "removed")
     _add_count_part(parts, counts.get("client_node_changed", 0), "client", "changed")
 
-    # Edges (combine device and client edges)
-    edge_added = counts.get("device_edge_added", 0) + counts.get("client_edge_added", 0)
-    edge_removed = counts.get("device_edge_removed", 0) + counts.get("client_edge_removed", 0)
-    edge_changed = counts.get("device_edge_changed", 0) + counts.get("client_edge_changed", 0)
-    _add_count_part(parts, edge_added, "connection", "added")
-    _add_count_part(parts, edge_removed, "connection", "removed")
-    _add_count_part(parts, edge_changed, "connection", "changed")
+    # Edges
+    _add_count_part(parts, counts.get("edge_edge_added", 0), "connection", "added")
+    _add_count_part(parts, counts.get("edge_edge_removed", 0), "connection", "removed")
+    _add_count_part(parts, counts.get("edge_edge_changed", 0), "connection", "changed")
 
     return ", ".join(parts) if parts else "No changes"
 
@@ -490,7 +487,7 @@ _CLIENT_SPEC: EntityCompareSpec[dict[str, Any]] = EntityCompareSpec(
 )
 
 _EDGE_SPEC: EntityCompareSpec[Edge] = EntityCompareSpec(
-    entity_type="device",
+    entity_type="edge",
     event_prefix="edge",
     key=_edge_key,
     sort_key=lambda k: tuple(sorted(k)),
