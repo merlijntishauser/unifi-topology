@@ -183,7 +183,7 @@ Priorities:
 
 ## P2 - Structural refactorings
 
-- [ ] **F33 Symmetric generic snapshot deserialization** - `model/snapshot.py`.
+- [x] **F33 Symmetric generic snapshot deserialization** - `model/snapshot.py`.
   `to_dict` is generic (`_dataclass_to_dict`) but every `from_dict` is a
   hand-written field list - fields added later auto-serialize and silently drop
   on load (the F18 bug class). Replace with a `fields()`-introspection loader

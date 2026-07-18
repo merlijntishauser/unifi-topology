@@ -40,6 +40,7 @@ _CLIENT_RELEVANT_KEYS = frozenset(
         "satisfaction",
         "oui",
         "vendor",
+        "fw_version",
         "unifi_device_info_from_ucore",
     }
 )
