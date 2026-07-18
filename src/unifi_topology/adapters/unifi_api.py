@@ -34,13 +34,19 @@ def _v2_payload_error(payload: object) -> str | None:
     return str(message)
 
 
+def _require_list_data(path: str, data: object) -> list[dict[str, object]]:
+    if not isinstance(data, list):
+        raise UnifiApiError(f"'data' field is not a list for {path}")
+    return data
+
+
 def _v2_payload_items(path: str, payload: object) -> list[dict[str, object]]:
     if isinstance(payload, list):
         return payload
     if not isinstance(payload, dict):
         raise UnifiApiError(f"Unexpected response format for {path}")
     if "data" in payload:
-        return payload["data"]
+        return _require_list_data(path, payload["data"])
     error_message = _v2_payload_error(payload)
     if error_message is not None:
         raise UnifiApiError(f"Error response for {path}: {error_message}")
@@ -311,7 +317,7 @@ class UnifiClient:
         if not isinstance(payload, dict) or "data" not in payload:
             raise UnifiApiError(f"Missing 'data' field in response for {path}")
 
-        return payload["data"]
+        return _require_list_data(path, payload["data"])
 
     @staticmethod
     def _parse_v2_list_payload(path: str, payload: object) -> list[dict[str, object]]:

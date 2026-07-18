@@ -139,16 +139,21 @@ def invalidate_cache(
         for extra in _cache_key_extras(prefix):
             key = _cache_key(config.url, site_name, *extra)
             cache_path = _cache_dir() / f"{prefix}_{key}.json"
-            if not cache_path.exists():
-                continue
-            try:
-                with _cache_lock(cache_path):
-                    cache_path.unlink(missing_ok=True)
-                removed += 1
-                logger.debug("Invalidated cache: %s", cache_path.name)
-            except OSError as exc:
-                logger.warning("Failed to invalidate cache %s: %s", cache_path, exc)
+            removed += _remove_cache_file(cache_path)
     return removed
+
+
+def _remove_cache_file(cache_path: Path) -> int:
+    if not cache_path.exists():
+        return 0
+    try:
+        with _cache_lock(cache_path):
+            cache_path.unlink(missing_ok=True)
+        logger.debug("Invalidated cache: %s", cache_path.name)
+        return 1
+    except OSError as exc:
+        logger.warning("Failed to invalidate cache %s: %s", cache_path, exc)
+        return 0
 
 
 def _call_with_retries[T](operation: str, func: Callable[[], T]) -> T:

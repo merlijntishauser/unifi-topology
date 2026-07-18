@@ -44,3 +44,21 @@ def test_is_rate_limited_uses_status_code():
     not_limited = UnifiAuthError("connect to unifi-429.local failed")
     assert unifi._is_rate_limited(limited) is True
     assert unifi._is_rate_limited(not_limited) is False
+
+
+def test_get_rejects_non_list_data(monkeypatch):
+    auth_resp = FakeResponse(json_data={"meta": {"rc": "ok"}})
+    data_resp = FakeResponse(json_data={"data": None})
+    session = FakeSession([auth_resp, data_resp])
+    client = make_client(monkeypatch, session)
+    with pytest.raises(UnifiApiError):
+        client.get_clients("mysite")
+
+
+def test_get_v2_rejects_dict_data(monkeypatch):
+    auth_resp = FakeResponse(json_data={"meta": {"rc": "ok"}})
+    data_resp = FakeResponse(json_data={"data": {"not": "a list"}})
+    session = FakeSession([auth_resp, data_resp])
+    client = make_client(monkeypatch, session)
+    with pytest.raises(UnifiApiError):
+        client.get_firewall_policies("mysite")

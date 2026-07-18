@@ -77,7 +77,7 @@ Priorities:
   `adapters/unifi_api.py:383-390`. If the second PUT fails, both policies hold
   the same index with no rollback. Fix: attempt rollback of the first PUT on
   failure; document partial-failure semantics.
-- [ ] **F12 `payload["data"]` never validated as a list** -
+- [x] **F12 `payload["data"]` never validated as a list** -
   `adapters/unifi_api.py:286-289, 42-43`. `{"data": null}` or a dict payload
   flows into model code as `Any`, failing far from the cause. Fix: isinstance
   check, raise `UnifiApiError` on shape mismatch.
