@@ -4,9 +4,9 @@ Quick reference for AI assistants working on this codebase.
 
 ## Project Overview
 
-**unifi-topology** - A Python library for UniFi network topology discovery and SVG diagram rendering. Extracted from `unifi-network-maps` to provide a clean API for programmatic use.
+**unifi-topology** - A Python library for UniFi network topology discovery and diagram rendering (SVG orthogonal/isometric, Mermaid, and Markdown/LLDP tables). Extracted from `unifi-network-maps` to provide a clean API for programmatic use.
 
-- **Version**: 0.1.0
+- **Version**: 2.2.2
 - **Python**: 3.12+ (3.13 preferred)
 - **License**: MIT
 - **PyPI**: `pip install unifi-topology`
@@ -14,51 +14,51 @@ Quick reference for AI assistants working on this codebase.
 ## Architecture
 
 ```
-Source (UniFi API) -> Model (devices/topology) -> Render (SVG) -> Output (string)
+Source (UniFi API) -> Model (devices/topology) -> Render (SVG/Mermaid/Markdown) -> Output (string)
 ```
 
 ### Source Layout
+
+Modules prefixed with `_` are private implementation helpers; the public API is
+re-exported from `unifi_topology/__init__.py`. Only the load-bearing modules are
+listed below.
 
 ```
 src/unifi_topology/
 ├── __init__.py          # Public API re-exports
 ├── paths.py             # Path validation helpers
 ├── adapters/
-│   ├── config.py        # Environment/config loading
+│   ├── config.py        # Environment/config loading (Config)
 │   ├── dns.py           # Reverse DNS hostname resolution
-│   ├── unifi.py         # UniFi API adapter (caching, retries)
-│   └── unifi_api.py     # Thin HTTP client for UniFi controller
+│   ├── unifi.py         # UniFi API adapter (caching, retries, auth fallback)
+│   ├── unifi_api.py     # Thin HTTP client for UniFi controller (UnifiError hierarchy)
+│   ├── _cache_store.py  # Cache storage, locking, safety checks
+│   ├── _cache_serialize.py # Device/network cache serialization
+│   ├── _fetch.py        # Fetch-with-cache orchestration
+│   └── _retry.py        # Retry policy and request timeout
 ├── model/
-│   ├── topology.py      # Core topology model (Device, Edge, etc.)
-│   ├── topology_coerce.py # Raw API data normalization
-│   ├── clients.py       # Client device handling and filtering
-│   ├── classify.py      # Device/client type classification
-│   ├── connection.py    # Wireless connection quality
-│   ├── edges.py         # Edge building, port maps, grouping
-│   ├── helpers.py       # Shared low-level helpers
-│   ├── inventory.py     # Device inventory model (DeviceInfo)
-│   ├── lldp.py          # LLDP parsing
-│   ├── labels.py        # Label generation
-│   ├── ports.py         # Port handling
-│   ├── vlans.py         # VLAN inventory
+│   ├── topology.py      # Core topology model (Topology, Device, Edge, snapshot version)
+│   ├── topology_coerce.py / _topology_device_coerce.py / _topology_port_coerce.py  # API data normalization
+│   ├── clients.py, classify.py, connection.py  # Client handling and classification
+│   ├── edges.py, _edge_discovery.py  # Edge building, port maps, grouping
+│   ├── firewall.py, firewall_coerce.py  # Firewall zones/policies model
+│   ├── device_stats.py, device_stats_coerce.py  # Device statistics
+│   ├── vpn.py           # VPN tunnel extraction
 │   ├── wan.py           # WAN upstream info extraction
-│   ├── mock.py          # Mock data generation (uses Faker)
+│   ├── vlans.py, ports.py, lldp.py, labels.py, inventory.py, helpers.py
+│   ├── mock.py          # Mock data generation (lazy-loaded; requires dev Faker)
 │   ├── snapshot.py      # Topology serialization
 │   └── diff.py          # Topology change detection
 ├── render/
-│   ├── svg.py           # SVG orthogonal output
-│   ├── svg_isometric.py # SVG isometric output
-│   ├── svg_theme.py     # SVG theming (SvgTheme, SvgOptions)
-│   ├── svg_layout.py    # SVG layout algorithms
-│   ├── svg_edges.py     # SVG edge rendering
-│   ├── svg_labels.py    # SVG label rendering
-│   ├── svg_icons.py     # SVG icon loading
-│   ├── svg_wan.py       # SVG WAN upstream rendering
-│   ├── svg_iso_geometry.py  # Isometric coordinate math
-│   ├── svg_iso_nodes.py     # Isometric node rendering
-│   ├── svg_iso_edges.py     # Isometric edge rendering
+│   ├── svg.py, svg_isometric.py  # SVG orthogonal / isometric output
+│   ├── svg_theme.py, svg_layout.py, svg_edges.py, svg_labels.py, svg_icons.py
+│   ├── svg_wan.py, svg_vpn.py  # SVG WAN / VPN overlays
+│   ├── theme.py         # Theme loading (SVG)
+│   ├── mermaid.py, mermaid_theme.py  # Mermaid diagram output
+│   ├── markdown.py, lldp.py  # Markdown device/LLDP tables (uses Jinja2 templates)
 │   ├── inventory.py     # Inventory table rendering
-│   └── theme.py         # Theme loading (SVG only)
+│   ├── templates/       # Jinja2 templates (*.j2)
+│   └── _svg_*, _markdown_*  # Private rendering helpers
 └── assets/
     ├── icons/           # SVG device icons (isometric, modern, modern-flat)
     ├── themes/          # Default theme YAML files
@@ -103,17 +103,18 @@ make ci                   # Run all checks
 - Optimize for readability over cleverness
 - Small, safe refactors; commit often
 - Functions > 15 lines are a code smell
-- Max cyclomatic complexity per function: 12 (enforced by CI)
+- Max cyclomatic complexity per function: 5 (enforced by CI via ruff mccabe, xenon, and scripts/check_complexity.sh)
 - Typing (pyright standard mode)
 - No prints in library modules (use `logging`)
 - Pure functions where possible
-- This is a library: no CLI concerns, no Jinja2 templates, no file I/O beyond caching
+- This is a library: no CLI concerns, no file I/O beyond caching. Markdown/LLDP rendering uses Jinja2 templates under `render/templates/`.
 
 ## Key Dependencies
 
 - `requests` - HTTP client
 - `python-dotenv` - Environment loading
 - `PyYAML` - Theme configuration
+- `Jinja2` - Markdown/LLDP table templates
 - `dnspython` - Reverse DNS hostname resolution
 - `Faker` (dev) - Mock data generation
 

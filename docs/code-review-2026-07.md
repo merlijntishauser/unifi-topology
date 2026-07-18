@@ -262,7 +262,7 @@ Priorities:
 
 ## P3 - Minor (grouped commit units)
 
-- [ ] **F47 Rewrite AGENTS.md + README renderer docs** - version says 0.1.0
+- [x] **F47 Rewrite AGENTS.md + README renderer docs** - version says 0.1.0
   (actual 2.2.2); complexity limit says 12 (CI enforces 5: ruff mccabe=5,
   xenon A, `check_complexity.sh 5`); "no Jinja2 templates" contradicts the
   runtime Jinja2 dependency and `render/templates/*.j2`; source layout omits
