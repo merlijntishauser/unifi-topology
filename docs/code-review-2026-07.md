@@ -22,7 +22,7 @@ Priorities:
   execution). Fix: validate node type against the known type set, fall back to
   `other`. Also fixes: unknown types currently reference a nonexistent gradient
   and render an invisible node body (the iso fallback fill is dead code).
-- [ ] **F02 `node_data` attribute names injected unescaped** -
+- [x] **F02 `node_data` attribute names injected unescaped** -
   `render/_svg_node_attrs.py:37`. Values are escaped, keys are not; a crafted
   key injects attributes (verified). Fix: validate keys against
   `^[A-Za-z_][\w-]*$`, skip invalid.

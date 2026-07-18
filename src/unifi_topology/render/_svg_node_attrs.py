@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import re
+
 from .svg_icons import _safe_node_type
 from .svg_labels import _escape_attr
+
+_VALID_ATTR_NAME = re.compile(r"^[A-Za-z_][\w-]*$")
 
 
 def _base_node_attrs(
@@ -35,7 +39,11 @@ def _merge_node_attrs(
 
 
 def _render_node_attrs(attrs: dict[str, str]) -> str:
-    return "".join(f' {key}="{_escape_attr(value)}"' for key, value in attrs.items())
+    return "".join(
+        f' {key}="{_escape_attr(value)}"'
+        for key, value in attrs.items()
+        if _VALID_ATTR_NAME.match(key)
+    )
 
 
 def _svg_node_group_attrs(
