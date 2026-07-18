@@ -255,3 +255,16 @@ def test_wan_interface_custom_label():
         wan_info=wan_info,
     )
     assert "Fiber" in output
+
+
+def test_wan_offsets_poe_linkstyle_index():
+    wan1 = WanInterface(port_idx=1, link_speed=1000, ip_address=None, enabled=True)
+    wan_info = WanInfo(wan1=wan1)
+    output = render_mermaid(
+        [Edge("GW", "SW", poe=True)],
+        node_types={"GW": "gateway", "SW": "switch"},
+        wan_info=wan_info,
+    )
+    # The WAN link occupies index 0, so the PoE edge is Mermaid link index 1.
+    assert "linkStyle 1 stroke:#1e88e5" in output
+    assert "linkStyle 0 stroke:#1e88e5" not in output

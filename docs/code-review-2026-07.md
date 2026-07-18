@@ -147,7 +147,7 @@ Priorities:
   from the rendered tables (verified end-to-end). Fix: key lookups by MAC,
   render client names; add an integration test feeding real
   `build_port_map`/`build_client_port_map` output into the renderers.
-- [ ] **F26 Mermaid `linkStyle` indices off by one when WAN is rendered** -
+- [x] **F26 Mermaid `linkStyle` indices off by one when WAN is rendered** -
   `render/mermaid.py:139-157, 182-196, 279-296`. The WAN edge occupies link
   index 0 but edge styling still counts from 0, styling the wrong links
   (verified). Fix: offset indices by the number of pre-emitted edges; add a

@@ -330,11 +330,19 @@ def render_mermaid(
     extra_nodes = ["__wan__"] if gateway_id else []
     id_map = _build_id_map(edge_list, [*_group_nodes(groups), *extra_nodes])
     lines = _build_mermaid_header(direction, theme)
-    _add_wan_section(
+    wan_links = _add_wan_section(
         lines, wan_info, gateway_id, id_map=id_map, groups=groups, node_names=node_names
     )
     _add_groups_and_edges(
-        lines, edge_list, groups, group_order, node_types, id_map, theme, node_names=node_names
+        lines,
+        edge_list,
+        groups,
+        group_order,
+        node_types,
+        id_map,
+        theme,
+        node_names=node_names,
+        link_index_offset=wan_links,
     )
     return "\n".join(lines) + "\n"
 
@@ -348,6 +356,7 @@ def _add_groups_and_edges(
     id_map: dict[str, str],
     theme: MermaidTheme,
     node_names: dict[str, str] | None = None,
+    link_index_offset: int = 0,
 ) -> None:
     if groups:
         _render_group_sections(
@@ -359,6 +368,8 @@ def _add_groups_and_edges(
     )
     if node_types:
         _render_node_classes(lines, node_types=node_types, id_map=id_map, theme=theme)
+    poe_links = [index + link_index_offset for index in poe_links]
+    wireless_links = [index + link_index_offset for index in wireless_links]
     _render_link_styles(lines, poe_links=poe_links, wireless_links=wireless_links, theme=theme)
 
 
@@ -379,7 +390,8 @@ def _add_wan_section(
     id_map: dict[str, str],
     groups: dict[str, list[str]] | None,
     node_names: dict[str, str] | None = None,
-) -> None:
+) -> int:
+    """Render the WAN node/edge if applicable; return the number of edges emitted."""
     if wan_info and gateway_id:
         _render_wan_node(
             lines,
@@ -389,6 +401,8 @@ def _add_wan_section(
             use_node_labels=not groups,
             node_names=node_names,
         )
+        return 1
+    return 0
 
 
 def render_legend(theme: MermaidTheme = DEFAULT_THEME, *, legend_scale: float = 1.0) -> str:
