@@ -159,7 +159,7 @@ Priorities:
   `render/mermaid.py:13-16`. One `"` in a device name breaks the whole diagram;
   `\n` renders literally. Fix: `#quot;` and `<br/>`; update the golden tests
   that currently pin the broken output.
-- [ ] **F29 `render_device_inventory_table` performs no escaping** -
+- [x] **F29 `render_device_inventory_table` performs no escaping** -
   `render/inventory.py:20-29`. A `|` in a device name misaligns the table. Fix:
   use `escape_markdown` and the shared `markdown_table_lines` helper. Also:
   `_markdown_connections.py:76-82` escapes multi-client `<li>` content with

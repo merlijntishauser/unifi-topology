@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from html import escape as _escape_html
 
 from ..model.ports import extract_port_number
 from ..model.topology import ClientPortMap, PortInfo, PortMap
@@ -78,7 +77,7 @@ def _format_client_connections(clients: list[str]) -> str:
         return ""
     if len(clients) == 1:
         return f"{escape_markdown(clients[0])} (client)"
-    items = "".join(f"<li>{_escape_html(name)}</li>" for name in clients)
+    items = "".join(f"<li>{escape_markdown(name)}</li>" for name in clients)
     return f'<ul class="unifi-port-clients">{items}</ul>'
 
 

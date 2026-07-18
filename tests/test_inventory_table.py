@@ -52,3 +52,12 @@ def test_render_table_multiple_devices():
     table = render_device_inventory_table(devices, include_hostname=False)
     lines = table.strip().split("\n")
     assert len(lines) == 4  # header + separator + 2 rows
+
+
+def test_render_table_escapes_pipe_in_name():
+    table = render_device_inventory_table([_info(name="Bad|Name")], include_hostname=False)
+    data_lines = [line for line in table.splitlines() if line.startswith("| Bad")]
+    assert data_lines
+    # Escaped, so the row still has the expected number of cells (6 columns).
+    assert data_lines[0].count(" | ") == 5
+    assert "\\|" in data_lines[0]
