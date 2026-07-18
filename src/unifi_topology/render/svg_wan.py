@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from html import escape as _escape_html
-
 from ..model.topology import WanInfo
-from .svg_labels import _build_wan_label_lines, _escape_text
+from .svg_labels import _build_wan_label_lines, _escape_attr, _escape_text
 from .svg_layout import GroupBounds
 from .svg_theme import SvgOptions, SvgTheme
 
@@ -33,7 +31,7 @@ def _render_group_boundaries(
     """Render group background rectangles and labels."""
     label_size = options.font_size + 4
     for bounds in group_bounds_list:
-        group_attr = _escape_html(bounds.name, quote=True)
+        group_attr = _escape_attr(bounds.name)
         fill, stroke = _vlan_group_colors(bounds.name, theme, group_vlan_ids)
         lines.append(f'<g class="network-group" data-group-name="{group_attr}">')
         lines.append(

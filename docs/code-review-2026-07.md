@@ -26,7 +26,7 @@ Priorities:
   `render/_svg_node_attrs.py:37`. Values are escaped, keys are not; a crafted
   key injects attributes (verified). Fix: validate keys against
   `^[A-Za-z_][\w-]*$`, skip invalid.
-- [ ] **F03 Control characters in group names produce unparseable SVG** -
+- [x] **F03 Control characters in group names produce unparseable SVG** -
   `render/svg_wan.py:36`, `render/_svg_iso_group_boundaries.py:108`. Both use
   `html.escape` instead of the project's `_escape_attr` (which strips
   XML-invalid chars); `groups={"bad\x01name": ...}` breaks the document

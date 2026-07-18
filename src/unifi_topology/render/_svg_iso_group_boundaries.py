@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from html import escape as _escape_html
 
 from .svg_iso_geometry import IsoLayout, _iso_project
-from .svg_labels import _escape_text
+from .svg_labels import _escape_attr, _escape_text
 from .svg_layout import _build_node_to_group_map, _resolve_group_order
 from .svg_theme import SvgOptions, SvgTheme
 from .svg_wan import _vlan_group_colors
@@ -105,7 +104,7 @@ def _render_iso_group_boundaries(
 ) -> None:
     """Render isometric group boundaries as parallelograms."""
     for bounds in bounds_list:
-        group_attr = _escape_html(bounds.name, quote=True)
+        group_attr = _escape_attr(bounds.name)
         fill, stroke = _vlan_group_colors(bounds.name, theme, group_vlan_ids)
         points_str = " ".join(f"{x},{y}" for x, y in bounds.points)
         lines.append(f'<g class="network-group" data-group-name="{group_attr}">')
