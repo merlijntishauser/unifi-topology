@@ -56,15 +56,6 @@ def build_device_index(devices: Iterable[Device]) -> dict[str, str]:
     return index
 
 
-def _client_matches_mode(client: object, mode: str) -> bool:
-    from ._client_access import _client_is_wired
-
-    if mode == "all":
-        return True
-    wired = _client_is_wired(client)
-    return not wired if mode == "wireless" else wired
-
-
 def _client_name_entry(client: object) -> tuple[str, str] | None:
     from ._client_access import client_node_id
     from .classify import client_display_name
@@ -80,14 +71,11 @@ def _filtered_clients(
     client_mode: str,
     only_unifi: bool,
 ) -> Iterable[object]:
-    from .classify import client_is_unifi
+    from .clients import client_matches_filters
 
     for client in clients:
-        if not _client_matches_mode(client, client_mode):
-            continue
-        if only_unifi and not client_is_unifi(client):
-            continue
-        yield client
+        if client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
+            yield client
 
 
 def _client_node_names(

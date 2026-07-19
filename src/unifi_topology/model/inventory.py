@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import ipaddress
 import re
-from collections.abc import Sequence
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from .classify import classify_client_type, classify_device_type, client_display_name
@@ -35,7 +35,7 @@ def _ip_sort_key(ip: str) -> tuple[int, ...]:
 
 
 def build_device_inventory(
-    devices: list[Device],
+    devices: Iterable[Device],
     hostnames: dict[str, str] | None = None,
 ) -> list[DeviceInfo]:
     """Convert devices to a sorted inventory list.
@@ -145,7 +145,7 @@ def _client_inventory_item(
 
 
 def build_client_inventory(
-    clients: Sequence[object],
+    clients: Iterable[object],
     hostnames: dict[str, str] | None = None,
     *,
     client_mode: str = "all",

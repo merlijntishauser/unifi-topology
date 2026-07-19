@@ -230,15 +230,15 @@ def _collect_lldp_links(
 def _resolve_uplink_target(
     device: Device,
     index: dict[str, str],
-    device_by_id: dict[str, Device],
     *,
     only_unifi: bool,
 ) -> tuple[UplinkInfo | None, str | None]:
     uplink = device.uplink or device.last_uplink
+    # When only_unifi is True, _uplink_id only returns ids present in `index`,
+    # which shares keys with device_by_id, so no further membership check is
+    # needed here.
     upstream_id = _uplink_id(uplink, index, only_unifi=only_unifi)
     if not upstream_id:
-        return uplink, None
-    if only_unifi and upstream_id not in device_by_id:
         return uplink, None
     return uplink, upstream_id
 
@@ -247,7 +247,6 @@ def _collect_uplink_links(
     devices: list[Device],
     devices_with_lldp_edges: set[str],
     index: dict[str, str],
-    device_by_id: dict[str, Device],
     port_map: PortMap,
     raw_links: list[tuple[str, str]],
     seen: set[frozenset[str]],
@@ -262,7 +261,6 @@ def _collect_uplink_links(
         uplink, upstream_id = _resolve_uplink_target(
             device,
             index,
-            device_by_id,
             only_unifi=only_unifi,
         )
         if not upstream_id:
@@ -301,7 +299,6 @@ def discover_edge_links(
         inputs.devices,
         devices_with_lldp_edges,
         inputs.index,
-        inputs.device_by_id,
         result.port_map,
         result.raw_links,
         result.seen,
