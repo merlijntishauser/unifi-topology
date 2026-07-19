@@ -202,24 +202,11 @@ def _collect_device_lldp_links(
 def _collect_lldp_links(
     devices: list[Device],
     index: dict[str, str],
-    port_map: PortMap,
-    poe_map: PoeMap,
-    speed_map: SpeedMap,
-    vlan_map: VlanMap,
-    raw_links: list[tuple[str, str]],
-    seen: set[frozenset[str]],
+    result: EdgeDiscoveryResult,
     *,
     only_unifi: bool,
 ) -> set[str]:
-    """Collect edges from LLDP data."""
-    result = EdgeDiscoveryResult(
-        raw_links=raw_links,
-        port_map=port_map,
-        poe_map=poe_map,
-        speed_map=speed_map,
-        vlan_map=vlan_map,
-        seen=seen,
-    )
+    """Collect edges from LLDP data into *result*."""
     devices_with_lldp_edges: set[str] = set()
     for device in devices:
         if _collect_device_lldp_links(device, index, result, only_unifi=only_unifi):
@@ -287,12 +274,7 @@ def discover_edge_links(
     devices_with_lldp_edges = _collect_lldp_links(
         inputs.devices,
         inputs.index,
-        result.port_map,
-        result.poe_map,
-        result.speed_map,
-        result.vlan_map,
-        result.raw_links,
-        result.seen,
+        result,
         only_unifi=only_unifi,
     )
     _collect_uplink_links(
