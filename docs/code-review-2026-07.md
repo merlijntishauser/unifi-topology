@@ -261,7 +261,7 @@ Priorities:
   (`clients: list[dict[str, object]]` + 3 type-ignores),
   `Device.network_table: list[dict[str, Any]]`. Introduce a TypedDict/Protocol
   for client records so pyright checks payload access; remove the ignores.
-- [ ] **F46 Test-suite structure** - shared Device/PortInfo factories in
+- [~] **F46 Test-suite structure** - shared Device/PortInfo factories in
   conftest (9-kwarg `PortInfo` literal repeated ~25x in one file); move
   misplaced model tests out of `test_lldp_render.py:136-168`; fix
   `test_render_lldp_md_escapes_pipe_in_port_label` (tests nothing); register

@@ -442,19 +442,6 @@ def test_render_lldp_md_escapes_pipe_in_client_name():
     assert "TV\\|Box" in output
 
 
-def test_render_lldp_md_escapes_pipe_in_port_label():
-    devices = [
-        Device(
-            name="Switch A", model_name="", model="", mac="aa:bb", ip="", type="usw", lldp_info=[]
-        )
-    ]
-    clients = [{"name": "TV", "is_wired": True, "sw_mac": "aa:bb", "sw_port": 1}]
-    output = render_lldp_md(
-        devices, clients=clients, include_ports=True, show_clients=True, client_mode="wired"
-    )
-    assert "| TV | Port 1 |" in output
-
-
 def test_render_lldp_md_client_scope_wireless():
     devices = [
         Device(

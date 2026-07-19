@@ -24,7 +24,7 @@ def _clear_client_cache() -> None:
 
 def pytest_collection_modifyitems(items: list) -> None:
     """Automatically mark tests without specific markers as unit tests."""
-    specific_markers = {"integration", "contract", "acceptance"}
+    specific_markers = {"integration", "contract"}
     for item in items:
         item_markers = {marker.name for marker in item.iter_markers()}
         if not item_markers & specific_markers:

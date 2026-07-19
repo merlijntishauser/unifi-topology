@@ -86,7 +86,7 @@ venv = ".venv"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 norecursedirs = ["src/unifi_topology/assets"]
-addopts = "-ra"
+addopts = "-ra --strict-markers"
 markers = [
     "unit: Pure unit tests with no external dependencies",
     "integration: Tests involving multiple components working together",
