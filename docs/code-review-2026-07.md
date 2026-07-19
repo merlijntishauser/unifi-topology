@@ -1,16 +1,19 @@
 # Code Review Findings (2026-07-18)
 
 **Status (2026-07-19):** All P0 (critical) and P1 (major correctness) findings
-fixed, plus all of P2 except F37 (adapter facade) and the edge-label-recorder
-half of F42. Every finding either fully done `[x]` or partially done `[~]`
+fixed. Every finding is either fully done `[x]` or partially done `[~]`
 (concrete bug/cleanup landed, judgment-call or high-churn remainder deferred),
-except F38 and F54 `[ ]`. Each fix has a regression test and its own commit.
-Full suite green: ruff, pyright, complexity gate, 1175 tests passing.
+except F54 `[ ]`. Each fix has a regression test and its own commit. Full suite
+green: ruff, pyright, complexity gate, 1175 tests passing.
 
 Deferred and why:
-- **F37 (adapter facade), F38 (render facade layering)**: high-churn structural
-  moves across many inline test call sites / tangled cross-imports; debatable
-  value, deferred to avoid destabilizing the suite.
+- **F37 (adapter facade)**: trimming the ~35 private re-exports means rewriting
+  14 test files' inline `unifi._private(...)` call sites; high churn, low value.
+  Its concrete correctness part (the `_cache_lock` dedup) is done.
+- **F38 remainder**: the three tangled cross-imports the review named are fixed
+  (`_TYPE_*`/`_vlan_group_colors` moved to neutral modules, function-level
+  import removed); deleting the `svg_layout`/`svg_iso_*` facade shims themselves
+  is deferred.
 - **F42 remainder**: the shared edge-label recorder (gateway-position dedup done).
 - **F53/F54/F56/F57 remainders**: judgment-call heuristic tweaks (WAN-speed
   bounds, ap-substring classification) and cosmetic dead-code in helper modules.
