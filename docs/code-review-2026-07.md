@@ -288,7 +288,7 @@ Priorities:
   silences InsecureRequestWarning for the whole host process. Scope to the
   session (e.g. suppress via per-request warnings context or leave warnings
   on and document).
-- [ ] **F50 Cache location and permissions** - `adapters/_cache_store.py:23`.
+- [~] **F50 Cache location and permissions** - `adapters/_cache_store.py:23`.
   Cache defaults to CWD under the predecessor project's name
   (`.cache/unifi_network_maps`); files contain MACs/IPs/hostnames and are
   world-readable. Prefer `~/.cache/unifi_topology`, write files 0600.

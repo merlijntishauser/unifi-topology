@@ -64,3 +64,15 @@ def test_cache_dir_never_raises_when_resolution_fails(monkeypatch):
     monkeypatch.setattr(_cache_store, "resolve_cache_dir", always_fail)
     result = _cache_store._cache_dir()
     assert isinstance(result, Path)
+
+
+def test_save_cache_writes_owner_only_file(tmp_path):
+    import stat
+
+    from unifi_topology.adapters import _cache_store
+
+    cache_path = tmp_path / "devices_abc.json"
+    _cache_store._save_cache(cache_path, [{"mac": "aa"}])
+    assert cache_path.exists()
+    mode = stat.S_IMODE(cache_path.stat().st_mode)
+    assert mode & (stat.S_IRWXG | stat.S_IRWXO) == 0

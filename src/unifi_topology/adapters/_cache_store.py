@@ -178,6 +178,8 @@ def _save_cache(path: Path, data: Sequence[object]) -> None:
         tmp_path = path.with_suffix(path.suffix + ".tmp")
         with _cache_lock(path):
             tmp_path.write_text(json.dumps(payload, ensure_ascii=True), encoding="utf-8")
+            # Cache files hold MACs/IPs/hostnames; keep them owner-only.
+            os.chmod(tmp_path, 0o600)
             tmp_path.replace(path)
     except Exception as exc:
         logger.debug("Failed to write cache %s: %s", path, exc)
