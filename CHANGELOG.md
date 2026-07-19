@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Full-codebase review remediation. See `docs/code-review-2026-07.md` for the
+underlying findings. Recommended release: **3.0.0** (contract changes below).
+
+### Security
+- Sanitize `node_type` before interpolating it into SVG paint references. A crafted node type (e.g. via `node_types`) could previously inject arbitrary SVG attributes and execute script when the diagram was embedded inline. Unknown types now fall back to the `other` gradient instead of rendering an invisible node body
+- Validate `node_data` attribute *names* against `^[A-Za-z_][\w-]*$` (values were already escaped); invalid keys are dropped instead of injecting attributes
+- Strip XML-invalid control characters from group names in SVG output (previously used `html.escape`, which left them intact and produced an unparseable document)
+- Keep `password` and `api_key` out of `Config`'s repr/str/tracebacks (`field(repr=False)`), so they no longer leak into logs or pytest output
+- Restrict the theme `font_family` slug to `[a-z0-9-]` to prevent path traversal into the embedded-font loader
+- Write cache files owner-only (`0600`); they contain MACs, IPs, and hostnames and were previously created world-readable
+
+### Changed
+- **BREAKING:** `fetch_*` now raise the `UnifiError` hierarchy (e.g. `UnifiApiError`) for network failures instead of leaking raw `requests` exceptions. `UnifiError` gains a `status_code` attribute. Consumers catching `requests.ConnectionError`/`requests.RequestException` must catch `UnifiError` instead
+- **BREAKING:** Edge change events from `compare_topologies` now use `entity_type="edge"` (previously `"device"`). Code filtering diff events via `TopologyDiff.filter(entity_types={"device"})` will no longer match edges; use `{"edge"}`
+- `Topology.from_dict` now raises `ValueError` on a snapshot whose `version` is newer than supported, instead of silently mis-deserializing it (existing snapshots are `version` 1 and unaffected)
+- **BREAKING:** `collapse_client_edges` is now pure: it no longer mutates the `node_types`/`node_names` arguments and returns a `CollapsedClientEdges` named tuple `(edges, client_counts, node_types, node_names)` instead of `(edges, client_counts)`
+- HTTP requests now default to a 30s timeout (`UNIFI_REQUEST_TIMEOUT_SECONDS` still overrides); previously an unset timeout meant a hung controller blocked fetches indefinitely
+- Retries are now limited to transient errors — authentication failures and 4xx responses surface immediately instead of being retried up to 20 times (which risked controller rate-limiting/lockout)
+- `normalize_devices` now skips and logs a malformed device rather than raising for the whole site; a single bad LLDP `local_port_idx` or a device missing name/MAC no longer aborts normalization
+- `normalize_mac` canonicalizes separators (e.g. `AA-BB-..` and `aabbcc..` become `aa:bb:..`), so dash/no-separator MACs now match the device index consistently. This can change node IDs for third-party LLDP peers
+- Client diffs no longer emit `node_changed` events for `signal`/`satisfaction` fluctuations (they change every poll); channel and the stable properties are still compared
+- Mermaid label escaping now uses Mermaid-native forms (`#quot;` for quotes, `<br/>` for newlines) instead of unsupported backslash escapes; a single quote in a device name no longer breaks the whole diagram
+- Reverse DNS resolution now runs concurrently over a bounded thread pool, and an invalid (non-IP) `dns_server` is logged at warning level instead of being silently swallowed
+
+### Fixed
+- **LLDP/Markdown port tables lost all connected-device and client data** after the v2 MAC-id migration: the maps became MAC-keyed but were looked up by device name. Port tables again show connected devices and client names
+- WAN1 could resolve to the WAN2 port because assignment matching was substring-based (`"wan" in "wan2"`); matching is now exact, so both interfaces map to distinct ports
+- `Device.in_gateway_mode` is now serialized and restored; a UX device in AP mode was previously reclassified as a gateway after a snapshot round-trip
+- Third-party LLDP peers seen with different MAC casing/format no longer render as duplicate nodes
+- `is_wired` is coerced with `as_bool`, so a stringly-typed `"false"` no longer misclassifies a wireless client as wired
+- `native_vlan: true` (and similar boolean payloads) no longer coerce to VLAN 1 in integer fields
+- `invalidate_cache` can now actually invalidate `devices` entries (it omitted the detail cache-key extra and silently removed nothing)
+- Cache-directory resolution failures (e.g. a symlinked `.cache`) degrade to no-cache instead of raising `ValueError` from every fetch, including with `use_cache=False`
+- `swap_firewall_policy_order` rolls back the first PUT if the second fails, instead of leaving both policies with a duplicate index
+- API responses whose `data` field is not a list are rejected at the boundary with `UnifiApiError` instead of failing deep in model code
+- Client `fw_version` is preserved through a snapshot round-trip (firmware no longer goes missing from restored inventories)
+- Snapshot loaders tolerate JSON `null` for list fields (`vlans`, `active_vlans`, `tagged_vlans`) instead of raising `TypeError`
+- Falsy VLAN 0 / port 0 are no longer coalesced away to a later key when comparing clients
+- Devices with an empty MAC no longer collide on the diff key and get compared against each other
+- Mermaid `linkStyle` indices are offset past the WAN link, so PoE/wireless styling targets the correct edges when a WAN node is present
+- Mermaid rendering no longer raises `KeyError` when the gateway is typed but appears in no edge or group
+- The device details table is no longer duplicated in each LLDP ports section
+- `render_device_inventory_table` and multi-client entries now escape Markdown special characters (a `|` no longer misaligns the table)
+- Orthogonal VPN overlay box is placed in reserved space at the canvas bottom instead of overlapping the level-1 nodes below the gateway
+- Isometric floor grid is aligned with the node tiles (both now share the same offset)
+- Group labels preserve mixed case (e.g. "IoT" renders as "IoT", not "Iot")
+- A narrow negative UniFi flag (e.g. `is_uap: False` on a wired Protect camera) no longer overrides positive ucore device info when classifying a client as UniFi
+- Authenticated sessions are retained across firewall writes instead of being discarded (which forced a fresh login on the next fetch)
+- Constructing a `verify_ssl=False` client no longer disables `InsecureRequestWarning` process-wide; suppression is scoped per request
+- Importing `unifi_topology.model.mock` without the optional `faker` package now raises a clear `ImportError` explaining the install
+- Legacy controllers are no longer probed with a doomed UDM Pro login on every fetch (the auth style is remembered per URL), reducing 429 rate-limiting risk
+- CI: the PyPI publish workflow now runs the test suite before building; the exact-pinned build backend was relaxed to avoid sdist install breakage; `click`, `msgpack`, and `pip` bumped to patched versions
+
+### Internal
+- Split `diff.py` (548 lines) into `_diff_events`, `_diff_engine`, and `_diff_specs` with `compare_topologies` as a thin facade
+- Removed two callable-injection layers (`_fetch.fetch_cached`, `_svg_render_flow`) and de-duplicated overlay box-metrics, VLAN striped-edge rendering, WAN-speed formatting, and the gateway-position helper across the SVG renderers
+- Model classification/coercion/edge facades no longer re-export private helpers; tests import from the real private modules
+- Introduced a `ClientRecord` type alias and removed the `# type: ignore` cluster in `topology.py`
+- Corrected stale facts in `AGENTS.md` (version, complexity limit, Jinja2 dependency, module layout)
+
 ## [2.2.2] - 2026-06-01
 
 ### Fixed
