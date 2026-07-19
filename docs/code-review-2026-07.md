@@ -225,7 +225,7 @@ Priorities:
   `_svg_tree_layout` imports `_TYPE_ORDER` from `svg_icons`, a function-level
   import dodges a facade-created cycle). Fold or delete facades; move
   `_TYPE_ORDER` and `_vlan_group_colors` to neutral modules.
-- [ ] **F39 Decompose `diff.py` (548 lines)** - `model/diff.py`. Split along
+- [x] **F39 Decompose `diff.py` (548 lines)** - `model/diff.py`. Split along
   existing seams: events/summary types, generic compare engine, describers +
   specs; `compare_topologies` stays as facade. Make `_build_summary`
   data-driven; extract the shared added/removed emission from
