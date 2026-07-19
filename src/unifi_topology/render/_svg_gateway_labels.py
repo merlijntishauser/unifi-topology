@@ -3,18 +3,7 @@
 from __future__ import annotations
 
 from ..model.topology import VpnTunnel, WanInfo, WanInterface
-
-
-def _format_wan_speed(speed_mbps: int | None) -> str | None:
-    """Format speed in Mbps to human-readable string (e.g., 10GbE, 100MbE)."""
-    if speed_mbps is None or speed_mbps == 0:
-        return None
-    if speed_mbps >= 1000:
-        gbps = speed_mbps / 1000
-        if gbps == int(gbps):
-            return f"{int(gbps)}GbE"
-        return f"{gbps:.1f}GbE"
-    return f"{speed_mbps}MbE"
+from ._wan_format import format_wan_speed as _format_wan_speed
 
 
 def _format_wan_speed_line(

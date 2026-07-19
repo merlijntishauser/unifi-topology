@@ -244,7 +244,7 @@ Priorities:
   also de-duplicate the uplink double coercion
   (`_topology_device_coerce.py:58-74`) and the port table coerced twice per
   device (`:153-161` + `_topology_port_coerce.py:175-184`).
-- [ ] **F44 Unify duplicated formatting across renderers** -
+- [x] **F44 Unify duplicated formatting across renderers** -
   `_format_wan_speed`/`_format_gbps` byte-identical in `render/mermaid.py:
   199-211` and `render/_svg_gateway_labels.py:8-17`; PoE predicates in 3
   places; device detail rows in 2 places with divergent model fallback (lldp

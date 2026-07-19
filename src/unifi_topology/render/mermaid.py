@@ -7,6 +7,7 @@ from collections.abc import Iterable
 
 from ..model.topology import Edge, WanInfo, WanInterface
 from ._templating import render_template
+from ._wan_format import format_wan_speed as _format_wan_speed
 from .mermaid_theme import DEFAULT_THEME, MermaidTheme, class_defs
 
 
@@ -195,21 +196,6 @@ def _render_link_styles(
         )
     for index in wireless_links:
         lines.append(f"  linkStyle {index} stroke-dasharray: 5 4;")
-
-
-def _format_wan_speed(speed_mbps: int | None) -> str | None:
-    if speed_mbps is None or speed_mbps == 0:
-        return None
-    if speed_mbps >= 1000:
-        return _format_gbps(speed_mbps)
-    return f"{speed_mbps}MbE"
-
-
-def _format_gbps(speed_mbps: int) -> str:
-    gbps = speed_mbps / 1000
-    if gbps == int(gbps):
-        return f"{int(gbps)}GbE"
-    return f"{gbps:.1f}GbE"
 
 
 def _wan_interface_label(wan: WanInterface, prefix: str, *, is_dual: bool) -> str:
