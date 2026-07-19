@@ -1,12 +1,12 @@
 # Code Review Findings (2026-07-18)
 
 **Status (2026-07-19):** All P0 (critical) and P1 (major correctness) findings
-fixed. Every finding is either fully done `[x]` or partially done `[~]`
-(concrete bug/cleanup landed, judgment-call or high-churn remainder deferred),
-except F54 `[ ]`. Each fix has a regression test and its own commit. Full suite
-green: ruff, pyright, complexity gate, 1175 tests passing.
+fixed, and every finding is now either fully done `[x]` or partially done `[~]`
+(concrete bug/cleanup landed; a judgment-call or high-churn remainder deferred).
+Nothing is fully unstarted. Each fix has a regression test and its own commit.
+Full suite green: ruff, pyright, complexity gate, 1176 tests passing.
 
-Deferred and why:
+Deferred remainders and why:
 - **F37 (adapter facade)**: trimming the ~35 private re-exports means rewriting
   14 test files' inline `unifi._private(...)` call sites; high churn, low value.
   Its concrete correctness part (the `_cache_lock` dedup) is done.
@@ -15,8 +15,8 @@ Deferred and why:
   import removed); deleting the `svg_layout`/`svg_iso_*` facade shims themselves
   is deferred.
 - **F42 remainder**: the shared edge-label recorder (gateway-position dedup done).
-- **F53/F54/F56/F57 remainders**: judgment-call heuristic tweaks (WAN-speed
-  bounds, ap-substring classification) and cosmetic dead-code in helper modules.
+- **F53/F56/F57 remainders**: judgment-call heuristic tweaks (WAN-speed bounds,
+  ap-substring classification) and cosmetic dead-code in helper modules.
 - **F46/F48/F50/F52/F55 remainders**: conftest factory sprawl, dead
   `_evict_client`, cache relocation (user-facing), CI job dedup, mock tests.
 
