@@ -26,6 +26,11 @@ class TestAsInt:
     def test_float_returns_none(self):
         assert _as_int(3.14) is None
 
+    def test_bool_returns_none(self):
+        # A JSON `true` must not masquerade as VLAN 1 in an int field.
+        assert _as_int(True) is None
+        assert _as_int(False) is None
+
 
 class TestAsFloat:
     def test_returns_float_from_int(self):

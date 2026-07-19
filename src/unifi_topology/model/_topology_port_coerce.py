@@ -21,6 +21,8 @@ def _as_float(value: object | None) -> float:
 
 
 def _as_int(value: object | None) -> int | None:
+    if isinstance(value, bool):
+        return None
     if isinstance(value, int):
         return value
     if isinstance(value, str):

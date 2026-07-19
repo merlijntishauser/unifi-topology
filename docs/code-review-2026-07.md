@@ -237,7 +237,7 @@ Priorities:
   (identical control flow, ~60 lines); `_find_gateway_position` byte-identical
   in `svg_wan.py:187-195` and `_svg_iso_wan_overlay.py:179-186` (move to
   `_svg_render_common.py`).
-- [ ] **F43 Consolidate the four int coercers** - `model/helpers.py:as_int`,
+- [x] **F43 Consolidate the four int coercers** - `model/helpers.py:as_int`,
   `model/_topology_port_coerce.py:_as_int` (lets `True` through as VLAN 1),
   `model/_raw.py:_coerce_int` (drops float speeds), `_client_access.py:
   _parse_port_value`. One or two well-specified helpers in `helpers.py`;
