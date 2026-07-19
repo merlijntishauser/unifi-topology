@@ -124,6 +124,11 @@ class TopologyResult:
     node_names: dict[str, str] = field(default_factory=dict)
 
 
+# A raw client record from the UniFi API: arbitrary string keys. Named so the
+# serialization/diff boundary shares one type instead of mixing dict[str, object]
+# and dict[str, Any].
+type ClientRecord = dict[str, Any]
+
 # Type aliases for maps used in edge building
 type DeviceSource = object
 type PortMap = dict[tuple[str, str], str]

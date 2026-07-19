@@ -256,7 +256,7 @@ Priorities:
   199-211` and `render/_svg_gateway_labels.py:8-17`; PoE predicates in 3
   places; device detail rows in 2 places with divergent model fallback (lldp
   drops `device.model`). Extract shared helpers; align the fallback chain.
-- [ ] **F45 Typed client records** - `model/_topology_types.py:128`
+- [x] **F45 Typed client records** - `model/_topology_types.py:128`
   (`type DeviceSource = object`), `topology.py:125`
   (`clients: list[dict[str, object]]` + 3 type-ignores),
   `Device.network_table: list[dict[str, Any]]`. Introduce a TypedDict/Protocol

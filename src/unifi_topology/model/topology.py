@@ -15,10 +15,11 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ._topology_types import (  # noqa: F401
     ClientPortMap,
+    ClientRecord,
     Device,
     DeviceSource,
     Edge,
@@ -34,6 +35,14 @@ from ._topology_types import (  # noqa: F401
     WanInterface,
 )
 from .helpers import normalize_mac
+
+
+def _dict_records(value: object) -> list[dict[str, Any]]:
+    """Return *value* as a list of dict records, or [] if it is not a list."""
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, dict)]
+
 
 if TYPE_CHECKING:
     from .diff import TopologyDiff
@@ -135,7 +144,7 @@ class Topology:
     """A complete network topology snapshot for serialization and comparison."""
 
     devices: list[Device] = field(default_factory=list)
-    clients: list[dict[str, object]] = field(default_factory=list)
+    clients: list[ClientRecord] = field(default_factory=list)
     edges: list[Edge] = field(default_factory=list)
     timestamp: str | None = None
 
@@ -147,7 +156,7 @@ class Topology:
             "version": _SNAPSHOT_VERSION,
             "timestamp": self.timestamp,
             "devices": [device_to_dict(d) for d in self.devices],
-            "clients": [client_to_dict(c) for c in self.clients],  # type: ignore[arg-type]
+            "clients": [client_to_dict(c) for c in self.clients],
             "edges": [edge_to_dict(e) for e in self.edges],
         }
 
@@ -158,13 +167,9 @@ class Topology:
 
         _check_snapshot_version(data.get("version", _SNAPSHOT_VERSION))
 
-        devices_data = data.get("devices", [])
-        clients_data = data.get("clients", [])
-        edges_data = data.get("edges", [])
-
-        devices = [device_from_dict(d) for d in devices_data]  # type: ignore[arg-type]
-        clients = [client_from_dict(c) for c in clients_data]  # type: ignore[arg-type]
-        edges = [edge_from_dict(e) for e in edges_data]  # type: ignore[arg-type]
+        devices = [device_from_dict(d) for d in _dict_records(data.get("devices"))]
+        clients = [client_from_dict(c) for c in _dict_records(data.get("clients"))]
+        edges = [edge_from_dict(e) for e in _dict_records(data.get("edges"))]
 
         timestamp = data.get("timestamp")
         return cls(
@@ -181,8 +186,8 @@ class Topology:
         return compare_topologies(
             old_devices=self.devices,
             new_devices=other.devices,
-            old_clients=self.clients,  # type: ignore[arg-type]
-            new_clients=other.clients,  # type: ignore[arg-type]
+            old_clients=self.clients,
+            new_clients=other.clients,
             old_edges=self.edges,
             new_edges=other.edges,
             old_timestamp=self.timestamp,
