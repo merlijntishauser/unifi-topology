@@ -327,7 +327,7 @@ Priorities:
   100 Gbps (add bounds sanity) (`wan.py:9-19`); bare `"ap" in name` classify
   substring false-positives ("Apollo") (`_classify_device.py:12-21, 48-49`);
   `extract_port_number`/eth0 0-based off-by-one (`ports.py:8-15`).
-- [ ] **F54 Model minor structure group** - `topology.py:50-95` duplicates
+- [x] **F54 Model minor structure group** - `topology.py:50-95` duplicates
   `clients.client_matches_filters`; `collapse_client_edges` mutates its
   arguments and returns values (`clients.py:217-237`); `_collect_lldp_links`
   takes 8 params that are `EdgeDiscoveryResult` fields

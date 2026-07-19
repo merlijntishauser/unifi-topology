@@ -18,16 +18,19 @@ def test_collapse_client_edges_collapses_generic_clients():
         "cc:cc:cc:00:00:03": "client",
     }
     node_names: dict[str, str] = {"aa:bb:cc:00:00:01": "Switch"}
-    collapsed_edges, client_counts = collapse_client_edges(edges, node_types, node_names)
-    assert client_counts == {"aa:bb:cc:00:00:01": 3}
-    assert len(collapsed_edges) == 1
-    assert collapsed_edges[0].left == "aa:bb:cc:00:00:01"
-    assert collapsed_edges[0].right == "aa:bb:cc:00:00:01__cluster"
-    assert node_types["aa:bb:cc:00:00:01__cluster"] == "client_cluster"
-    assert node_names["aa:bb:cc:00:00:01__cluster"] == "Switch (3 clients)"
-    assert "cc:cc:cc:00:00:01" not in node_types
-    assert "cc:cc:cc:00:00:02" not in node_types
-    assert "cc:cc:cc:00:00:03" not in node_types
+    result = collapse_client_edges(edges, node_types, node_names)
+    assert result.client_counts == {"aa:bb:cc:00:00:01": 3}
+    assert len(result.edges) == 1
+    assert result.edges[0].left == "aa:bb:cc:00:00:01"
+    assert result.edges[0].right == "aa:bb:cc:00:00:01__cluster"
+    assert result.node_types["aa:bb:cc:00:00:01__cluster"] == "client_cluster"
+    assert result.node_names["aa:bb:cc:00:00:01__cluster"] == "Switch (3 clients)"
+    assert "cc:cc:cc:00:00:01" not in result.node_types
+    assert "cc:cc:cc:00:00:02" not in result.node_types
+    assert "cc:cc:cc:00:00:03" not in result.node_types
+    # Inputs must not be mutated.
+    assert "cc:cc:cc:00:00:01" in node_types
+    assert "aa:bb:cc:00:00:01__cluster" not in node_names
 
 
 def test_collapse_client_edges_preserves_non_client_edges():
@@ -41,11 +44,11 @@ def test_collapse_client_edges_preserves_non_client_edges():
         "aa:bb:cc:00:00:02": "ap",
         "cc:cc:cc:00:00:01": "client",
     }
-    collapsed_edges, client_counts = collapse_client_edges(edges, node_types)
-    assert client_counts == {"aa:bb:cc:00:00:01": 1}
-    ap_edges = [e for e in collapsed_edges if e.right == "aa:bb:cc:00:00:02"]
+    result = collapse_client_edges(edges, node_types)
+    assert result.client_counts == {"aa:bb:cc:00:00:01": 1}
+    ap_edges = [e for e in result.edges if e.right == "aa:bb:cc:00:00:02"]
     assert len(ap_edges) == 1
-    cluster_edges = [e for e in collapsed_edges if "__cluster" in e.right]
+    cluster_edges = [e for e in result.edges if "__cluster" in e.right]
     assert len(cluster_edges) == 1
 
 
@@ -63,9 +66,9 @@ def test_collapse_client_edges_multiple_devices():
         "cc:cc:cc:00:00:02": "client",
         "cc:cc:cc:00:00:03": "client",
     }
-    collapsed_edges, client_counts = collapse_client_edges(edges, node_types)
-    assert client_counts == {"aa:bb:cc:00:00:01": 2, "aa:bb:cc:00:00:02": 1}
-    assert len(collapsed_edges) == 2
+    result = collapse_client_edges(edges, node_types)
+    assert result.client_counts == {"aa:bb:cc:00:00:01": 2, "aa:bb:cc:00:00:02": 1}
+    assert len(result.edges) == 2
 
 
 def test_collapse_client_edges_no_clients():
@@ -77,9 +80,9 @@ def test_collapse_client_edges_no_clients():
         "aa:bb:cc:00:00:01": "switch",
         "aa:bb:cc:00:00:02": "ap",
     }
-    collapsed_edges, client_counts = collapse_client_edges(edges, node_types)
-    assert client_counts == {}
-    assert collapsed_edges == edges
+    result = collapse_client_edges(edges, node_types)
+    assert result.client_counts == {}
+    assert result.edges == edges
 
 
 def test_build_client_edges_includes_vlan():

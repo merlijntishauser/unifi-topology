@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import NamedTuple
 
 from . import _client_access
 from .classify import (
@@ -214,24 +215,36 @@ def _partition_client_edges(
     return non_client_edges, client_counts, collapsed_clients
 
 
+class CollapsedClientEdges(NamedTuple):
+    edges: list[Edge]
+    client_counts: dict[str, int]
+    node_types: dict[str, str]
+    node_names: dict[str, str]
+
+
 def collapse_client_edges(
     edges: list[Edge],
     node_types: dict[str, str],
     node_names: dict[str, str] | None = None,
-) -> tuple[list[Edge], dict[str, int]]:
-    """Collapse individual client edges into cluster nodes."""
-    names = node_names or {}
-    collapsed_edges, client_counts, collapsed_clients = _partition_client_edges(edges, node_types)
+) -> CollapsedClientEdges:
+    """Collapse individual client edges into cluster nodes.
+
+    Pure: the input maps are not mutated. Returns the collapsed edges, per-device
+    client counts, and fresh node_types/node_names maps with client nodes removed
+    and cluster nodes added.
+    """
+    types = dict(node_types)
+    names = dict(node_names or {})
+    collapsed_edges, client_counts, collapsed_clients = _partition_client_edges(edges, types)
 
     for client_id in collapsed_clients:
-        node_types.pop(client_id, None)
+        types.pop(client_id, None)
 
     for device_id, count in sorted(client_counts.items()):
         cluster_id = f"{device_id}__cluster"
         device_display = names.get(device_id, device_id)
         collapsed_edges.append(Edge(left=device_id, right=cluster_id))
-        node_types[cluster_id] = "client_cluster"
-        if node_names is not None:
-            node_names[cluster_id] = f"{device_display} ({count} clients)"
+        types[cluster_id] = "client_cluster"
+        names[cluster_id] = f"{device_display} ({count} clients)"
 
-    return collapsed_edges, client_counts
+    return CollapsedClientEdges(collapsed_edges, client_counts, types, names)
