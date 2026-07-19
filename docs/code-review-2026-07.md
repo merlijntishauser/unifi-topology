@@ -290,7 +290,7 @@ Priorities:
   clients against a dead server = 200s); hostname-valued `dns_server` raises
   ValueError silently swallowed at debug level. Fan out with a thread pool;
   log the config error at warning.
-- [ ] **F52 Packaging/CI hygiene** - exact-pinned build backend
+- [x] **F52 Packaging/CI hygiene** - exact-pinned build backend
   (`setuptools==83.0.0`, `wheel` unnecessary) breaks sdist installs if yanked;
   `push: ["**"]` + `pull_request` double-runs CI; 7 copy-pasted install blocks
   (composite action); fully serial job chain; ruff/pyright target 3.13 while
