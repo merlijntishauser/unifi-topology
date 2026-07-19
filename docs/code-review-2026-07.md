@@ -235,7 +235,7 @@ Priorities:
   `_svg_iso_wan_overlay.py:24-44`) plus a fifth implicit hardcode
   (`_svg_render_flow.py:81`); globe drawing duplicated; centered-label loop
   appears 4x. One metrics helper, one globe fn, one label appender.
-- [ ] **F41 Parameterize the VLAN striped-edge renderer** -
+- [x] **F41 Parameterize the VLAN striped-edge renderer** -
   `render/svg_edges.py:43-81` vs `render/_svg_iso_edge_draw.py:29-67`.
   Identical algorithm, differs only in constants; extract to
   `_svg_edge_shared.py`.

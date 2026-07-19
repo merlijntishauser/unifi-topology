@@ -37,34 +37,20 @@ def _render_iso_vlan_striped_edge(
     opacity: float = 1.0,
 ) -> None:
     """Render an isometric edge with striped VLAN colors and glow effect."""
-    if not vlans:
-        return
-    num_vlans = len(vlans)
-    segment_len = 16
-    total_pattern = segment_len * num_vlans
-    gap_len = total_pattern - segment_len
-    opacity_attr = f' opacity="{opacity}"' if opacity < 1.0 else ""
-
-    glow_color = theme.vlan_color(vlans[0])
-    glow_width = base_width * 3
-    glow_opacity = 0.25 * opacity
-    lines.append(
-        f'<path d="{path}" stroke="{glow_color}" stroke-width="{glow_width}" '
-        f'fill="none" stroke-linecap="round" stroke-linejoin="round" '
-        f'opacity="{glow_opacity}" filter="url(#iso-edge-glow)" {extra_attrs}/>'
+    _svg_edge_shared._render_vlan_striped_edge_generic(
+        lines,
+        path,
+        vlans,
+        theme,
+        base_width,
+        is_wireless,
+        extra_attrs,
+        opacity,
+        segment_len=16,
+        filter_id="iso-edge-glow",
+        line_attrs='stroke-linecap="round" stroke-linejoin="round" ',
+        wireless_dash=lambda gap_len: f"6 3 6 {gap_len + 1}",
     )
-
-    for index, vlan_id in enumerate(vlans):
-        color = theme.vlan_color(vlan_id)
-        dash_offset = -index * segment_len
-        dash = f'stroke-dasharray="{segment_len} {gap_len}"'
-        if is_wireless:
-            dash = f'stroke-dasharray="6 3 6 {gap_len + 1}"'
-        lines.append(
-            f'<path d="{path}" stroke="{color}" stroke-width="{base_width}" '
-            f'fill="none" stroke-linecap="round" stroke-linejoin="round" '
-            f'{dash} stroke-dashoffset="{dash_offset}"{opacity_attr} {extra_attrs}/>'
-        )
 
 
 def _render_iso_poe_icon(

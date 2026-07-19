@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from ..model.topology import Edge
@@ -110,4 +111,54 @@ def _render_vlan_endpoint_markers(
             f'height="{marker_size}" fill="{color}" stroke="#fff" '
             f'stroke-width="0.5" rx="1" data-vlan="{vlan_id}">'
             f"<title>VLAN {vlan_id}</title></rect>"
+        )
+
+
+def _render_vlan_striped_edge_generic(
+    lines: list[str],
+    path: str,
+    vlans: tuple[int, ...],
+    theme: SvgTheme,
+    base_width: int,
+    is_wireless: bool,
+    extra_attrs: str,
+    opacity: float,
+    *,
+    segment_len: int,
+    filter_id: str,
+    line_attrs: str,
+    wireless_dash: Callable[[int], str],
+) -> None:
+    """Render an edge striped by VLAN color with a glow layer.
+
+    Shared by the orthogonal and isometric edge renderers, which differ only in
+    the segment length, extra line attributes, glow-filter id, and the wireless
+    dash pattern.
+    """
+    if not vlans:
+        return
+    num_vlans = len(vlans)
+    total_pattern = segment_len * num_vlans
+    gap_len = total_pattern - segment_len
+    opacity_attr = f' opacity="{opacity}"' if opacity < 1.0 else ""
+
+    glow_color = theme.vlan_color(vlans[0])
+    glow_width = base_width * 3
+    glow_opacity = 0.25 * opacity
+    lines.append(
+        f'<path d="{path}" stroke="{glow_color}" stroke-width="{glow_width}" '
+        f'fill="none" {line_attrs}'
+        f'opacity="{glow_opacity}" filter="url(#{filter_id})" {extra_attrs}/>'
+    )
+
+    for index, vlan_id in enumerate(vlans):
+        color = theme.vlan_color(vlan_id)
+        dash_offset = -index * segment_len
+        dash = f'stroke-dasharray="{segment_len} {gap_len}"'
+        if is_wireless:
+            dash = f'stroke-dasharray="{wireless_dash(gap_len)}"'
+        lines.append(
+            f'<path d="{path}" stroke="{color}" stroke-width="{base_width}" '
+            f'fill="none" {line_attrs}{dash} stroke-dashoffset="{dash_offset}"'
+            f"{opacity_attr} {extra_attrs}/>"
         )
