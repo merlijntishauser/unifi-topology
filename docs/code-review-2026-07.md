@@ -1,11 +1,21 @@
 # Code Review Findings (2026-07-18)
 
 **Status (2026-07-19):** All P0 (critical) and P1 (major correctness) findings
-fixed, each with a regression test and its own commit. Several P2/P3 items also
-done; the rest (large pure-structure refactors and judgment-call minor tweaks)
-remain. `[x]` = done, `[~]` = partially done (concrete bug fixed, structural
-remainder deferred), `[ ]` = not started. Full suite green: ruff, pyright,
-complexity gate, 1171 tests passing.
+fixed, plus all of P2 except F37 (adapter facade) and the edge-label-recorder
+half of F42. Every finding either fully done `[x]` or partially done `[~]`
+(concrete bug/cleanup landed, judgment-call or high-churn remainder deferred),
+except F38 and F54 `[ ]`. Each fix has a regression test and its own commit.
+Full suite green: ruff, pyright, complexity gate, 1175 tests passing.
+
+Deferred and why:
+- **F37 (adapter facade), F38 (render facade layering)**: high-churn structural
+  moves across many inline test call sites / tangled cross-imports; debatable
+  value, deferred to avoid destabilizing the suite.
+- **F42 remainder**: the shared edge-label recorder (gateway-position dedup done).
+- **F53/F54/F56/F57 remainders**: judgment-call heuristic tweaks (WAN-speed
+  bounds, ap-substring classification) and cosmetic dead-code in helper modules.
+- **F46/F48/F50/F52/F55 remainders**: conftest factory sprawl, dead
+  `_evict_client`, cache relocation (user-facing), CI job dedup, mock tests.
 
 Full-codebase review, five parallel reviewers (adapters/packaging, model core,
 serialization/diff/mock, SVG render, text render/tests). Findings ordered by
