@@ -7,7 +7,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from ..model.topology import Edge
-from .svg_icons import _TYPE_ORDER
+from ._svg_node_types import _TYPE_ORDER
 from .svg_theme import SvgOptions
 
 

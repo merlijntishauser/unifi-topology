@@ -4,22 +4,10 @@ from __future__ import annotations
 
 from ..model.topology import WanInfo
 from ._svg_render_common import _find_gateway_position as _find_gateway_position
-from ._svg_render_common import _overlay_box_size
+from ._svg_render_common import _overlay_box_size, _vlan_group_colors
 from .svg_labels import _build_wan_label_lines, _escape_attr, _escape_text
 from .svg_layout import GroupBounds
 from .svg_theme import SvgOptions, SvgTheme
-
-
-def _vlan_group_colors(
-    group_name: str,
-    theme: SvgTheme,
-    group_vlan_ids: dict[str, int] | None,
-) -> tuple[str, str]:
-    """Return (fill, stroke) for a group, using VLAN color when available."""
-    if group_vlan_ids and group_name in group_vlan_ids:
-        color = theme.vlan_color(group_vlan_ids[group_name])
-        return color, color
-    return theme.group_colors(group_name)
 
 
 def _render_group_boundaries(

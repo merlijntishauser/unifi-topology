@@ -227,7 +227,7 @@ Priorities:
   `__all__`, plus a line-for-line duplicated `_cache_lock` context manager
   (`unifi.py:99-111` vs `_cache_store.py:60-72`). Tests import from the real
   modules; delete the shims and the duplicate.
-- [ ] **F38 Untangle render facade layering** - `render/svg_layout.py`,
+- [~] **F38 Untangle render facade layering** - `render/svg_layout.py`,
   `render/svg_iso_nodes.py`, `render/svg_iso_edges.py`,
   `render/svg_isometric.py:15-66`, `render/_svg_iso_overlays.py`. Public-named
   modules are shims re-exporting only `_`-private names; cross-links route

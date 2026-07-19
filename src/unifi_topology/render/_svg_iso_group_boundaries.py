@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ._svg_render_common import _vlan_group_colors
 from .svg_iso_geometry import IsoLayout, _iso_project
 from .svg_labels import _escape_attr, _escape_text
 from .svg_layout import _build_node_to_group_map, _resolve_group_order
 from .svg_theme import SvgOptions, SvgTheme
-from .svg_wan import _vlan_group_colors
 
 _ISO_GROUP_LABEL_SIZE = 48
 _ISO_PERSPECTIVE_ANGLE = 30

@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..model.topology import Edge
+from ._svg_tree_layout import _tree_layout_indices
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
 from .svg_theme import SvgOptions, SvgTheme
 
@@ -129,8 +130,6 @@ def _iso_layout_positions(
     node_types: dict[str, str],
     options: SvgOptions,
 ) -> IsoLayoutPositions:
-    from .svg_layout import _tree_layout_indices
-
     layout = _iso_layout(options)
     positions_index, levels = _tree_layout_indices(edges, node_types)
     grid_positions, positions = _project_iso_positions(layout, positions_index, levels)

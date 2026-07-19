@@ -79,48 +79,6 @@ _ICON_SETS = {
     ),
 }
 
-# Node type fill/stroke colors for orthogonal rendering
-_TYPE_COLORS = {
-    "gateway": ("#ffd199", "#f08a00"),
-    "switch": ("#bfe4ff", "#1c6dd0"),
-    "ap": ("#c4f2d4", "#1f9a50"),
-    "camera": ("#b3e5fc", "#0277bd"),
-    "tv": ("#d1c4e9", "#512da8"),
-    "phone": ("#c8e6c9", "#388e3c"),
-    "printer": ("#cfd8dc", "#546e7a"),
-    "nas": ("#ffe0b2", "#e65100"),
-    "speaker": ("#b2dfdb", "#00796b"),
-    "game_console": ("#e1bee7", "#7b1fa2"),
-    "iot": ("#b2ebf2", "#00838f"),
-    "client": ("#e4ccff", "#6b2fb4"),
-    "client_cluster": ("#d4b8ff", "#5a25a0"),
-    "other": ("#e3e3e3", "#7b7b7b"),
-}
-
-
-def _safe_node_type(node_type: str) -> str:
-    """Restrict a node type to the known set so it is safe to interpolate."""
-    return node_type if node_type in _TYPE_COLORS else "other"
-
-
-# Type ordering for layout sorting
-_TYPE_ORDER = [
-    "gateway",
-    "switch",
-    "ap",
-    "camera",
-    "tv",
-    "phone",
-    "printer",
-    "nas",
-    "speaker",
-    "game_console",
-    "iot",
-    "client",
-    "client_cluster",
-    "other",
-]
-
 
 def _darken_hex(color: str, factor: float = 0.35) -> str:
     """Darken a hex color by *factor* (0..1). Returns 6-digit hex."""

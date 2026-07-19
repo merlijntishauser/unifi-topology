@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from .svg_icons import _safe_node_type
+from ._svg_node_types import _safe_node_type
 from .svg_labels import _escape_attr
 
 _VALID_ATTR_NAME = re.compile(r"^[A-Za-z_][\w-]*$")

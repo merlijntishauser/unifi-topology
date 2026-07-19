@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from .svg_icons import _TYPE_COLORS, _safe_node_type
+from ._svg_node_types import _TYPE_COLORS, _safe_node_type
 from .svg_iso_geometry import (
     IsoLayout,
     _iso_front_text_position,

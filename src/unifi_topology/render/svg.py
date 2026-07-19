@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
 from . import _svg_dual_render, _svg_render_flow
+from ._svg_node_types import _TYPE_COLORS, _safe_node_type
 from ._svg_render_common import finish_svg_document, start_svg_document
 from .svg_edges import _render_svg_edges
-from .svg_icons import (
-    _TYPE_COLORS,
-    _load_icons,
-    _safe_node_type,
-)
+from .svg_icons import _load_icons
 from .svg_labels import (
     _escape_text,
     _wrap_text,

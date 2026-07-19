@@ -43,6 +43,18 @@ def _find_gateway_position(
     return None
 
 
+def _vlan_group_colors(
+    group_name: str,
+    theme: SvgTheme,
+    group_vlan_ids: dict[str, int] | None,
+) -> tuple[str, str]:
+    """Return (fill, stroke) for a group, using VLAN color when available."""
+    if group_vlan_ids and group_name in group_vlan_ids:
+        color = theme.vlan_color(group_vlan_ids[group_name])
+        return color, color
+    return theme.group_colors(group_name)
+
+
 def _overlay_box_size(
     icon_size: float,
     padding: float,
