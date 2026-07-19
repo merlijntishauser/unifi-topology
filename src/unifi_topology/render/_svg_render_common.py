@@ -32,6 +32,17 @@ def finish_svg_document(lines: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _find_gateway_position(
+    node_types: dict[str, str],
+    positions: dict[str, tuple[float, float]],
+) -> tuple[float, float] | None:
+    """Find the position of the gateway node."""
+    for name, node_type in node_types.items():
+        if node_type == "gateway" and name in positions:
+            return positions[name]
+    return None
+
+
 def render_at_gateway[TPosition, TContent](
     *,
     lines: list[str],

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ..model.topology import WanInfo
+from ._svg_render_common import _find_gateway_position as _find_gateway_position
 from .svg_labels import _build_wan_label_lines, _escape_attr, _escape_text
 from .svg_layout import GroupBounds
 from .svg_theme import SvgOptions, SvgTheme
@@ -180,14 +181,3 @@ def _apply_wan_offset(
         for gb in group_bounds_list
     ]
     return shifted_positions, shifted_bounds, height + wan_offset_y
-
-
-def _find_gateway_position(
-    node_types: dict[str, str],
-    positions: dict[str, tuple[float, float]],
-) -> tuple[float, float] | None:
-    """Find the position of the gateway node."""
-    for name, ntype in node_types.items():
-        if ntype == "gateway" and name in positions:
-            return positions[name]
-    return None

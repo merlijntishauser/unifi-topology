@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..model.topology import VpnTunnel, WanInfo
+from ._svg_render_common import _find_gateway_position as _find_gateway_position
 from .svg_iso_geometry import IsoLayout
 from .svg_labels import _build_wan_label_lines, _escape_text
 from .svg_theme import SvgOptions, SvgTheme
@@ -174,13 +175,3 @@ def _expand_viewbox_for_overlays(
         width = width + 200
         height = height + 100
     return width, height
-
-
-def _find_gateway_position(
-    node_types: dict[str, str],
-    positions: dict[str, tuple[float, float]],
-) -> tuple[float, float] | None:
-    for name, node_type in node_types.items():
-        if node_type == "gateway" and name in positions:
-            return positions[name]
-    return None

@@ -232,7 +232,7 @@ Priorities:
   `render/svg_edges.py:43-81` vs `render/_svg_iso_edge_draw.py:29-67`.
   Identical algorithm, differs only in constants; extract to
   `_svg_edge_shared.py`.
-- [ ] **F42 Shared edge-label recorder and gateway-position helper** -
+- [x] **F42 Shared edge-label recorder and gateway-position helper** -
   `render/svg_edges.py:191-245` vs `render/_svg_iso_edge_labels.py:40-98`
   (identical control flow, ~60 lines); `_find_gateway_position` byte-identical
   in `svg_wan.py:187-195` and `_svg_iso_wan_overlay.py:179-186` (move to
