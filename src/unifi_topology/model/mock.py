@@ -7,9 +7,18 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from faker import Faker
+try:
+    from faker import Faker
+except ModuleNotFoundError as exc:  # pragma: no cover - exercised only without faker
+    raise ImportError(
+        "unifi_topology.model.mock requires the optional 'faker' package. "
+        "Install it with: pip install faker"
+    ) from exc
 
 from .vlans import build_vlan_info, normalize_networks
+
+# Candidate VLAN ids for generated mock clients/networks.
+_MOCK_VLAN_OPTIONS = [1, 10, 20, 30, 100]
 
 
 @dataclass(frozen=True)
@@ -143,7 +152,7 @@ def _build_wired_clients(
         _add_port(core_switch, port_idx, poe_enabled=False, rng=state.rng)
         name = _unique_client_name(state, client_index=start_index + i)
         # Assign VLANs to wired clients based on index
-        vlan_options = [1, 10, 20, 30, 100]
+        vlan_options = _MOCK_VLAN_OPTIONS
         client_vlan = vlan_options[port_idx % len(vlan_options)]
         clients.append(
             {
@@ -328,14 +337,14 @@ def _port_entry(
 
 
 def _native_vlan(port_idx: int) -> int:
-    vlan_options = [1, 10, 20, 30, 100]
+    vlan_options = _MOCK_VLAN_OPTIONS
     return vlan_options[port_idx % len(vlan_options)]
 
 
 def _tagged_vlans(native_vlan: int, *, is_trunk: bool) -> list[int]:
     if not is_trunk:
         return []
-    vlan_options = [1, 10, 20, 30, 100]
+    vlan_options = _MOCK_VLAN_OPTIONS
     return [vlan for vlan in vlan_options if vlan != native_vlan]
 
 

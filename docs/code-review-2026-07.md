@@ -321,7 +321,7 @@ Priorities:
   `_primary_vlan_for_node` docstring contradicts behavior (`edges.py:280-290`);
   `wan.py:149` mypy-style ignore instead of narrowing; inventory
   Iterable/Sequence/list parameter inconsistency.
-- [ ] **F55 Mock/dependency hygiene** - star-import of `unifi_topology.model`
+- [x] **F55 Mock/dependency hygiene** - star-import of `unifi_topology.model`
   raises raw `ModuleNotFoundError: faker` on prod installs (`MockOptions` in
   `__all__` triggers the lazy load); add a friendly ImportError in `mock.py`
   and consider a public `mock` extra; hoist duplicated `[1, 10, 20, 30, 100]`
