@@ -418,7 +418,6 @@ def _build_swatch_row(fill: str, stroke: str, label: str) -> dict[str, object]:
 
 
 def _build_line_row(
-    theme: MermaidTheme,
     *,
     color: str,
     width: int,
@@ -445,7 +444,6 @@ def _legend_compact_rows(theme: MermaidTheme) -> list[dict[str, object]]:
         _build_swatch_row(theme.node_client[0], theme.node_client[1], "Client"),
         _build_swatch_row(theme.node_other[0], theme.node_other[1], "Other"),
         _build_line_row(
-            theme,
             color=theme.poe_link,
             width=theme.poe_link_width,
             dashed=False,
@@ -453,7 +451,6 @@ def _legend_compact_rows(theme: MermaidTheme) -> list[dict[str, object]]:
             bolt=True,
         ),
         _build_line_row(
-            theme,
             color=theme.standard_link,
             width=theme.standard_link_width,
             dashed=False,
@@ -461,7 +458,6 @@ def _legend_compact_rows(theme: MermaidTheme) -> list[dict[str, object]]:
             bolt=False,
         ),
         _build_line_row(
-            theme,
             color=theme.standard_link,
             width=theme.standard_link_width,
             dashed=True,

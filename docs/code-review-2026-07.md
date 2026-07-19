@@ -347,7 +347,7 @@ Priorities:
   long overlay renderers split into metrics/connector/box/labels like the
   ortho WAN path; unannotated sort_key params; document/name the iso magic
   constants.
-- [ ] **F57 Text render minor group** - Jinja autoescape extensions never
+- [~] **F57 Text render minor group** - Jinja autoescape extensions never
   match `*.md.j2`/`*.html.j2` (autoescape effectively off)
   (`_templating.py:7-14`); headings interpolate `device_name`/`title`
   unescaped; mermaid legend template has duplicate/dead linkStyle+classDef
