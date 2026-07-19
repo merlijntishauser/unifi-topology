@@ -43,6 +43,24 @@ def _find_gateway_position(
     return None
 
 
+def _overlay_box_size(
+    icon_size: float,
+    padding: float,
+    font_size: int,
+    label_lines: list[str],
+) -> tuple[float, float]:
+    """Compute (width, height) for a WAN/VPN overlay box from its label content.
+
+    Shared by the orthogonal and isometric WAN and VPN overlays, which all use
+    the same icon + text-column sizing formula.
+    """
+    line_height = font_size + 4
+    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
+    box_width = max(icon_size + padding * 2, max_text_width + padding * 2)
+    box_height = icon_size + len(label_lines) * line_height + padding * 3
+    return box_width, box_height
+
+
 def render_at_gateway[TPosition, TContent](
     *,
     lines: list[str],

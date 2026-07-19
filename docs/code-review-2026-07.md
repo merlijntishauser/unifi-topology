@@ -230,7 +230,7 @@ Priorities:
   specs; `compare_topologies` stays as facade. Make `_build_summary`
   data-driven; extract the shared added/removed emission from
   `_compare_entities` (~48 lines).
-- [ ] **F40 Extract shared overlay primitives (ortho/iso)** - overlay box
+- [x] **F40 Extract shared overlay primitives (ortho/iso)** - overlay box
   metrics computed 4x (`svg_wan.py:55-66`, `svg_vpn.py:21-35, 162-167`,
   `_svg_iso_wan_overlay.py:24-44`) plus a fifth implicit hardcode
   (`_svg_render_flow.py:81`); globe drawing duplicated; centered-label loop

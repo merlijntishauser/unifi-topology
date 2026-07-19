@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ..model.topology import VpnTunnel
+from ._svg_render_common import _overlay_box_size
 from .svg_labels import _build_vpn_label_lines, _escape_text
 from .svg_theme import SvgOptions, SvgTheme
 
@@ -29,9 +30,7 @@ def _vpn_box_dimensions(
     icon_size = 30
     padding = 10
     line_height = font_size + 4
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(icon_size + padding * 2, max_text_width + padding * 2)
-    box_height = icon_size + len(label_lines) * line_height + padding * 3
+    box_width, box_height = _overlay_box_size(icon_size, padding, font_size, label_lines)
     return icon_size, padding, line_height, box_width, box_height
 
 
@@ -168,9 +167,7 @@ def _render_iso_vpn_tunnels(
     icon_size = 34
     padding_val = 12
     line_height = font_size + 4
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(icon_size + padding_val * 2, max_text_width + padding_val * 2)
-    box_height = icon_size + len(label_lines) * line_height + padding_val * 3
+    box_width, box_height = _overlay_box_size(icon_size, padding_val, font_size, label_lines)
 
     # Use iso- prefix for gradient references
     iso_gradient_id = f"iso-{gradient_id}"

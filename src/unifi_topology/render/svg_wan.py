@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ..model.topology import WanInfo
 from ._svg_render_common import _find_gateway_position as _find_gateway_position
+from ._svg_render_common import _overlay_box_size
 from .svg_labels import _build_wan_label_lines, _escape_attr, _escape_text
 from .svg_layout import GroupBounds
 from .svg_theme import SvgOptions, SvgTheme
@@ -59,9 +60,7 @@ def _wan_box_dimensions(
     globe_size = 36
     padding = 10
     line_height = font_size + 4
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(globe_size + padding * 2, max_text_width + padding * 2)
-    box_height = globe_size + len(label_lines) * line_height + padding * 3
+    box_width, box_height = _overlay_box_size(globe_size, padding, font_size, label_lines)
     return globe_size, padding, line_height, box_width, box_height
 
 

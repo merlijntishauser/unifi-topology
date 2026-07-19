@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from ..model.topology import VpnTunnel, WanInfo
 from ._svg_render_common import _find_gateway_position as _find_gateway_position
+from ._svg_render_common import _overlay_box_size
 from .svg_iso_geometry import IsoLayout
 from .svg_labels import _build_wan_label_lines, _escape_text
 from .svg_theme import SvgOptions, SvgTheme
@@ -31,9 +32,7 @@ def _iso_wan_box_metrics(
     globe_size = 40.0
     padding = 12.0
     line_height = float(font_size + 4)
-    max_text_width = max((len(line) for line in label_lines), default=10) * font_size * 0.55
-    box_width = max(globe_size + padding * 2, max_text_width + padding * 2)
-    box_height = globe_size + len(label_lines) * line_height + padding * 3
+    box_width, box_height = _overlay_box_size(globe_size, padding, font_size, label_lines)
     return IsoWanBoxMetrics(
         label_lines=label_lines,
         font_size=font_size,
