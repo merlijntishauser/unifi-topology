@@ -11,3 +11,6 @@ ruff==0.15.21
 pyright==1.1.411
 setuptools==83.0.0
 wheel==0.47.0
+# Transitive/tooling pins bumped to patched versions (pip-audit remediation)
+click==8.3.3
+msgpack==1.2.1
