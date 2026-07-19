@@ -32,3 +32,19 @@ def test_resolve_hostnames_invalid_dns_server():
         result = resolve_hostnames(["192.168.1.10"], "not-an-ip")
 
     assert result == {}
+
+
+def test_resolve_hostnames_invalid_dns_server_warns(caplog):
+    import logging
+
+    with patch("unifi_topology.adapters.dns.dns.resolver.Resolver") as mock_resolver_cls:
+        mock_resolver = MagicMock()
+        mock_resolver_cls.return_value = mock_resolver
+        type(mock_resolver).nameservers = property(
+            fget=lambda self: [],
+            fset=MagicMock(side_effect=ValueError("Invalid address")),
+        )
+        with caplog.at_level(logging.WARNING):
+            resolve_hostnames(["192.168.1.10"], "not-an-ip")
+
+    assert any("DNS server" in r.message for r in caplog.records if r.levelno >= logging.WARNING)

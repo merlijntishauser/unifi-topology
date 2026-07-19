@@ -292,7 +292,7 @@ Priorities:
   Cache defaults to CWD under the predecessor project's name
   (`.cache/unifi_network_maps`); files contain MACs/IPs/hostnames and are
   world-readable. Prefer `~/.cache/unifi_topology`, write files 0600.
-- [ ] **F51 Concurrent DNS lookups; surface bad `dns_server`** -
+- [x] **F51 Concurrent DNS lookups; surface bad `dns_server`** -
   `adapters/dns.py:33-41`. Sequential PTR queries with 2s lifetime each (100
   clients against a dead server = 200s); hostname-valued `dns_server` raises
   ValueError silently swallowed at debug level. Fan out with a thread pool;
