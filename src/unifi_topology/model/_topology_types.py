@@ -43,7 +43,10 @@ class PortInfo:
     wan_networkconf_id: str | None = None
 
 
-@dataclass(frozen=True)
+# eq=False so Device uses identity equality/hashing. Its list/dict fields make
+# the auto-generated __hash__ raise TypeError, and nothing compares whole
+# Device objects by value (comparisons use .mac/.name), so identity is correct.
+@dataclass(frozen=True, eq=False)
 class Device:
     """A network device (gateway, switch, or access point)."""
 

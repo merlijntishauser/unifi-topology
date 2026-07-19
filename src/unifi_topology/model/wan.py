@@ -144,11 +144,11 @@ def _extract_wan2(
     wan2_disabled: str,
 ) -> WanInterface | None:
     wan2_port = _find_wan2_port(device.port_table)
-    if not _should_include_wan2(wan2_port, wan2_label, wan2_isp_speed):
+    if wan2_port is None or not _should_include_wan2(wan2_port, wan2_label, wan2_isp_speed):
         return None
     enabled_override = _resolve_wan2_enabled(wan2_disabled, wan_enabled_map)
     return _build_wan_interface(
-        wan2_port,  # type: ignore[arg-type]
+        wan2_port,
         9,
         None,
         wan2_label,

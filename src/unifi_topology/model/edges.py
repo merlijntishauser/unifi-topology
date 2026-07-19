@@ -242,7 +242,10 @@ def _primary_vlan_for_node(
 ) -> int | None:
     """Find the primary VLAN for a node from its edges.
 
-    Uses active_vlans first, falls back to vlans, picks lowest VLAN ID.
+    Each incident edge contributes its active_vlans (or its configured vlans if
+    it has no active VLANs); the union across edges is taken and the lowest VLAN
+    id returned. Note this is per-edge: one edge's active VLANs do not take
+    precedence over another edge's configured VLANs.
     """
     vlans = _node_vlans(node, edges)
     return min(vlans) if vlans else None

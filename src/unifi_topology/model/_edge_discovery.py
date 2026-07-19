@@ -163,6 +163,9 @@ def _add_lldp_port_details(
     resolved_port_idx = _resolve_port_idx_from_lldp(lldp_entry, device.port_table)
     label = local_port_label(_lldp_label_entry(lldp_entry, resolved_port_idx))
     if label:
+        # Keyed by (device, peer): multiple LLDP links to the same peer (a LAG or
+        # redundant cabling) collapse to one entry, last write wins. Aggregated
+        # links therefore render as a single edge with one port label.
         result.port_map[(device_id, peer_id)] = label
     if resolved_port_idx is None:
         return
