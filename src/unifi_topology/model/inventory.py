@@ -6,6 +6,7 @@ import ipaddress
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import NamedTuple
 
 from .classify import classify_client_type, classify_device_type, client_display_name
 from .clients import client_matches_filters
@@ -115,31 +116,40 @@ def _client_hostname(
     return hostnames.get(ip) if hostnames and ip else None
 
 
+class _ClientIdentity(NamedTuple):
+    name: str
+    ip: str
+    mac: str
+    hostname: str | None
+
+
 def _client_inventory_identity(
     client: object,
     hostnames: dict[str, str] | None,
-) -> tuple[str, str, str, str | None]:
-    name = client_display_name(client) or ""
+) -> _ClientIdentity:
     ip_str = _client_ip(client)
-    mac_str = _client_mac(client)
-    hostname = _client_hostname(ip_str, hostnames)
-    return name, ip_str, mac_str, hostname
+    return _ClientIdentity(
+        name=client_display_name(client) or "",
+        ip=ip_str,
+        mac=_client_mac(client),
+        hostname=_client_hostname(ip_str, hostnames),
+    )
 
 
 def _client_inventory_item(
     client: object,
     hostnames: dict[str, str] | None,
 ) -> DeviceInfo | None:
-    name, ip_str, mac_str, hostname = _client_inventory_identity(client, hostnames)
-    if not name:
+    identity = _client_inventory_identity(client, hostnames)
+    if not identity.name:
         return None
     return DeviceInfo(
-        name=name,
+        name=identity.name,
         device_type=classify_client_type(client),
         model_name=_client_model(client),
-        ip=ip_str,
-        hostname=hostname,
-        mac=mac_str,
+        ip=identity.ip,
+        hostname=identity.hostname,
+        mac=identity.mac,
         firmware=_client_firmware(client),
     )
 

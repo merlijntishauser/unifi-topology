@@ -5,6 +5,7 @@ from __future__ import annotations
 import ipaddress
 import logging
 from collections.abc import Iterable
+from typing import NamedTuple
 
 from . import _topology_port_coerce
 from ._raw import RawRecord
@@ -79,16 +80,22 @@ def _get_model_display_name(device: DeviceSource) -> str | None:
     return RawRecord(device).text("model_in_lts", "model_in_eol", "shortname", "model_name")
 
 
-def _device_display_fields(
-    device: DeviceSource,
-) -> tuple[object | None, object | None, object | None, object | None, object | None]:
+class _DeviceDisplayFields(NamedTuple):
+    model_name: object | None
+    model: object | None
+    ip: object | None
+    dev_type: object | None
+    version: object | None
+
+
+def _device_display_fields(device: DeviceSource) -> _DeviceDisplayFields:
     record = RawRecord(device)
-    return (
-        _get_model_display_name(device) or record.get("model"),
-        record.get("model"),
-        record.first("ip", "ip_address"),
-        record.first("type", "device_type"),
-        record.first("displayable_version", "version"),
+    return _DeviceDisplayFields(
+        model_name=_get_model_display_name(device) or record.get("model"),
+        model=record.get("model"),
+        ip=record.first("ip", "ip_address"),
+        dev_type=record.first("type", "device_type"),
+        version=record.first("displayable_version", "version"),
     )
 
 
