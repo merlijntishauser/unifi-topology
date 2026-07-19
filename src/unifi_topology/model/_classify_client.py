@@ -119,13 +119,28 @@ def _client_vendor(client: object) -> str | None:
 
 
 def _client_unifi_flag(client: object) -> bool | None:
-    """Check explicit UniFi device flags."""
-    for key in ("is_unifi", "is_unifi_device", "is_ubnt", "is_uap", "is_managed"):
-        value = get_field(client, key)
-        if isinstance(value, bool):
-            return value
-        if isinstance(value, int):
-            return value != 0
+    """Check explicit UniFi device flags.
+
+    Any positive flag is decisive. A negative is only decisive for the
+    authoritative ``is_unifi``/``is_unifi_device`` flags; a narrow negative such
+    as ``is_uap: False`` (e.g. a wired UniFi Protect camera) must not override
+    positive ucore device info, so it yields ``None`` to fall through.
+    """
+    authoritative = ("is_unifi", "is_unifi_device")
+    for key in (*authoritative, "is_ubnt", "is_uap", "is_managed"):
+        as_flag = _as_optional_bool(get_field(client, key))
+        if as_flag is True:
+            return True
+        if as_flag is False and key in authoritative:
+            return False
+    return None
+
+
+def _as_optional_bool(value: object) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value != 0
     return None
 
 

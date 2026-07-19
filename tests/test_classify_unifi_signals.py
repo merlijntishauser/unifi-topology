@@ -61,3 +61,20 @@ def test_client_is_unifi_false_no_vendor():
 def test_client_is_unifi_false_no_flag_no_ucore_no_vendor():
     client = SimpleNamespace(name="Unknown")
     assert client_is_unifi(client) is False
+
+
+def test_narrow_negative_flag_does_not_override_ucore():
+    # A wired UniFi Protect camera reports is_uap: False but has real ucore info.
+    client = {
+        "is_uap": False,
+        "unifi_device_info_from_ucore": {"product_line": "protect", "name": "G4 Doorbell"},
+    }
+    assert client_is_unifi(client) is True
+
+
+def test_positive_flag_is_decisive():
+    assert client_is_unifi({"is_unifi": True}) is True
+
+
+def test_authoritative_negative_flag_is_decisive():
+    assert client_is_unifi({"is_unifi": False, "vendor": "Ubiquiti"}) is False

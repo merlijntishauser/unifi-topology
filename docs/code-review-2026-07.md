@@ -303,7 +303,7 @@ Priorities:
   (composite action); fully serial job chain; ruff/pyright target 3.13 while
   floor is 3.12; public-surface inconsistencies (`fetch_payload` public but not
   exported, `clear_client_cache` exported from adapters but not top level).
-- [ ] **F53 Model minor correctness group** - `_client_unifi_flag` first-flag
+- [~] **F53 Model minor correctness group** - `_client_unifi_flag` first-flag
   short-circuit misclassifies (treat only True as decisive, check ucore first)
   (`_classify_client.py:121-129`); uplink `port_idx` fallback labels the wrong
   end of the link (`_topology_device_coerce.py:18-25`,
