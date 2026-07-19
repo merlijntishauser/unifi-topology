@@ -1,11 +1,10 @@
 """Tests for LLDP Markdown rendering."""
 
-from unifi_topology.model.classify import (
+from unifi_topology.model._classify_client import (
     _client_ucore_display_name,
     _client_unifi_flag,
-    client_display_name,
-    client_is_unifi,
 )
+from unifi_topology.model.classify import client_display_name, client_is_unifi
 from unifi_topology.model.clients import client_uplink_mac, client_uplink_port
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology import Device, PortInfo, UplinkInfo

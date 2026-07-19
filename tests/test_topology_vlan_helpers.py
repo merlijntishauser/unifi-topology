@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.topology_coerce import _coerce_vlan_list, _resolve_vlan_id
+from unifi_topology.model._topology_port_coerce import _coerce_vlan_list, _resolve_vlan_id
 
 
 class TestCoerceVlanList:

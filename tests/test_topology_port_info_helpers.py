@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.topology_coerce import _extract_wan_networkconf_id, _port_info_from_entry
+from unifi_topology.model._topology_port_coerce import (
+    _extract_wan_networkconf_id,
+    _port_info_from_entry,
+)
 
 
 class TestExtractWanNetworkconfId:

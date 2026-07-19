@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.topology_coerce import _parse_uplink
+from unifi_topology.model._topology_device_coerce import _parse_uplink
 
 
 class TestParseUplink:

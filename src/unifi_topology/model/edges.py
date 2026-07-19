@@ -7,7 +7,7 @@ from collections import deque
 from collections.abc import Iterable
 from dataclasses import replace
 
-from . import _edge_build, _edge_discovery, _edge_ports
+from . import _edge_build, _edge_discovery
 from .classify import classify_device_type
 from .helpers import normalize_mac
 from .topology import (
@@ -23,29 +23,6 @@ from .topology import (
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "_build_adjacency",
-    "_build_edge_map",
-    "_build_ordered_edges",
-    "_collect_lldp_links",
-    "_collect_uplink_links",
-    "_discover_links",
-    "_find_port_by_idx",
-    "_lldp_candidates",
-    "_match_port_by_name",
-    "_match_port_by_number",
-    "_maybe_add_uplink_link",
-    "_node_vlans",
-    "_partition_nodes_by_vlan",
-    "_populate_port_maps",
-    "_port_speed_by_idx",
-    "_port_vlans_by_idx",
-    "_primary_vlan_for_node",
-    "_resolve_port_idx_from_lldp",
-    "_seed_tree_queue",
-    "_tree_edges_from_parent",
-    "_tree_parents",
-    "_uplink_id",
-    "_visit_tree_neighbor",
     "build_device_index",
     "build_edges",
     "build_port_map",
@@ -57,18 +34,8 @@ __all__ = [
 ]
 
 build_device_index = _build_device_index
-_lldp_candidates = _edge_ports._lldp_candidates
-_match_port_by_name = _edge_ports._match_port_by_name
-_match_port_by_number = _edge_ports._match_port_by_number
-_resolve_port_idx_from_lldp = _edge_ports._resolve_port_idx_from_lldp
-_find_port_by_idx = _edge_ports._find_port_by_idx
-_port_speed_by_idx = _edge_ports._port_speed_by_idx
-_port_vlans_by_idx = _edge_ports._port_vlans_by_idx
-_populate_port_maps = _edge_ports._populate_port_maps
-_collect_lldp_links = _edge_discovery._collect_lldp_links
-_uplink_id = _edge_discovery._uplink_id
-_maybe_add_uplink_link = _edge_discovery._maybe_add_uplink_link
-_collect_uplink_links = _edge_discovery._collect_uplink_links
+# Internal helper used by _discover_links below; the port/discovery helpers
+# themselves live in _edge_ports / _edge_discovery / _edge_build.
 _build_ordered_edges = _edge_build._build_ordered_edges
 
 

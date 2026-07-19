@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.topology_coerce import (
+from unifi_topology.model._topology_port_coerce import (
     _aggregation_group,
     _as_float,
     _as_group_id,

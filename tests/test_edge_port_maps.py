@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from tests.edge_port_helpers import make_port
-from unifi_topology.model.edges import _populate_port_maps, _port_vlans_by_idx
+from unifi_topology.model._edge_ports import _populate_port_maps, _port_vlans_by_idx
 
 
 def test_port_vlans_by_idx_native_vlan():

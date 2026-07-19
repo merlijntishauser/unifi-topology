@@ -4,11 +4,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from unifi_topology.model.classify import (
-    _client_unifi_flag,
-    classify_device_type,
-    client_display_name,
-)
+from unifi_topology.model._classify_client import _client_unifi_flag
+from unifi_topology.model.classify import classify_device_type, client_display_name
 from unifi_topology.model.clients import _client_channel, client_uplink_mac, client_uplink_port
 from unifi_topology.model.helpers import get_field
 

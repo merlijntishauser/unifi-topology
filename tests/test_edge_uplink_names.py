@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.edges import _uplink_id
+from unifi_topology.model._edge_discovery import _uplink_id
 from unifi_topology.model.topology import UplinkInfo
 
 

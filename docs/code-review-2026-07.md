@@ -207,7 +207,7 @@ Priorities:
   `render/_svg_render_flow.py:101-193`. Eight `Callable` params, one caller,
   always the same bindings, no cycle avoided. Import directly; removes ~80
   lines and two indirection hops.
-- [ ] **F36 Remove model compatibility facades re-exporting privates** -
+- [x] **F36 Remove model compatibility facades re-exporting privates** -
   `model/topology_coerce.py`, `model/edges.py:25-72`, `model/classify.py`.
   ~50 underscore-private helpers re-exported in `__all__` in three different
   idioms; tests import them, freezing internals as de-facto API. Point tests at

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.edges import _port_speed_by_idx, _uplink_id
+from unifi_topology.model._edge_discovery import _uplink_id
+from unifi_topology.model._edge_ports import _port_speed_by_idx
 from unifi_topology.model.topology import PortInfo, UplinkInfo
 
 

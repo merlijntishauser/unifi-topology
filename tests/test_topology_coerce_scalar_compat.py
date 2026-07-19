@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from unifi_topology.model.helpers import as_bool, as_list
-from unifi_topology.model.topology_coerce import (
+from unifi_topology.model._topology_port_coerce import (
     _aggregation_group,
     _as_float,
     _as_group_id,
     _as_int,
 )
+from unifi_topology.model.helpers import as_bool, as_list
 
 
 def test_as_group_id_handles_types():

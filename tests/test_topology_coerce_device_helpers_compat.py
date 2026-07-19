@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from unifi_topology.model.topology import UplinkInfo
-from unifi_topology.model.topology_coerce import (
+from unifi_topology.model._topology_device_coerce import (
     _get_model_display_name,
     _parse_uplink,
-    _poe_ports_from_device,
     _uplink_info,
 )
+from unifi_topology.model._topology_port_coerce import _poe_ports_from_device
+from unifi_topology.model.topology import UplinkInfo
 
 
 def test_poe_ports_from_device_skips_missing_port_idx():

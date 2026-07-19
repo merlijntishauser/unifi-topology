@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from unifi_topology.model.edges import _resolve_port_idx_from_lldp, build_edges
+from unifi_topology.model._edge_ports import _resolve_port_idx_from_lldp
+from unifi_topology.model.edges import build_edges
 from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology import PortInfo
 from unifi_topology.model.topology_coerce import coerce_device

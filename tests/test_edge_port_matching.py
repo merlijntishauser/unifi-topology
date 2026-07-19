@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 from tests.edge_port_helpers import make_port
-from unifi_topology.model.edges import _lldp_candidates, _match_port_by_name, _match_port_by_number
+from unifi_topology.model._edge_ports import (
+    _lldp_candidates,
+    _match_port_by_name,
+    _match_port_by_number,
+)
 from unifi_topology.model.lldp import LLDPEntry
 
 

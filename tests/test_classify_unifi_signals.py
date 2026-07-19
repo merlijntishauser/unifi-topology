@@ -2,12 +2,12 @@
 
 from types import SimpleNamespace
 
-from unifi_topology.model.classify import (
+from unifi_topology.model._classify_client import (
     _classify_by_unifi_info,
     _classify_by_vendor,
     _ucore_has_device_info,
-    client_is_unifi,
 )
+from unifi_topology.model.classify import client_is_unifi
 
 
 def test_classify_by_vendor_no_match():

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from tests.edge_discovery_helpers import make_device
-from unifi_topology.model.edges import _maybe_add_uplink_link
+from unifi_topology.model._edge_discovery import _maybe_add_uplink_link
 from unifi_topology.model.helpers import normalize_mac
 from unifi_topology.model.topology import UplinkInfo
 

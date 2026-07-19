@@ -2,7 +2,8 @@
 
 from types import SimpleNamespace
 
-from unifi_topology.model.classify import _classify_by_device_name, classify_device_type
+from unifi_topology.model._classify_device import _classify_by_device_name
+from unifi_topology.model.classify import classify_device_type
 
 
 def test_classify_by_device_name_returns_none_for_unknown():
