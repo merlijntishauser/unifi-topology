@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-07-19
+
 Full-codebase review remediation. See `docs/code-review-2026-07.md` for the
-underlying findings. Recommended release: **3.0.0** (contract changes below).
+underlying findings. This is a major release: it contains three breaking
+contract changes (marked **BREAKING** below).
 
 ### Security
 - Sanitize `node_type` before interpolating it into SVG paint references. A crafted node type (e.g. via `node_types`) could previously inject arbitrary SVG attributes and execute script when the diagram was embedded inline. Unknown types now fall back to the `other` gradient instead of rendering an invisible node body
