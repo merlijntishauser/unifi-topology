@@ -1,5 +1,12 @@
 # Code Review Findings (2026-07-18)
 
+**Status (2026-07-19):** All P0 (critical) and P1 (major correctness) findings
+fixed, each with a regression test and its own commit. Several P2/P3 items also
+done; the rest (large pure-structure refactors and judgment-call minor tweaks)
+remain. `[x]` = done, `[~]` = partially done (concrete bug fixed, structural
+remainder deferred), `[ ]` = not started. Full suite green: ruff, pyright,
+complexity gate, 1171 tests passing.
+
 Full-codebase review, five parallel reviewers (adapters/packaging, model core,
 serialization/diff/mock, SVG render, text render/tests). Findings ordered by
 priority. One commit per finding; checkbox ticked in the same commit as the fix.
@@ -232,7 +239,7 @@ Priorities:
   `render/svg_edges.py:43-81` vs `render/_svg_iso_edge_draw.py:29-67`.
   Identical algorithm, differs only in constants; extract to
   `_svg_edge_shared.py`.
-- [x] **F42 Shared edge-label recorder and gateway-position helper** -
+- [~] **F42 Shared edge-label recorder and gateway-position helper** -
   `render/svg_edges.py:191-245` vs `render/_svg_iso_edge_labels.py:40-98`
   (identical control flow, ~60 lines); `_find_gateway_position` byte-identical
   in `svg_wan.py:187-195` and `_svg_iso_wan_overlay.py:179-186` (move to
@@ -290,7 +297,7 @@ Priorities:
   clients against a dead server = 200s); hostname-valued `dns_server` raises
   ValueError silently swallowed at debug level. Fan out with a thread pool;
   log the config error at warning.
-- [x] **F52 Packaging/CI hygiene** - exact-pinned build backend
+- [~] **F52 Packaging/CI hygiene** - exact-pinned build backend
   (`setuptools==83.0.0`, `wheel` unnecessary) breaks sdist installs if yanked;
   `push: ["**"]` + `pull_request` double-runs CI; 7 copy-pasted install blocks
   (composite action); fully serial job chain; ruff/pyright target 3.13 while
@@ -321,14 +328,14 @@ Priorities:
   `_primary_vlan_for_node` docstring contradicts behavior (`edges.py:280-290`);
   `wan.py:149` mypy-style ignore instead of narrowing; inventory
   Iterable/Sequence/list parameter inconsistency.
-- [x] **F55 Mock/dependency hygiene** - star-import of `unifi_topology.model`
+- [~] **F55 Mock/dependency hygiene** - star-import of `unifi_topology.model`
   raises raw `ModuleNotFoundError: faker` on prod installs (`MockOptions` in
   `__all__` triggers the lazy load); add a friendly ImportError in `mock.py`
   and consider a public `mock` extra; hoist duplicated `[1, 10, 20, 30, 100]`
   VLAN list to a constant (`mock.py:146, 331, 338`); split the two >15-line
   client builders; add basic mock tests (currently zero, excluded from
   coverage).
-- [x] **F56 SVG render minor group** - theme YAML cannot set vpn_*/group_*
+- [~] **F56 SVG render minor group** - theme YAML cannot set vpn_*/group_*
   fields (never read in `theme.py:101-134`); `max_vlan_colors` dead parameter
   chain; `font_family` slug allows path traversal into the woff2 loader and
   unescaped CSS interpolation (restrict to `[a-z0-9-]`)
