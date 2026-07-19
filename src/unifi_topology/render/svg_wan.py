@@ -45,7 +45,7 @@ def _render_group_boundaries(
         lines.append(
             f'<text class="group-label" x="{label_x}" y="{label_y}" '
             f'fill="{stroke}" font-size="{label_size}" font-weight="bold">'
-            f"{_escape_text(bounds.name.capitalize())}</text>"
+            f"{_escape_text(bounds.name)}</text>"
         )
         lines.append("</g>")
 

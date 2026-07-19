@@ -328,7 +328,7 @@ Priorities:
   VLAN list to a constant (`mock.py:146, 331, 338`); split the two >15-line
   client builders; add basic mock tests (currently zero, excluded from
   coverage).
-- [ ] **F56 SVG render minor group** - theme YAML cannot set vpn_*/group_*
+- [x] **F56 SVG render minor group** - theme YAML cannot set vpn_*/group_*
   fields (never read in `theme.py:101-134`); `max_vlan_colors` dead parameter
   chain; `font_family` slug allows path traversal into the woff2 loader and
   unescaped CSS interpolation (restrict to `[a-z0-9-]`)

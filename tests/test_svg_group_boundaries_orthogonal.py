@@ -59,3 +59,16 @@ def test_render_svg_groups_adds_data_group_attribute():
         groups=groups,
     )
     assert 'data-group="Core"' in output
+
+
+def test_render_svg_group_label_preserves_mixed_case():
+    edges = [Edge("A", "B")]
+    node_types = {"A": "gateway", "B": "switch"}
+    output = svg_module.render_svg(
+        edges,
+        node_types=node_types,
+        options=svg_module.SvgOptions(layout_mode="grouped"),
+        groups={"IoT": ["B"]},
+    )
+    assert ">IoT</text>" in output
+    assert "Iot" not in output

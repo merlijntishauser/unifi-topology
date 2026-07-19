@@ -113,7 +113,7 @@ def _render_iso_group_boundaries(
             f'fill="{fill}" fill-opacity="0.35" '
             f'stroke="{stroke}" stroke-width="{theme.group_stroke_width}"/>'
         )
-        label_text = _escape_text(bounds.name.capitalize())
+        label_text = _escape_text(bounds.name)
         lx, ly = bounds.label_x, bounds.label_y
         label_transform = (
             f"translate({lx} {ly}) rotate({_ISO_PERSPECTIVE_ANGLE}) "

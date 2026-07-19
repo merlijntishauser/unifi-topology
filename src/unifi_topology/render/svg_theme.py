@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import functools
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -240,6 +241,11 @@ _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"
 _SYSTEM_FONT_STACK = "Arial,Helvetica,sans-serif"
 
 
+def _font_slug(font_family: str) -> str:
+    """Restrict a font family to a safe filename slug (no path traversal)."""
+    return re.sub(r"[^a-z0-9-]", "", font_family.lower().replace(" ", "-"))
+
+
 @functools.lru_cache(maxsize=4)
 def _build_font_style(font_family: str | None) -> tuple[str, str]:
     """Build @font-face CSS and font-family stack for the given font.
@@ -250,25 +256,28 @@ def _build_font_style(font_family: str | None) -> tuple[str, str]:
     if not font_family:
         return "", _SYSTEM_FONT_STACK
 
-    slug = font_family.lower().replace(" ", "-")
-    font_face_parts: list[str] = []
+    slug = _font_slug(font_family)
+    if not slug:
+        return "", _SYSTEM_FONT_STACK
 
+    font_face_css = "".join(_font_face_rules(slug, font_family))
+    if not font_face_css:
+        return "", _SYSTEM_FONT_STACK
+    return font_face_css, f"'{font_family}',{_SYSTEM_FONT_STACK}"
+
+
+def _font_face_rules(slug: str, font_family: str) -> list[str]:
+    parts: list[str] = []
     for weight, suffix in ((400, "regular"), (600, "semibold")):
         path = _FONTS_DIR / f"{slug}-{suffix}.woff2"
         if not path.exists():
             continue
         b64 = base64.b64encode(path.read_bytes()).decode("ascii")
-        font_face_parts.append(
+        parts.append(
             f"@font-face{{font-family:'{font_family}';font-weight:{weight};"
             f"src:url(data:font/woff2;base64,{b64}) format('woff2');}}"
         )
-
-    if not font_face_parts:
-        return "", _SYSTEM_FONT_STACK
-
-    font_face_css = "".join(font_face_parts)
-    family_css = f"'{font_family}',{_SYSTEM_FONT_STACK}"
-    return font_face_css, family_css
+    return parts
 
 
 def _svg_style_block(theme: SvgTheme, font_size: int, *, iso: bool = False) -> str:
