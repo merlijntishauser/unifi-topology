@@ -283,7 +283,7 @@ Priorities:
   `resolve_env_file` name check looser than its error message
   (`paths.py:136-137`); `--env-file` CLI-flavored error message and dead
   ImportError guard (`config.py:23-27`).
-- [ ] **F49 `urllib3.disable_warnings` is process-global** -
+- [x] **F49 `urllib3.disable_warnings` is process-global** -
   `adapters/unifi_api.py:133-136`. Constructing one `verify_ssl=False` client
   silences InsecureRequestWarning for the whole host process. Scope to the
   session (e.g. suppress via per-request warnings context or leave warnings

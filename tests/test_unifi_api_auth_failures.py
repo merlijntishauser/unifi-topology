@@ -37,7 +37,7 @@ def test_authenticate_request_failure(monkeypatch):
         )
 
 
-def test_ssl_warning_suppressed(monkeypatch):
+def test_insecure_client_does_not_mutate_global_warnings(monkeypatch):
     calls = []
     monkeypatch.setattr("urllib3.disable_warnings", lambda *a: calls.append(a))
     auth_resp = FakeResponse(json_data={"meta": {"rc": "ok"}})
@@ -50,7 +50,9 @@ def test_ssl_warning_suppressed(monkeypatch):
         password="secret",
         verify_ssl=False,
     )
-    assert len(calls) == 1
+    # Suppression is scoped per-request now, so the process-global
+    # disable_warnings is never invoked.
+    assert calls == []
 
 
 def test_authenticate_http_error_does_not_treat_roles_as_success(monkeypatch):

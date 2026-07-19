@@ -7,9 +7,11 @@ of code covering the three GET endpoints this project actually uses.
 from __future__ import annotations
 
 import logging
+import warnings
 from collections.abc import Callable
 
 import requests
+from urllib3.exceptions import InsecureRequestWarning
 
 logger = logging.getLogger(__name__)
 
@@ -140,11 +142,6 @@ class UnifiClient:
         self._session = requests.Session()
         self._csrf_token: str | None = None
 
-        if not verify_ssl:
-            import urllib3
-
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
         self._initialize_auth()
 
     def _initialize_auth(self) -> None:
@@ -173,7 +170,13 @@ class UnifiClient:
             kwargs["headers"] = headers
         if self._request_timeout is not None:
             kwargs["timeout"] = self._request_timeout
-        return request_method(url, **kwargs)
+        if self._verify_ssl:
+            return request_method(url, **kwargs)
+        # Scope the insecure-request warning suppression to this call instead of
+        # disabling it process-wide for the host application.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=InsecureRequestWarning)
+            return request_method(url, **kwargs)
 
     def _request_with_reauth(
         self,
