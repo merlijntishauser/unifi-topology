@@ -21,7 +21,7 @@ def test_swap_firewall_policy_order_calls_client(monkeypatch, tmp_path):
     assert calls == [("swap", "default", "pa", "pb")]
 
 
-def test_swap_clears_client_cache(monkeypatch, tmp_path):
+def test_swap_preserves_client_session(monkeypatch, tmp_path):
     monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
     create_calls = {"count": 0}
 
@@ -40,6 +40,6 @@ def test_swap_clears_client_cache(monkeypatch, tmp_path):
     unifi.fetch_devices(config, use_cache=False)
     assert create_calls["count"] == 1
     unifi.swap_firewall_policy_order(config, "pa", "pb")
-    assert create_calls["count"] == 1
+    # A successful write must not discard the authenticated session.
     unifi.fetch_devices(config, use_cache=False)
-    assert create_calls["count"] == 2
+    assert create_calls["count"] == 1

@@ -441,7 +441,6 @@ def toggle_firewall_policy(
     site_name = site or config.site
     client = _get_or_create_client(config, is_udm_pro=True)
     client.update_firewall_policy(site_name, policy_id, {"enabled": enabled})
-    clear_client_cache()
     invalidate_cache(config, site=site)
 
 
@@ -480,5 +479,4 @@ def swap_firewall_policy_order(
     site_name = site or config.site
     client = _get_or_create_client(config, is_udm_pro=True)
     client.swap_firewall_policy_order(site_name, policy_id_a, policy_id_b)
-    clear_client_cache()
     invalidate_cache(config, site=site)

@@ -276,7 +276,7 @@ Priorities:
   ~40 modules (whole mermaid/markdown/lldp/vpn render family, firewall/
   device_stats/vpn model modules, adapter internals); README documents only
   SVG renderers though mermaid/lldp/inventory/legend are public API.
-- [ ] **F48 Adapter minor cleanups** - dead `_evict_client`
+- [~] **F48 Adapter minor cleanups** - dead `_evict_client`
   (`unifi.py:197-200`); `clear_client_cache()` after firewall writes discards
   all sessions for all configs (`unifi.py:424, 463`); lost exception chain in
   legacy fallback; module-level client cache not thread-safe (add a lock);

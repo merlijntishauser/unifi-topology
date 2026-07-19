@@ -41,7 +41,7 @@ def test_toggle_invalidates_cache(monkeypatch, tmp_path):
     assert not cache_path.exists()
 
 
-def test_toggle_clears_client_cache(monkeypatch, tmp_path):
+def test_toggle_preserves_client_session(monkeypatch, tmp_path):
     monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
     create_calls = {"count": 0}
 
@@ -60,6 +60,6 @@ def test_toggle_clears_client_cache(monkeypatch, tmp_path):
     unifi.fetch_devices(config, use_cache=False)
     assert create_calls["count"] == 1
     unifi.toggle_firewall_policy(config, "p1", enabled=False)
-    assert create_calls["count"] == 1
+    # A successful write must not discard the authenticated session.
     unifi.fetch_devices(config, use_cache=False)
-    assert create_calls["count"] == 2
+    assert create_calls["count"] == 1
