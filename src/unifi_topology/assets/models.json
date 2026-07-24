@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "https://store.ui.com, https://fw-update.ubnt.com/api/firmware-latest",
-    "scraped_at": "2026-03-19T21:41:08.709179+00:00",
+    "scraped_at": "2026-07-24T10:20:06.401280+00:00",
     "description": "UniFi device model codes to friendly names. Scraped from the official Ubiquiti store and firmware API."
   },
   "models": {
@@ -63,6 +63,31 @@
       "name": "Access Point E7 Campus",
       "url": "https://store.ui.com/us/en/products/e7-campus-us"
     },
+    "EAV-Bridge": {
+      "name": "Enterprise Audio/Video Bridge",
+      "url": "https://store.ui.com/us/en/products/eav-bridge",
+      "docs": {
+        "guide": "https://ui.com/qig/eav-bridge"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 109.0,
+          "depth": 134.4,
+          "height": 40.4
+        },
+        "weight_kg": 0.56,
+        "max_power_w": 14.0,
+        "form_factor": "DIN rail, Wall, Pole (Included)"
+      }
+    },
+    "EAV-Fiber": {
+      "name": "Switch Enterprise Audio/Video Fiber",
+      "url": "https://store.ui.com/us/en/products/eav-fiber"
+    },
+    "EAV-XG-24-PoE": {
+      "name": "Switch Enterprise Audio/Video XG 24 PoE",
+      "url": "https://store.ui.com/us/en/products/eav-xg-24-poe"
+    },
     "ECS-24-PoE": {
       "name": "Switch Enterprise Campus 24 PoE",
       "url": "https://store.ui.com/us/en/products/ecs-24-poe"
@@ -81,19 +106,22 @@
     },
     "ECS-Aggregation": {
       "name": "Switch Enterprise Campus Aggregation",
-      "url": "https://store.ui.com/us/en/products/ecs-aggregation",
+      "url": "https://store.ui.com/us/en/products/ecs-aggregation"
+    },
+    "EF-Core": {
+      "name": "Enterprise Firewall Core",
+      "url": "https://store.ui.com/us/en/products/ef-core",
       "docs": {
-        "guide": "https://ui.com/qig/ecs-aggregation"
+        "guide": "https://ui.com/qig/ef-core"
       },
       "specs": {
         "dimensions_mm": {
           "width": 442.4,
           "depth": 43.7,
-          "height": 496.0
+          "height": 400.0
         },
-        "weight_kg": 9.9,
-        "max_power_w": 340.0,
-        "form_factor": "Rack mount (1U, Full-Depth)",
+        "max_power_w": 171.0,
+        "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       }
     },
@@ -112,6 +140,24 @@
         "max_power_w": 82.0,
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
+      }
+    },
+    "ENAS": {
+      "name": "Enterprise NAS",
+      "url": "https://store.ui.com/us/en/products/enas",
+      "docs": {
+        "guide": "https://ui.com/qig/enas"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 481.4,
+          "depth": 480.0,
+          "height": 132.0
+        },
+        "weight_kg": 16.1,
+        "max_power_w": 550.0,
+        "form_factor": "Rack mount (3U)",
+        "rack_height_u": 3
       }
     },
     "G7LT": {
@@ -136,27 +182,27 @@
     },
     "S216150": {
       "name": "US-16-150W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c377bc2b-5cca-4b17-8a61-99023a46241e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/938e1043-3a1b-4cf5-8f16-8755393a8a72/changelog"
     },
     "S224250": {
       "name": "US-24-250W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e0cfa6ba-dc78-4689-b471-176289efd503/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5299f0b6-d649-46a2-93ac-24ae69eaf5e2/changelog"
     },
     "S224500": {
       "name": "US-24-500W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/77f8ec77-8083-45cf-ac96-cceb7d73d9a0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/18d25354-8d50-42fc-aa7a-687e006c86ea/changelog"
     },
     "S248500": {
       "name": "US-48-500W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5d1a5f66-6b44-4a17-865d-46832f4d20e4/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/61318423-103c-4d2a-bd87-8cbb5c6c88c1/changelog"
     },
     "S248750": {
       "name": "US-48-750W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/68d2b436-9370-4d6c-a3c8-149517696235/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/83754d4d-9948-49f9-a30b-f467d8fd59b6/changelog"
     },
     "S28150": {
       "name": "US-8-150W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d8733872-0752-43a0-a018-c36c2d565914/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/12cc8b0f-d18a-4f6c-a195-fa9591c53dfc/changelog"
     },
     "U-AirWire": {
       "name": "AirWire",
@@ -170,13 +216,9 @@
           "depth": 117.0,
           "height": 42.5
         },
-        "weight_kg": 0.537,
+        "weight_kg": 0.544,
         "max_power_w": 18.0
       }
-    },
-    "U-LTE": {
-      "name": "UniFi LTE Backup",
-      "url": "https://store.ui.com/us/en/products/u-lte"
     },
     "U-LTE-Backup Pro": {
       "name": "UniFi LTE Backup Pro",
@@ -202,24 +244,56 @@
       "name": "UAP",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/7c4d47da-9d61-4dd7-91a1-8f6afebd2865/changelog"
     },
-    "U5G-Max": {
-      "name": "UniFi 5G Max",
-      "url": "https://store.ui.com/us/en/products/u5g-max"
+    "U5G": {
+      "name": "UniFi 5G Backup",
+      "url": "https://store.ui.com/us/en/products/u5g-us",
+      "docs": {
+        "guide": "https://ui.com/qig/u5g"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 200.0,
+          "depth": 38.0,
+          "height": 20.2
+        },
+        "weight_kg": 0.122,
+        "form_factor": "Desktop stand, wall, window mount (Included)"
+      }
     },
-    "U5G-Max-Outdoor": {
+    "U5G-Max-Outdoor-US": {
       "name": "UniFi 5G Max Outdoor",
       "url": "https://store.ui.com/us/en/products/u5g-max-outdoor"
+    },
+    "U5G-Max-US": {
+      "name": "UniFi 5G Max",
+      "url": "https://store.ui.com/us/en/products/u5g-max"
     },
     "U5O": {
       "name": "UAP-Outdoor5",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/235b1693-b45d-411c-acf6-b610c8a5d315/changelog"
     },
+    "U6+": {
+      "name": "Access Point U6 Plus",
+      "url": "https://store.ui.com/us/en/products/u6-plus",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6+"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 160.0,
+          "height": 33.0
+        },
+        "weight_kg": 0.338,
+        "max_power_w": 9.0,
+        "form_factor": "Ceiling, Wall"
+      }
+    },
     "U6-Enterprise": {
       "name": "Access Point U6 Enterprise",
       "url": "https://store.ui.com/us/en/products/u6-enterprise",
       "docs": {
-        "guide": "https://dl.ubnt.com/qig/u6-enterprise",
-        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
+        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf",
+        "guide": "https://dl.ubnt.com/qig/u6-enterprise"
       },
       "specs": {
         "dimensions_mm": {
@@ -248,24 +322,6 @@
         "form_factor": "Wall"
       }
     },
-    "U6-Extender-US": {
-      "name": "Access Point U6 Extender",
-      "url": "https://store.ui.com/us/en/products/u6-extender",
-      "docs": {
-        "guide": "https://dl.ui.com/qig/u6-extender",
-        "datasheet": "https://dl.ui.com/ds/u6-extender_ds.pdf"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 169.7,
-          "depth": 112.2,
-          "height": 32.2
-        },
-        "weight_kg": 0.29,
-        "max_power_w": 11.0,
-        "form_factor": "Wall"
-      }
-    },
     "U6-IW": {
       "name": "Access Point U6 In-Wall",
       "url": "https://store.ui.com/us/en/products/u6-iw",
@@ -287,8 +343,8 @@
       "name": "Access Point U6 Mesh",
       "url": "https://store.ui.com/us/en/products/u6-mesh",
       "docs": {
-        "guide": "https://dl.ui.com/qig/u6-mesh",
-        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds"
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
+        "guide": "https://dl.ui.com/qig/u6-mesh"
       },
       "specs": {
         "dimensions_mm": {
@@ -317,22 +373,6 @@
         "form_factor": "Wall, Pole"
       }
     },
-    "U6-PLUS": {
-      "name": "Access Point U6 Plus",
-      "url": "https://store.ui.com/us/en/products/u6-plus",
-      "docs": {
-        "guide": "https://dl.ui.com/qig/u6+"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "diameter": 160.0,
-          "height": 33.0
-        },
-        "weight_kg": 0.338,
-        "max_power_w": 9.0,
-        "form_factor": "Ceiling, Wall"
-      }
-    },
     "U6-Pro": {
       "name": "Access Point U6 Pro",
       "url": "https://store.ui.com/us/en/products/u6-pro",
@@ -354,8 +394,8 @@
       "name": "Access Point U6 Enterprise",
       "url": "https://store.ui.com/us/en/products/u6-enterprise",
       "docs": {
-        "guide": "https://dl.ubnt.com/qig/u6-enterprise",
-        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf"
+        "datasheet": "https://dl.ui.com/ds/u6-enterprise_ds.pdf",
+        "guide": "https://dl.ubnt.com/qig/u6-enterprise"
       },
       "specs": {
         "dimensions_mm": {
@@ -412,8 +452,8 @@
       "name": "Access Point U6 Mesh",
       "url": "https://store.ui.com/us/en/products/u6-mesh",
       "docs": {
-        "guide": "https://dl.ui.com/qig/u6-mesh",
-        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds"
+        "datasheet": "https://dl.ui.com/ds/u6-mesh_ds",
+        "guide": "https://dl.ui.com/qig/u6-mesh"
       },
       "specs": {
         "dimensions_mm": {
@@ -716,7 +756,20 @@
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba2d5b45-dd0a-4075-bcd5-7befa6e14399/changelog"
     },
     "U7LT": {
-      "name": "U6+",
+      "name": "Access Point U6 Plus",
+      "url": "https://store.ui.com/us/en/products/u6-plus",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6+"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 160.0,
+          "height": 33.0
+        },
+        "weight_kg": 0.338,
+        "max_power_w": 9.0,
+        "form_factor": "Ceiling, Wall"
+      },
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/f547b5e0-5951-46f5-bde8-21c4e792965a/changelog"
     },
     "U7MP": {
@@ -755,7 +808,7 @@
     },
     "U7NHD": {
       "name": "UAP-nanoHD",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3893b740-69a2-41ef-9e9a-7129e1f5fbb2/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/048d9cfe-2449-49db-a71f-cbe35332f128/changelog"
     },
     "U7P": {
       "name": "Access Point U6 Pro",
@@ -808,7 +861,7 @@
         "max_power_w": 22.0,
         "form_factor": "Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/277a7dcb-9eac-40af-b51b-e662b0fa7760/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2ea0522a-927d-4e76-a9e7-53c7f926ede7/changelog"
     },
     "U7PRO": {
       "name": "Access Point U7 Pro",
@@ -825,7 +878,7 @@
         "max_power_w": 21.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/01651e48-bab6-45a8-9c12-4d96d7ffe0ab/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/94862a62-887a-4433-b148-3dcfc93e672f/changelog"
     },
     "U7PROMAX": {
       "name": "Access Point U7 Pro XGS",
@@ -842,7 +895,7 @@
         "max_power_w": 29.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/04b2a329-aba9-445f-9680-be61169e604b/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d150ffd1-2dfd-402d-b1c7-5a089088fefb/changelog"
     },
     "U7SHD": {
       "name": "UAP-SHD",
@@ -881,6 +934,10 @@
         "weight_kg": 1.6
       }
     },
+    "UACCEA03": {
+      "name": "UACCEA03",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bb7267cf-4db2-451e-84f6-0405fdb60fd6/changelog"
+    },
     "UACCMPOEAF": {
       "name": "U-PoE-AF",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ff2cf20-8ac4-453e-8114-033a8f76e404/changelog"
@@ -901,7 +958,7 @@
         "max_power_w": 43.0,
         "form_factor": "Ceiling, Wall, VESA"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b285a7a5-4d31-4e00-9c24-3fcb9bb7fea3/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8dfbaafc-a499-4c90-8453-4267a5f62da8/changelog"
     },
     "UAIW6": {
       "name": "Access Point U7 In-Wall",
@@ -919,7 +976,7 @@
         "max_power_w": 13.0,
         "form_factor": "Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/308b64b9-bc5c-4844-97a3-da015c55f48a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b7942a25-c6d1-4292-9979-25a3b2ea391a/changelog"
     },
     "UAL6": {
       "name": "Access Point U7 Pro",
@@ -936,7 +993,7 @@
         "max_power_w": 21.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5729f8c9-394a-4ad7-952d-cebedcc030ca/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/209abc69-17e5-4910-92c1-47970fe335b4/changelog"
     },
     "UALR6": {
       "name": "Access Point U7 Long-Range",
@@ -953,7 +1010,7 @@
         "max_power_w": 14.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9f61c2cb-ca6b-43e2-998e-38efce5ba231/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f319dbc3-0c30-47e0-9689-25cb2c8657a1/changelog"
     },
     "UALR6v2": {
       "name": "Access Point U7 Long-Range",
@@ -970,7 +1027,7 @@
         "max_power_w": 14.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/878e3366-0de2-4d37-8bd0-7b4399002215/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/223d949c-646e-4b8e-89f7-3f9afebd8ced/changelog"
     },
     "UALRPL6": {
       "name": "Access Point U7 Pro XGS",
@@ -987,7 +1044,7 @@
         "max_power_w": 29.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cb7506e7-9469-4f48-94d7-e735d355e829/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/51bd2f90-50d7-44db-b5ff-5e4e9bbdff99/changelog"
     },
     "UAM6": {
       "name": "Access Point U7 Mesh",
@@ -1004,7 +1061,7 @@
         "max_power_w": 13.0,
         "form_factor": "Wall, Pole, Table stand"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/12d5a387-96f7-4330-80b6-16034487cf86/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a358cae7-63eb-41c7-8ebd-821b6487a2a3/changelog"
     },
     "UAP-AC-M": {
       "name": "Access Point AC Mesh",
@@ -1073,83 +1130,100 @@
         "max_power_w": 13.0,
         "form_factor": "Ceiling, Wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c9472971-bb24-4113-90e6-03721b79bd27/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bc6c6e6a-d23d-40a0-9408-38dcd9171ac8/changelog"
     },
     "UAPA697": {
       "name": "UAPA697",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f2396b29-976f-4c75-8112-12372766300e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9b80a059-b0f3-4bab-aaa7-978cd26af2fb/changelog"
     },
     "UAPA698": {
       "name": "UAPA698",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/af1064c4-c318-46dd-aa63-eb93a410b3c9/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/31dce1ff-5b0a-484b-bed9-cd6a0ad4f503/changelog"
     },
     "UAPA699": {
       "name": "UAPA699",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1813e3cd-b8e2-464b-9d44-0ab80e4da9e2/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/484fd76c-b302-4915-bae3-e7d54b834a18/changelog"
     },
     "UAPA69E": {
       "name": "UAPA69E",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a9694b21-7331-4bdf-9b0e-e7f1c230b8e8/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0e30471e-1fb8-4652-b345-be9c1b6f451b/changelog"
     },
     "UAPA6A4": {
       "name": "UAPA6A4",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5bed9ae0-5aa1-42f0-a5af-b73a9bc90060/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c3afa87-793d-497d-bb00-be76ddce719e/changelog"
     },
     "UAPA6A5": {
       "name": "UAPA6A5",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cd12565c-46fd-4027-8f4a-e5480992dc51/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/49992bd6-6f20-44c5-8880-3b9c6f60ae38/changelog"
     },
     "UAPA6A6": {
       "name": "UAPA6A6",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6e299c36-1a5a-4d22-ab21-a36ee31926c1/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0877729b-e0b2-433a-a5dd-231f4cc30ac7/changelog"
     },
     "UAPA6A9": {
       "name": "UAPA6A9",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a7bb4817-2df5-443d-b3c2-caf0c968203b/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d8a36821-968c-440e-ba4f-d907838c930f/changelog"
     },
     "UAPA6AB": {
       "name": "UAPA6AB",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e7bc63c6-cd26-48e7-8139-e66a6b0b358d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba814f1f-6aae-49fc-bc7e-d7e075ce400f/changelog"
     },
     "UAPA6AC": {
       "name": "UAPA6AC",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3659cd1a-43a6-43ae-a6f8-282685ae1358/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/84178fa4-9c0c-4043-bd84-6c3d7467fa55/changelog"
     },
     "UAPA6AE": {
       "name": "UAPA6AE",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2aec6028-4d0c-44f0-a4f7-13ebece90829/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d4119816-d505-48b1-84e6-5ceea0a77ed1/changelog"
     },
     "UAPA6AF": {
       "name": "UAPA6AF",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c27da21-11f3-4ba4-96ba-fb4e984ac805/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/72f413fd-ff5b-4ae3-911b-e7907fd7c5d8/changelog"
     },
     "UAPA6B0": {
       "name": "UAPA6B0",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/074a9230-2a39-4156-ad4f-08d1d32dcfe0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/309d42e9-8bea-42de-b0c1-f445a121fd7c/changelog"
     },
     "UAPA6B1": {
       "name": "UAPA6B1",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/88e3d401-e7a7-4c61-9bc8-852ad9c45b45/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e0d0c067-03cf-4b0c-9d85-1f23182f85e1/changelog"
     },
     "UAPA6B3": {
       "name": "UAPA6B3",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/42e39de7-9322-4cc4-8c13-57547c554a4d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d25003fe-4a32-4a7a-be8f-a2b2e0a5e0a6/changelog"
     },
     "UAPA6BA": {
       "name": "UAPA6BA",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/963a07db-b8e0-41a3-a84d-9cc6d488c45e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2d09c2f0-4ff2-465b-9e78-1742a049484a/changelog"
     },
     "UAPA6BC": {
       "name": "UAPA6BC",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fcce3b05-09fa-4f66-8ad4-fcdbed402ac9/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bfafd44e-8eed-4912-88bd-9ffca6ffbc6d/changelog"
     },
-    "UAPA6BE": {
-      "name": "UAPA6BE",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/08f3606f-a4f3-4118-b84f-c4d778575379/changelog"
+    "UAPEA07": {
+      "name": "UAPEA07",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/79ca6783-428e-4ca2-9fa9-7427382ec483/changelog"
     },
     "UAPL6": {
-      "name": "U6+",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/940c8beb-8127-4923-a30d-559c0341929d/changelog"
+      "name": "Access Point U6 Plus",
+      "url": "https://store.ui.com/us/en/products/u6-plus",
+      "docs": {
+        "guide": "https://dl.ui.com/qig/u6+"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "diameter": 160.0,
+          "height": 33.0
+        },
+        "weight_kg": 0.338,
+        "max_power_w": 9.0,
+        "form_factor": "Ceiling, Wall"
+      },
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f5667cfd-cef6-4796-820b-b72d6848a00c/changelog"
+    },
+    "UAVAA06": {
+      "name": "UAVAA06",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c37d56c1-5e45-4857-8bde-6d921a5916e5/changelog"
     },
     "UBB": {
       "name": "Building-to-Building Bridge",
@@ -1165,7 +1239,7 @@
         "weight_kg": 0.376,
         "max_power_w": 11.0
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a7dd55e1-126f-4205-b6cf-b7110fde2347/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fc4a5eaf-a9a3-44b6-a929-81dbc2f23a9b/changelog"
     },
     "UBB-XG": {
       "name": "Building-to-Building Bridge XG",
@@ -1196,7 +1270,7 @@
         "weight_kg": 1.7,
         "max_power_w": 29.0
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1c4761aa-d7b4-47bd-a331-b08655b613a3/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/82e1182e-5f11-4462-a1f7-2d80af539d7e/changelog"
     },
     "UC-Cast-Lite": {
       "name": "Display Cast Lite",
@@ -1227,23 +1301,6 @@
           "height": 31.0
         },
         "weight_kg": 0.24
-      }
-    },
-    "UC-Display": {
-      "name": "Connect Display",
-      "url": "https://store.ui.com/us/en/products/uc-display21",
-      "docs": {
-        "guide": "https://dl.ui.com/qig/uc-display"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 538.3,
-          "depth": 330.0,
-          "height": 37.0
-        },
-        "weight_kg": 4.9,
-        "max_power_w": 27.0,
-        "form_factor": "VESA mount adapter (Included)\nTable stand, surface, arm, flush mount (Optional)"
       }
     },
     "UC-EV-Station-Lite": {
@@ -1336,7 +1393,20 @@
     },
     "UCK-G2-SSD": {
       "name": "CloudKey+ SSD",
-      "url": "https://store.ui.com/us/en/products/uck-g2-ssd"
+      "url": "https://store.ui.com/us/en/products/uck-g2-ssd",
+      "docs": {
+        "guide": "https://ui.com/qig/uck-g2-ssd"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 131.2,
+          "depth": 27.1,
+          "height": 134.2
+        },
+        "weight_kg": 0.56,
+        "max_power_w": 9.6,
+        "form_factor": "Compact Desktop"
+      }
     },
     "UCKG2": {
       "name": "UCK-G2",
@@ -1380,7 +1450,7 @@
         "max_power_w": 25.0,
         "form_factor": "Wall (Included)"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/51728f6e-d82e-4e00-aeba-937fc004c7bb/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f190f887-6310-4221-9bc9-c8353301088d/changelog"
     },
     "UDB-IoT": {
       "name": "Device Bridge IoT",
@@ -1449,7 +1519,7 @@
     },
     "UDBA69F": {
       "name": "UDBA69F",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb33ad4b-7bb4-4fbf-8b52-11518ff3eb83/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d0e88b43-5b13-411a-8f7b-856c0ebfee38/changelog"
     },
     "UDBE802": {
       "name": "Device Bridge Pro Sector",
@@ -1466,11 +1536,28 @@
         "weight_kg": 0.782,
         "max_power_w": 6.0
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/58797a2b-1da9-4734-b8a8-42b2da5fdb9f/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8f9d6302-c55b-4585-84e9-da9b73db2e2b/changelog"
     },
     "UDM": {
       "name": "UDM",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/56d2948a-d5a0-4f9f-af53-bc4a7c492fa2/changelog"
+    },
+    "UDM-Beast": {
+      "name": "Dream Machine Beast",
+      "url": "https://store.ui.com/us/en/products/udm-beast",
+      "docs": {
+        "guide": "https://ui.com/qig/udm-beast"
+      },
+      "specs": {
+        "dimensions_mm": {
+          "width": 442.4,
+          "depth": 43.7,
+          "height": 325.0
+        },
+        "max_power_w": 100.0,
+        "form_factor": "Rack mount (1U)",
+        "rack_height_u": 1
+      }
     },
     "UDM-Pro": {
       "name": "Dream Machine Pro",
@@ -1541,7 +1628,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/02ea9883-e84e-42f0-9083-695cd0313e4d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cab1b701-9e27-43d4-a9bd-866a65890d75/changelog"
     },
     "UDMA6A8": {
       "name": "Cloud Gateway Fiber",
@@ -1564,7 +1651,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d559faf8-78cf-42fb-8aa1-7196fc633212/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bb3a4606-a591-46ae-aeaf-87cfd8151517/changelog"
     },
     "UDMPRO": {
       "name": "Dream Machine Pro",
@@ -1634,7 +1721,7 @@
     },
     "UFLHD": {
       "name": "UAP-FlexHD",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b7fdfb50-4e72-416b-b25b-968698da1a57/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba579746-9f58-4ab8-a00c-11a452694918/changelog"
     },
     "UGW3": {
       "name": "USG",
@@ -1650,7 +1737,7 @@
     },
     "UHDIW": {
       "name": "UAP-IW-HD",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b775cc70-6a8d-414f-b1bd-1ceed1fa52cf/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/96e5ba6e-39f0-417b-a76b-d8daaf58d065/changelog"
     },
     "UK-Ultra": {
       "name": "Swiss Army Knife",
@@ -1685,16 +1772,14 @@
         "max_power_w": 8.0,
         "form_factor": "Ceiling, Wall, Pole, Table (With Accessory)\n(Mounts Included)\nDesktop Stand (Optional)"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d80df91e-f1a2-4f0a-8ef0-c27c858e025f/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/644a4c86-f996-49a6-ac36-9d7cafd73793/changelog"
     },
     "ULTE": {
-      "name": "UniFi LTE Backup",
-      "url": "https://store.ui.com/us/en/products/u-lte",
+      "name": "U-LTE",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/348e6514-2b72-4bbb-b8e9-d42e8e714f6d/changelog"
     },
     "ULTEPEU": {
-      "name": "UniFi LTE Backup",
-      "url": "https://store.ui.com/us/en/products/u-lte",
+      "name": "U-LTE",
       "firmware_changelog": "https://fw-update.ui.com/api/firmware/c87b2c39-51ae-46fe-9175-86a01596ef82/changelog"
     },
     "ULTEPUS": {
@@ -1704,11 +1789,19 @@
     },
     "UMBBE630": {
       "name": "UMBBE630",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2740fb58-3c20-4725-8016-7e6b674171af/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1c766085-9045-4c57-9fcd-e9a1135a80c7/changelog"
     },
     "UMBBE631": {
       "name": "UMBBE631",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c5169102-d2de-4a58-bd48-0cc31d59eced/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/243cff80-dd80-42b6-98ca-2500c6028933/changelog"
+    },
+    "UMBBE633": {
+      "name": "UMBBE633",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bdd771d4-f500-4944-96d8-468f20ef6eaa/changelog"
+    },
+    "UMBBE634": {
+      "name": "UMBBE634",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/36a6b483-b3d4-48c2-9554-145b4b423070/changelog"
     },
     "UMR-Industrial": {
       "name": "Mobile Router Industrial",
@@ -1836,7 +1929,7 @@
       }
     },
     "UPL-Port": {
-      "name": "PoE Audio Port",
+      "name": "UniFi PoE Audio Port",
       "url": "https://store.ui.com/us/en/products/upl-port",
       "docs": {
         "guide": "https://ui.com/qig/upl-port-w"
@@ -1853,11 +1946,11 @@
       }
     },
     "UPS-2U-US": {
-      "name": "UniFi UPS 2U",
+      "name": "UPS 2U",
       "url": "https://store.ui.com/us/en/products/ups-2u-us"
     },
     "UPS-Tower-US": {
-      "name": "UniFi UPS Tower",
+      "name": "UPS Tower",
       "url": "https://store.ui.com/us/en/products/ups-tower-us",
       "docs": {
         "guide": "https://ui.com/qig/ups-tower"
@@ -1889,7 +1982,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ce5ce216-d8de-4ad6-8a15-d4f0d18bf69a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/17265e42-ce46-4996-bbf6-9522c867a4e0/changelog"
     },
     "US24": {
       "name": "Switch 24",
@@ -1909,7 +2002,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/615a34a1-96f4-4290-a9ec-af864271db46/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0d02199a-e68f-48fc-bf6a-369ecddd5bf6/changelog"
     },
     "US24P250": {
       "name": "Switch 24 PoE",
@@ -1929,15 +2022,15 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f4de140a-df96-4e2f-aad4-bef7e80bb02c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f4e112c2-63f9-48eb-9739-e5a41a5fec68/changelog"
     },
     "US24P500": {
       "name": "USW-24-500W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/56f0602e-32ea-4b1d-aa3b-73f23151f3b5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5e26700a-2bd7-4232-9042-92bbe3613fe0/changelog"
     },
     "US24PL2": {
       "name": "USW-24-PoE",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/75747daa-c762-4c9e-92b7-996c80eb5fbb/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/57a7fa94-7b70-4bb1-b52a-22f2eed99890/changelog"
     },
     "US24PRO": {
       "name": "Switch Pro 24",
@@ -1957,7 +2050,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0073f981-4a5e-4169-b45d-09035bdaa11f/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9439e380-5c78-4193-b7fc-3e23c81e3755/changelog"
     },
     "US24PRO2": {
       "name": "Switch Pro 24 PoE",
@@ -1977,14 +2070,14 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ae04cc1-9fcd-44c1-a28f-f0e55bfe0ad0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b0a481c6-09a3-46d8-a4ce-32e88c8cd708/changelog"
     },
     "US48": {
       "name": "Switch 48",
       "url": "https://store.ui.com/us/en/products/usw-48",
       "docs": {
-        "guide": "https://dl.ui.com/qig/usw-48",
-        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf"
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-48"
       },
       "specs": {
         "dimensions_mm": {
@@ -1997,7 +2090,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2813e242-f8d8-4963-b2ff-a573d18937be/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f26d36fa-c2a7-43c4-90c1-5ab1409a310f/changelog"
     },
     "US48P500": {
       "name": "Switch 48 PoE",
@@ -2017,15 +2110,15 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a752339-a617-4b84-bca4-b6138db71516/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/31815e91-00ee-4fd2-8b24-ed7361ac6e8d/changelog"
     },
     "US48P750": {
       "name": "USW-48-750W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/64f52edf-c365-49e3-84ba-c0215a42bb2c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/673fe9d6-bb56-4db7-bf12-171d2b43e440/changelog"
     },
     "US48PL2": {
       "name": "USW-48-PoE",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/48d3e87b-9c8e-49ea-80f3-5f1cbe4d0c7f/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e50ac537-7656-4dd6-bc45-253c5fbb9209/changelog"
     },
     "US48PRO": {
       "name": "Switch Pro 48",
@@ -2045,7 +2138,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b08972d7-9134-4c30-9381-b19e81384df2/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c2245114-21d2-4c8d-98f3-cd406fb01c58/changelog"
     },
     "US48PRO2": {
       "name": "Switch Pro 48 PoE",
@@ -2065,54 +2158,22 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7b994c84-0d43-4fa5-a1c1-2be3e20ff059/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8657f253-fc97-45db-a6ae-dd2b702c3cad/changelog"
     },
     "US624P": {
-      "name": "Switch Enterprise 24 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe",
-      "docs": {
-        "guide": "https://dl.ui.com/qig/enterprise-24-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 442.0,
-          "depth": 325.0,
-          "height": 44.0
-        },
-        "weight_kg": 5.1,
-        "max_power_w": 460.0,
-        "form_factor": "Rack mount (1U)",
-        "rack_height_u": 1
-      },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/70841a0b-f229-42ec-a62b-27970c1fdd54/changelog"
+      "name": "USW-Enterprise-24-PoE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/bd07cdba-b5cf-4ff7-8740-a93b7f897398/changelog"
     },
     "US648P": {
-      "name": "Switch Enterprise 48 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe",
-      "docs": {
-        "guide": "http://ui.com/qig/enterprise-48-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 442.0,
-          "depth": 400.0,
-          "height": 44.0
-        },
-        "weight_kg": 6.2,
-        "max_power_w": 870.0,
-        "form_factor": "Rack mount (1U)",
-        "rack_height_u": 1
-      },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5c64130e-c71c-445a-ba16-ddf9c6252ecb/changelog"
+      "name": "USW-Enterprise-48-PoE",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/74e7db52-4b2c-4979-91a0-973955c3b48d/changelog"
     },
     "US68P": {
       "name": "Switch Enterprise 8 PoE (Vintage)",
       "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe",
       "docs": {
-        "guide": "https://dl.ui.com/qig/enterprise-8-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds",
+        "guide": "https://dl.ui.com/qig/enterprise-8-poe"
       },
       "specs": {
         "dimensions_mm": {
@@ -2124,7 +2185,7 @@
         "max_power_w": 150.0,
         "form_factor": "Compact desktop"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/11731f2f-ec2a-4dec-af99-e1da2b626b5e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a87562b4-489f-4915-9293-8ca00180ae7f/changelog"
     },
     "US6XG150": {
       "name": "Switch Hi-Capacity Aggregation",
@@ -2144,19 +2205,19 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0adadd4c-1611-4d30-9852-b0a686b7781c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/13624265-f1ae-4b23-ba1f-71252dc04b56/changelog"
     },
     "US8": {
       "name": "USW-8",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/650c83e5-980d-4794-87a9-75d3d77cef8a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3e230945-8e55-47e7-9288-b9c870fe0cf8/changelog"
     },
     "US8P150": {
       "name": "USW-8-150W",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e2b3409f-f8e9-4641-9013-6bf8608410e0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/178d351e-8d07-4490-9521-58019f0da7ce/changelog"
     },
     "US8P60": {
       "name": "USW-8-PoE",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fec6d726-5fbd-412f-bbd3-479c456ca730/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d5aac312-4b07-4201-901b-5d91cead1c8a/changelog"
     },
     "USAGGPRO": {
       "name": "Switch Aggregation",
@@ -2175,17 +2236,17 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4ef00764-aab3-4471-8234-45b3fd3766d5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0b247988-3343-441f-9ac2-09a6e219a7f8/changelog"
     },
     "USC8": {
       "name": "Switch Ultra 60W",
       "url": "https://store.ui.com/us/en/products/usw-ultra-60w",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c13e8ad6-6730-460b-86d8-22b35986b10e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6b8fb741-0ef6-4dc5-a3b9-385cae621e2a/changelog"
     },
     "USC8P450": {
       "name": "Switch Ultra 210W",
       "url": "https://store.ui.com/us/en/products/usw-ultra-210w",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/662f8948-3401-4cfe-a42b-a1761c129440/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6ae15ee8-b9a6-4465-baaa-f708aeab8838/changelog"
     },
     "USF5P": {
       "name": "Switch Flex",
@@ -2204,7 +2265,7 @@
         "max_power_w": 51.0,
         "form_factor": "Compact desktop, wall, pole"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb3d948d-7ba5-4233-8dc1-c098ff15c1f6/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/88ba2734-f196-4036-84da-76bbbde772cc/changelog"
     },
     "USFXG": {
       "name": "Switch Pro XG Aggregation",
@@ -2223,7 +2284,7 @@
         "form_factor": "Rack Mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/60e368bc-8d1b-421c-b595-d3ff6e9ee1f0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/52ed0b21-1397-4aa2-a228-4deefe88519a/changelog"
     },
     "USL16LP": {
       "name": "Switch Lite 16 PoE",
@@ -2242,7 +2303,7 @@
         "max_power_w": 60.0,
         "form_factor": "Compact desktop, wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/21a07965-1787-421d-999f-8b46434650db/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d7f9aefe-dcfc-47a6-a40d-6a3ffddbf93f/changelog"
     },
     "USL16LPB": {
       "name": "Switch Pro Max 16",
@@ -2261,7 +2322,7 @@
         "form_factor": "Rack mount (1U), desktop, wall",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/03d2600a-2a25-4e1e-a51f-ed11be111eb1/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6da27d64-d20f-4b24-aeeb-72be7030a21e/changelog"
     },
     "USL16P": {
       "name": "Switch Pro Max 16 PoE",
@@ -2280,7 +2341,7 @@
         "form_factor": "Rack mount (1U), desktop, wall",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2bf048b8-9128-4b84-9e20-a16e2dafd14b/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1d91500f-bb7e-4e40-8b30-b808e337313f/changelog"
     },
     "USL16PB": {
       "name": "Switch Pro Max 16 PoE",
@@ -2299,7 +2360,7 @@
         "form_factor": "Rack mount (1U), desktop, wall",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8f74d7e3-4642-4bb0-a776-ecbe9e94d95c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4099f979-d2e7-4ac6-a18f-5cc6050f2ff8/changelog"
     },
     "USL24": {
       "name": "Switch Pro Max 24",
@@ -2318,7 +2379,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4554f1fe-b7f6-4cb6-b567-eab17a930116/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3566b3bd-eeeb-4068-94d7-7ef4be38da16/changelog"
     },
     "USL24B": {
       "name": "Switch Pro Max 24",
@@ -2337,7 +2398,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/35905616-1c98-4613-b748-f9baadac62e6/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b4d65abb-9741-44a3-894b-bfb27b83f50d/changelog"
     },
     "USL24P": {
       "name": "Switch Pro Max 24 PoE",
@@ -2356,7 +2417,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b1f250fb-0f64-449e-b292-8685babf4407/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f3cd0b44-4844-4678-8840-772c3ba315af/changelog"
     },
     "USL24PB": {
       "name": "Switch Pro Max 24 PoE",
@@ -2375,7 +2436,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/113d9f4c-cfd2-4bfd-ab25-5f1e4471af30/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d71d39e7-7763-44ae-be9e-dc0064c5c1e4/changelog"
     },
     "USL48": {
       "name": "Switch Pro Max 48",
@@ -2394,7 +2455,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1639d28e-7082-41fe-9ca6-48a7de5b6b7f/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/296682f2-0812-48c0-b151-0000e0a06f2c/changelog"
     },
     "USL48B": {
       "name": "Switch Pro Max 48",
@@ -2413,7 +2474,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/51f6524a-923a-4681-ac3f-a9788813755e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5da895f6-cd1e-406f-b982-05de898f2d78/changelog"
     },
     "USL48P": {
       "name": "Switch Pro Max 48 PoE",
@@ -2432,7 +2493,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/06f3d569-9ce5-4701-a5b7-ce1be14386ca/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/940c4ed4-4e83-4bb9-8fd1-ea3a34ee8d6b/changelog"
     },
     "USL48PB": {
       "name": "Switch Pro Max 48 PoE",
@@ -2451,7 +2512,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/feba904f-15cf-430b-82c2-c886d26062c6/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/503773c1-d82b-4a47-84a3-150100c723ab/changelog"
     },
     "USL8A": {
       "name": "Switch Lite 8 PoE",
@@ -2470,7 +2531,7 @@
         "max_power_w": 60.0,
         "form_factor": "Compact desktop, wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7cdc1161-fd6f-4550-bbb6-3dd259dc929d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b6a66b5a-c8b3-44ed-b3d6-e16012e959c8/changelog"
     },
     "USL8LP": {
       "name": "Switch Lite 8 PoE",
@@ -2489,11 +2550,11 @@
         "max_power_w": 60.0,
         "form_factor": "Compact desktop, wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/e6fef6f9-16af-422c-b3f6-4b36f5b2474c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2ccb250c-f01c-46a6-834b-0f977726ad43/changelog"
     },
     "USL8LPB": {
       "name": "USL8LPB",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a2c36784-70a9-4ff1-94ad-9ddbb9a15f9e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7a8a3585-fabc-491e-bdc1-65e91ecbfb97/changelog"
     },
     "USL8MP": {
       "name": "Switch Pro 8 PoE",
@@ -2511,7 +2572,7 @@
         "max_power_w": 150.0,
         "form_factor": "Compact desktop, wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6edda40c-ede7-4e94-a17a-98e0fa1ee9eb/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/096c126e-f186-46dd-be3e-0e431d0fe868/changelog"
     },
     "USLP8P": {
       "name": "Switch Pro 8 PoE",
@@ -2529,7 +2590,7 @@
         "max_power_w": 150.0,
         "form_factor": "Compact desktop, wall"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4345dd46-e992-45d0-afb9-72ca1221dfc7/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2a19ae47-6272-4692-9361-d91c11a79eb4/changelog"
     },
     "USM25G8P": {
       "name": "Switch Ultra 210W",
@@ -2673,7 +2734,7 @@
         "form_factor": "Rack mount (1U), desktop, wall",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/940135de-b84d-4376-85ba-e581fa8ce55b/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fb13ee8f-e953-46bd-87e8-ea24fcdf5231/changelog"
     },
     "USPM16P": {
       "name": "Switch Pro Max 16 PoE",
@@ -2692,7 +2753,7 @@
         "form_factor": "Rack mount (1U), desktop, wall",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/531c7744-74cc-4a6f-839d-f78fc13f883c/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d0d3de81-2acf-4dd8-a987-4df426ee5f47/changelog"
     },
     "USPM24": {
       "name": "Switch Pro Max 24",
@@ -2711,7 +2772,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/5f110576-e1c3-4792-b048-aed48832983d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/95535a75-ef88-43c7-a953-ce57f666b862/changelog"
     },
     "USPM24P": {
       "name": "Switch Pro Max 24 PoE",
@@ -2730,7 +2791,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/401a48ce-12ae-4925-b281-4b565774bbf9/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1a6a7b1e-1080-4b28-ab11-93ee0a24b768/changelog"
     },
     "USPM48": {
       "name": "Switch Pro Max 48",
@@ -2749,7 +2810,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/36afbb25-596d-40a4-afff-b386d4312de5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/200255d6-714b-4123-944b-351929291003/changelog"
     },
     "USPM48P": {
       "name": "Switch Pro Max 48 PoE",
@@ -2768,7 +2829,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/0b1939dd-5e9e-4d04-95c9-1c9c85acde48/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7048bbb3-c5e6-47b7-89f2-4c4bf9e7e2f4/changelog"
     },
     "USPPDUHD": {
       "name": "Power Distribution Hi-Density",
@@ -2876,8 +2937,8 @@
       "name": "Switch 48",
       "url": "https://store.ui.com/us/en/products/usw-48",
       "docs": {
-        "guide": "https://dl.ui.com/qig/usw-48",
-        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf"
+        "datasheet": "https://dl.ui.com/ds/usw-48_ds.pdf",
+        "guide": "https://dl.ui.com/qig/usw-48"
       },
       "specs": {
         "dimensions_mm": {
@@ -2928,50 +2989,12 @@
         "rack_height_u": 1
       }
     },
-    "USW-Enterprise-24-PoE": {
-      "name": "Switch Enterprise 24 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-24-poe",
-      "docs": {
-        "guide": "https://dl.ui.com/qig/enterprise-24-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-24-poe_ds"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 442.0,
-          "depth": 325.0,
-          "height": 44.0
-        },
-        "weight_kg": 5.1,
-        "max_power_w": 460.0,
-        "form_factor": "Rack mount (1U)",
-        "rack_height_u": 1
-      }
-    },
-    "USW-Enterprise-48-PoE": {
-      "name": "Switch Enterprise 48 PoE (Vintage)",
-      "url": "https://store.ui.com/us/en/products/usw-enterprise-48-poe",
-      "docs": {
-        "guide": "http://ui.com/qig/enterprise-48-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-48-poe_ds.pdf"
-      },
-      "specs": {
-        "dimensions_mm": {
-          "width": 442.0,
-          "depth": 400.0,
-          "height": 44.0
-        },
-        "weight_kg": 6.2,
-        "max_power_w": 870.0,
-        "form_factor": "Rack mount (1U)",
-        "rack_height_u": 1
-      }
-    },
     "USW-Enterprise-8-PoE": {
       "name": "Switch Enterprise 8 PoE (Vintage)",
       "url": "https://store.ui.com/us/en/products/usw-enterprise-8-poe",
       "docs": {
-        "guide": "https://dl.ui.com/qig/enterprise-8-poe",
-        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds"
+        "datasheet": "https://dl.ui.com/ds/usw-enterprise-8-poe_ds",
+        "guide": "https://dl.ui.com/qig/enterprise-8-poe"
       },
       "specs": {
         "dimensions_mm": {
@@ -3588,19 +3611,19 @@
     },
     "USWDA23": {
       "name": "USWDA23",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7b0640ea-5ca3-460c-bc2f-426ba821cd1a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f0d0059f-bdda-49d5-b97e-f79327de5e2e/changelog"
     },
     "USWDA24": {
       "name": "USWDA24",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1a57b19a-5840-4555-a781-7676c17acc17/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7f8fc3e3-8559-4399-8813-f760651be584/changelog"
     },
     "USWDA25": {
       "name": "USWDA25",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/dbc1a3b7-7411-4bcd-9dca-3524513c51b5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/13096557-c4ac-42f1-9e3d-ed177560a3b6/changelog"
     },
     "USWDA26": {
       "name": "USWDA26",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/afd7c47d-c284-4ba1-a7ff-f806b6b09a8e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/47833997-6532-4d57-8d75-644ddb667e6e/changelog"
     },
     "USWED35": {
       "name": "USWED35",
@@ -3617,27 +3640,27 @@
     },
     "USWED42": {
       "name": "USWED42",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6fc94667-d342-4652-8335-3e01a4570e2b/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/ba44b9db-681c-415e-9d31-501cc0c3cae7/changelog"
     },
     "USWED43": {
       "name": "USWED43",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/25c87ce4-5a44-45e5-83c9-98a4948ac6b6/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c1045113-4bee-483a-9f55-9a986bbcea5c/changelog"
     },
     "USWED44": {
       "name": "USWED44",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1d6cc279-a5f6-4015-a427-b50762efe249/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/3af718b4-58ff-4ffd-8731-81cc044981d9/changelog"
     },
     "USWED45": {
       "name": "USWED45",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/7380b3a9-9142-4cbb-98eb-12006bffb80a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/8f4d7eb2-a9fb-454f-b710-82f71fbabf80/changelog"
     },
     "USWED72": {
       "name": "USWED72",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6dc8b784-a7fa-4e31-8da6-b1920bd0f3a5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/aa407cfb-6f12-4064-8239-bea48dbedebe/changelog"
     },
     "USWED73": {
       "name": "USWED73",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a02b1424-a4c6-40a3-b818-8669079fd6e5/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/9a41fe6a-eb7e-4bcf-b0e0-261eda4fd927/changelog"
     },
     "USWED74": {
       "name": "USWED74",
@@ -3649,27 +3672,35 @@
     },
     "USWED76": {
       "name": "USWED76",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6ec34c5a-b6ba-4183-a836-493d07a191b0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f7b85cea-f2b2-4efe-a207-193324cb6a2e/changelog"
     },
     "USWED77": {
       "name": "USWED77",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/190622f2-9bf7-4534-a45e-ac517457cbab/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/750144f1-6f4c-4f07-8093-f51a4324483d/changelog"
+    },
+    "USWF001": {
+      "name": "USWF001",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a72eb76a-c834-49f8-91b2-98fd723681a1/changelog"
+    },
+    "USWF002": {
+      "name": "USWF002",
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/492bb1fd-f9ed-4555-9be1-db9b25be24db/changelog"
     },
     "USWF003": {
       "name": "USWF003",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/f082d434-3b6a-4bc7-99ad-63a45c7212b4/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/81018e2e-3a40-450b-856f-311663a1f7a0/changelog"
     },
     "USWF066": {
       "name": "USWF066",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c6125a40-960a-42fb-b9b9-b270199098fc/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/080a8f89-b99f-43b2-8206-90ad9c2e40b7/changelog"
     },
     "USWF067": {
       "name": "USWF067",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/cd203b43-83e5-4eac-b4fa-1e6da35dcdda/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1649fdad-d3f8-47bc-af46-dfaa75c3772b/changelog"
     },
     "USWF069": {
       "name": "USWF069",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6feedef4-46c8-480e-965b-2afb81f1b2e0/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b2c5ab36-819c-4fe2-8fe8-2f1e89b831a2/changelog"
     },
     "USXG": {
       "name": "Switch Pro XG Aggregation",
@@ -3688,11 +3719,11 @@
         "form_factor": "Rack Mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/fbfedb58-c0c3-4ffa-9f02-7e5e957815f2/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/39a942b9-3e1c-40cc-b9e8-c23099bb550d/changelog"
     },
     "USXG24": {
       "name": "USXG24",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2ef1aa3e-0d84-48c8-8c3f-3baba5b41fdf/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/935097fd-7285-4b02-95b9-0be0991c4807/changelog"
     },
     "UT-ATA": {
       "name": "Analog Telephone Adapter",
@@ -3776,7 +3807,7 @@
     },
     "UTREA06": {
       "name": "UTREA06",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a53ec285-c870-46d9-a08f-8260d8856efe/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/a59e3a21-ed39-45a0-b5e6-948d94791baf/changelog"
     },
     "UWB-XG": {
       "name": "WiFi BaseStation XG",
@@ -3797,7 +3828,7 @@
     },
     "UX": {
       "name": "UX",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/4d48a18e-523e-465a-b3d8-a3e4f87c6f14/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/b5164ae5-ec18-4d37-b95d-1540d91e0a8a/changelog"
     },
     "UX7": {
       "name": "UniFi Express 7",
@@ -3847,7 +3878,7 @@
         "max_power_w": 6.2,
         "form_factor": "Compact desktop"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/1f9e6245-6339-41e1-971b-145b39ac4bcb/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/996c83e4-42a4-4dc7-bfa3-26894dc59cd7/changelog"
     },
     "UXG-Enterprise": {
       "name": "Gateway Enterprise",
@@ -3946,12 +3977,12 @@
         "max_power_w": 28.0,
         "form_factor": "Wall-mounted\nCompact desktop (Table stand included)\nRack mount (Accessory sold separately)"
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/2fbd927b-2684-439f-8987-e244d09caa6a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/d0af0167-e730-4199-8b69-cebbbd015d1c/changelog"
     },
     "UXGB": {
       "name": "Cloud Gateway Max",
       "url": "https://store.ui.com/us/en/products/ucg-max",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/c8654ad6-831f-4ba9-9dd6-a0e83511b23a/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/24c0e20a-ac00-49f4-a876-728cf4dcd56a/changelog"
     },
     "UXGENT": {
       "name": "Gateway Enterprise",
@@ -3969,7 +4000,7 @@
         "form_factor": "Rack mount (1U)",
         "rack_height_u": 1
       },
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/af57c01e-c247-4584-9465-08aea690dc4d/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/272df3dc-63a8-41ac-8e83-db7a3af2a53a/changelog"
     },
     "UXGPRO": {
       "name": "UXG-Pro-US",
@@ -3977,7 +4008,7 @@
     },
     "UXGPROV2": {
       "name": "UXG-Pro-US",
-      "firmware_changelog": "https://fw-update.ui.com/api/firmware/6520fc8e-46a1-46c6-b2f2-db4a3b08a74e/changelog"
+      "firmware_changelog": "https://fw-update.ui.com/api/firmware/24b42f22-ad8a-4ef9-80b4-fc30b8213664/changelog"
     },
     "UXSDM": {
       "name": "UXSDM",
