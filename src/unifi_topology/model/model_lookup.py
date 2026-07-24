@@ -18,6 +18,7 @@ _ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
 _MODELS_PATH = _ASSETS_DIR / "models.json"
 _OVERRIDES_PATH = _ASSETS_DIR / "specs_overrides.json"
 _cache: dict[str, dict[str, Any]] | None = None
+_index_cache: dict[str, dict[str, Any]] | None = None
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -46,7 +47,7 @@ def _apply_spec_overrides(
 
 def _load_models() -> dict[str, dict[str, Any]]:
     """Load the model lookup table (cached after first call)."""
-    global _cache  # noqa: PLW0603
+    global _cache, _index_cache  # noqa: PLW0603
     if _cache is not None:
         return _cache
     data = _load_json(_MODELS_PATH)
@@ -57,20 +58,46 @@ def _load_models() -> dict[str, dict[str, Any]]:
     if overrides:
         _apply_spec_overrides(models, overrides)
     _cache = models
+    _index_cache = None
     return _cache  # type: ignore[return-value]  # narrowing lost after global assignment
 
 
-def _find_entry(model: str) -> dict[str, Any] | None:
-    """Find the model entry, trying exact then case-insensitive match."""
+def _lookup_index() -> dict[str, dict[str, Any]]:
+    """Case-insensitive index over model keys and `name` values (cached).
+
+    Keys (the codes/SKUs the UniFi API returns in the `model` field) take
+    precedence; friendly `name` values are added as a fallback so a SKU that
+    was re-keyed to a firmware code (e.g. USW-Enterprise-24-PoE, now the name
+    of US624P) still resolves.
+    """
+    global _index_cache  # noqa: PLW0603
+    if _index_cache is not None:
+        return _index_cache
     models = _load_models()
-    entry = models.get(model)
+    index = _name_fallback_index(models)
+    # Keys (the codes/SKUs the API returns) win over name fallbacks.
+    index.update({key.lower(): entry for key, entry in models.items()})
+    _index_cache = index
+    return index
+
+
+def _name_fallback_index(
+    models: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    index: dict[str, dict[str, Any]] = {}
+    for entry in models.values():
+        name = entry.get("name")
+        if isinstance(name, str) and name:
+            index.setdefault(name.lower(), entry)
+    return index
+
+
+def _find_entry(model: str) -> dict[str, Any] | None:
+    """Find the model entry by exact key, then case-insensitive key/name."""
+    entry = _load_models().get(model)
     if entry is not None:
         return entry
-    lower = model.lower()
-    for key, value in models.items():
-        if key.lower() == lower:
-            return value
-    return None
+    return _lookup_index().get(model.lower())
 
 
 def lookup_model_name(model: str) -> str:

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- `lookup_model_name` (and the `_stats` model-name fallback) again resolve model strings that only survive as an entry's `name` after the store-to-firmware-code re-keying of the bundled model database (e.g. `USW-Enterprise-24-PoE`, now the name of firmware code `US624P`). The lookup index now falls back to a case-insensitive `name` match, honouring the documented "accepts both store SKUs and firmware platform codes" contract
 - `render_device_port_overview` Connected column was always empty: MAC-keyed port/client maps (from `build_port_map`/`build_client_port_map`) were filtered by device display name, which never matched since the node-id migration. The maps are now translated to display names, so connected devices show correctly. Pass the new optional `node_names` (MAC-to-display-name map, as `render_svg`/`render_mermaid` accept) to also resolve connected client names (closes #67)
 
 ## [3.0.0] - 2026-07-19

@@ -144,3 +144,15 @@ def test_specs_for_firmware_code():
     specs = lookup_model_specs("U6M")
     assert "dimensions_mm" in specs
     assert "weight_kg" in specs
+
+
+def test_lookup_resolves_sku_that_only_survives_as_a_name():
+    """A model string that is only present as an entry's `name` still resolves.
+
+    After the store->firmware re-keying, some SKUs (e.g. USW-Enterprise-24-PoE)
+    are no longer keys but survive as the `name` of a firmware-code entry
+    (US624P). The lookup documents that it accepts both SKUs and codes, so a
+    name match must still resolve.
+    """
+    assert lookup_model_name("USW-Enterprise-24-PoE") != ""
+    assert lookup_model_name("usw-enterprise-24-poe") != ""  # case-insensitive
