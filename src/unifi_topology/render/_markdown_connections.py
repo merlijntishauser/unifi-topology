@@ -10,6 +10,34 @@ from ._device_ports_aggregate import port_index
 from ._markdown_tables import escape_markdown
 
 
+def port_map_by_name(port_map: PortMap, name_of: dict[str, str]) -> PortMap:
+    """Rewrite a MAC-keyed device port map to use display names.
+
+    ``name_of`` maps a node id (MAC) to its display name; unknown ids are left
+    as-is. The connection helpers key on display name, so a MAC-keyed map (as
+    ``build_port_map`` produces) must be translated before rendering.
+    """
+    return {
+        (name_of.get(src, src), name_of.get(dst, dst)): label
+        for (src, dst), label in port_map.items()
+    }
+
+
+def client_port_map_by_name(
+    client_map: ClientPortMap,
+    name_of: dict[str, str],
+    client_names: dict[str, str],
+) -> ClientPortMap:
+    """Rewrite a MAC-keyed client port map to device/client display names."""
+    result: ClientPortMap = {}
+    for device_id, rows in client_map.items():
+        device_name = name_of.get(device_id, device_id)
+        result[device_name] = [
+            (port, client_names.get(client_id, client_id)) for port, client_id in rows
+        ]
+    return result
+
+
 def device_port_connections(device_name: str, port_map: PortMap) -> dict[int, list[str]]:
     connections: dict[int, list[str]] = defaultdict(list)
     for (src, dst), label in port_map.items():

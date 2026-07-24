@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ..model.classify import classify_device_type
+from ..model.edges import build_device_index
 from ..model.topology import ClientPortMap, Device, PortInfo, PortMap
 from ._device_ports_aggregate import (
     aggregate_ports,
@@ -12,10 +13,12 @@ from ._device_ports_aggregate import (
 )
 from ._device_summary import poe_summary, port_summary, uplink_summary
 from ._markdown_connections import (
+    client_port_map_by_name,
     device_client_connections,
     device_port_connections,
     format_aggregate_connections,
     format_connections,
+    port_map_by_name,
 )
 from ._markdown_port_format import (
     format_aggregate_poe_state,
@@ -36,13 +39,39 @@ def render_device_port_overview(
     port_map: PortMap,
     *,
     client_ports: ClientPortMap | None = None,
+    node_names: dict[str, str] | None = None,
 ) -> str:
+    """Render per-device port tables with a Connected column.
+
+    ``port_map`` / ``client_ports`` are MAC-keyed (as produced by
+    ``build_port_map`` / ``build_client_port_map``). They are translated to
+    display names here: device peers resolve via the device list; pass
+    ``node_names`` (a MAC-to-display-name map, as accepted by ``render_svg`` /
+    ``render_mermaid``) to also resolve connected client names.
+    """
+    port_map, client_ports = _resolve_port_map_names(devices, port_map, client_ports, node_names)
     gateways = _collect_devices_by_type(devices, "gateway")
     switches = _collect_devices_by_type(devices, "switch")
     sections: list[str] = []
     _append_device_section(sections, "Gateways", gateways, port_map, client_ports)
     _append_device_section(sections, "Switches", switches, port_map, client_ports)
     return "\n\n".join(section for section in sections if section).rstrip() + "\n"
+
+
+def _resolve_port_map_names(
+    devices: list[Device],
+    port_map: PortMap,
+    client_ports: ClientPortMap | None,
+    node_names: dict[str, str] | None,
+) -> tuple[PortMap, ClientPortMap | None]:
+    name_of = build_device_index(devices)
+    if node_names:
+        name_of = {**name_of, **node_names}
+    resolved_port_map = port_map_by_name(port_map, name_of)
+    if client_ports is None:
+        return resolved_port_map, None
+    resolved_clients = client_port_map_by_name(client_ports, name_of, node_names or {})
+    return resolved_port_map, resolved_clients
 
 
 def _append_device_section(
