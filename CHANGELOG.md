@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.0.2] - 2026-07-24
 
 ### Fixed
 - `lookup_model_name` (and the `_stats` model-name fallback) again resolve model strings that only survive as an entry's `name` after the store-to-firmware-code re-keying of the bundled model database (e.g. `USW-Enterprise-24-PoE`, now the name of firmware code `US624P`). The lookup index now falls back to a case-insensitive `name` match, honouring the documented "accepts both store SKUs and firmware platform codes" contract
 - `render_device_port_overview` Connected column was always empty: MAC-keyed port/client maps (from `build_port_map`/`build_client_port_map`) were filtered by device display name, which never matched since the node-id migration. The maps are now translated to display names, so connected devices show correctly. Pass the new optional `node_names` (MAC-to-display-name map, as `render_svg`/`render_mermaid` accept) to also resolve connected client names (closes #67)
 
-## [3.0.0] - 2026-07-19
+## [3.0.1] - 2026-07-19
 
 Full-codebase review remediation. See `docs/code-review-2026-07.md` for the
 underlying findings. This is a major release: it contains three breaking
@@ -270,7 +270,9 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.2...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...HEAD
+[3.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.1...v3.0.2
+[3.0.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v3.0.1
 [2.2.2]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v2.1.2...v2.2.0
