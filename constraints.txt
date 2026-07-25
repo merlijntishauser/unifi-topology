@@ -3,14 +3,14 @@ PyYAML==6.0.3
 urllib3==2.7.0
 idna==3.18
 pymdown-extensions==11.0.1
-Faker==40.28.1
-pre-commit==4.6.0
+Faker==40.36.0
+pre-commit==4.6.1
 pytest==9.1.1
 pytest-cov==7.1.0
-ruff==0.15.21
+ruff==0.16.0
 pyright==1.1.411
 setuptools==83.0.0
 wheel==0.47.0
 # Transitive/tooling pins bumped to patched versions (pip-audit remediation)
-click==8.3.3
+click==8.4.2
 msgpack==1.2.1
