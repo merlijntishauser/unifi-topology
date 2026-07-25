@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from ._svg_iso_lighting import iso_face_colors, node_extrusion, render_contact_shadow
+from ._svg_iso_lighting import iso_face_colors, render_contact_shadow
 from ._svg_node_types import _TYPE_COLORS, _safe_node_type
 from .svg_iso_geometry import (
     IsoLayout,
@@ -317,7 +317,6 @@ def _render_iso_node(
     port_prefix: str | None,
     layout: IsoLayout,
     theme: SvgTheme,
-    node_elevation: dict[str, float] | None = None,
 ) -> None:
     safe_type = _safe_node_type(node_type)
     _, stroke = _TYPE_COLORS[safe_type]
@@ -325,18 +324,7 @@ def _render_iso_node(
     tile_w = layout.tile_width
     tile_h = layout.tile_height
     is_client = node_type in ("client", "client_cluster")
-    base_depth = _node_depth(port_label, layout)
-    node_depth = node_extrusion(
-        node_id,
-        base_depth=base_depth,
-        tile_h=tile_h,
-        node_elevation=node_elevation,
-        elevation_scale=options.iso_elevation_scale,
-    )
-    # Extrusion grows downward from the tile, so lift the tile by the elevation
-    # to keep the node's base seated on the floor plane and let it rise.
-    lift = node_depth - base_depth
-    top_y = y - lift
+    node_depth = _node_depth(port_label, layout)
 
     group_attrs = _svg_node_group_attrs(None, node_id, node_type)
     lines.append(f"<g{group_attrs}>")
@@ -348,10 +336,9 @@ def _render_iso_node(
             y=y,
             tile_w=tile_w,
             tile_h=tile_h,
-            node_depth=base_depth + lift * 0.35,
+            node_depth=node_depth,
             filter_id="iso-contact-shadow",
         )
-    y = top_y
     top, left, right = _iso_node_polygons(x, y, tile_w, tile_h, node_depth)
     lines.append(
         f'<polygon points="{_points_to_svg(top)}" fill="transparent" '
@@ -418,7 +405,6 @@ def _render_iso_nodes(
     node_port_labels: dict[str, str],
     node_port_prefix: dict[str, str],
     theme: SvgTheme,
-    node_elevation: dict[str, float] | None = None,
 ) -> None:
     names = node_names or {}
     # Draw back-to-front so nearer nodes and their shadows overlap farther ones.
@@ -437,5 +423,4 @@ def _render_iso_nodes(
             port_prefix=node_port_prefix.get(node_id),
             layout=layout,
             theme=theme,
-            node_elevation=node_elevation,
         )

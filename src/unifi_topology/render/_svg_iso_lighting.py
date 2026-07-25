@@ -88,26 +88,3 @@ def render_contact_shadow(
         f'<polygon class="iso-contact-shadow" points="{points_str}" fill="#000000" '
         f'opacity="{_SHADOW_OPACITY}" filter="url(#{filter_id})"/>'
     )
-
-
-def node_extrusion(
-    node_id: str,
-    *,
-    base_depth: float,
-    tile_h: float,
-    node_elevation: dict[str, float] | None,
-    elevation_scale: float,
-) -> float:
-    """Return a node's extrusion depth, raised by its normalized elevation.
-
-    ``node_elevation`` maps a node id to a 0..1 value (e.g. normalized client
-    count or throughput). ``elevation_scale`` is the additional height, in tile
-    heights, applied at elevation 1.0.
-    """
-    if not node_elevation or elevation_scale <= 0:
-        return base_depth
-    level = node_elevation.get(node_id)
-    if level is None:
-        return base_depth
-    clamped = max(0.0, min(1.0, level))
-    return base_depth + clamped * elevation_scale * tile_h

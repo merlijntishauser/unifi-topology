@@ -241,12 +241,9 @@ class SvgOptions:
     layout_mode: str = "physical"  # "physical" | "grouped"
     group_padding: int = 20
     group_gap: int = 40
-    # Isometric depth cues. iso_lighting shades side faces from each node's own
-    # colour under a single light direction and seats nodes with a contact
-    # shadow; iso_elevation_scale is the extra extrusion (in tile heights)
-    # applied to a node at normalized elevation 1.0 (see node_elevation).
+    # Shade isometric side faces from each node's own colour under a single
+    # light direction, and seat each node with a contact shadow.
     iso_lighting: bool = False
-    iso_elevation_scale: float = 0.0
 
 
 _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"

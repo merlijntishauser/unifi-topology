@@ -34,22 +34,3 @@ def test_lighting_is_opt_in():
 def test_lighting_adds_contact_shadows():
     output = render_svg_isometric(_EDGES, node_types=_TYPES, options=SvgOptions(iso_lighting=True))
     assert output.count('class="iso-contact-shadow"') == len(_TYPES)
-
-
-def test_elevation_raises_node_without_lighting_flag():
-    flat = render_svg_isometric(
-        _EDGES, node_types=_TYPES, options=SvgOptions(iso_elevation_scale=1.0)
-    )
-    raised = render_svg_isometric(
-        _EDGES,
-        node_types=_TYPES,
-        options=SvgOptions(iso_elevation_scale=1.0),
-        node_elevation={"sw": 1.0},
-    )
-    assert flat != raised
-
-
-def test_elevation_ignored_when_scale_is_zero():
-    baseline = render_svg_isometric(_EDGES, node_types=_TYPES)
-    with_elevation = render_svg_isometric(_EDGES, node_types=_TYPES, node_elevation={"sw": 1.0})
-    assert baseline == with_elevation
