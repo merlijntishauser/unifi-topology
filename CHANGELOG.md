@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- New `unifi` icon set (`SvgTheme(icon_set="unifi")`), bundled under `assets/icons/icons-unifi/`. Original MIT-licensed artwork covering all 14 node types with no fallbacks, replacing several semantically wrong isopacks mappings: access points are ceiling discs rather than radio towers, NAS is a drive enclosure rather than a database cylinder, and `client_cluster` is a group of devices rather than a person. The existing `isometric` (isopacks) and `modern` sets are unchanged and remain the default
+- `SvgOptions.iso_compact_layout` (default `False`): packs isometric nodes into per-hub districts instead of laying every sibling along one diagonal. The previous layout mapped sibling order to one grid axis and tree depth to the other, so a shallow, wide network became a thin diagonal strip — 89 nodes produced a 166x4 grid on a 21504x12296 canvas. Compact packing brings that to 5904x4675, raises node density from 0.4 to 5.1 nodes per megapixel, and cuts mean edge length by roughly half
+- `scripts/normalize_icon_viewbox.py`: retargets an icon set's root `viewBox` so every icon fills the same fraction of its square frame. Icons are drawn into a fixed square with `xMidYMid meet`, so uneven internal margins made some devices render as specks
+
+### Fixed
+- Isometric layout could place two nodes on the same grid cell, silently stacking them. A parent's position was the mean of its children's indices, so two switches feeding one client resolved to the same tile (three nodes shared a tile in a 30-node topology). Only affects the new compact layout path; the default tree layout is unchanged pending a wider fix
+
 ## [3.0.2] - 2026-07-24
 
 ### Fixed

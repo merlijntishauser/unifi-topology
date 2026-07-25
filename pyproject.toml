@@ -117,6 +117,8 @@ package-dir = {"" = "src"}
   "assets/icons/*.svg",
   "assets/icons/isometric/*.svg",
   "assets/icons/isometric/ISOPACKS_LICENSE",
+  "assets/icons/icons-unifi/*.svg",
+  "assets/icons/icons-unifi/LICENSE",
   "assets/icons/modern/*.svg",
   "assets/icons/modern-flat/*.svg",
   "assets/themes/*.yaml",

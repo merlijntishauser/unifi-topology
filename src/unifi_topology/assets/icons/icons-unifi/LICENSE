@@ -1,0 +1,42 @@
+MIT License
+
+Copyright (c) 2026 Merlijn Tishauser
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+PROVENANCE
+
+These icons are original artwork commissioned for unifi-topology. They are not
+derived from, and share no geometry with, the isopacks set bundled under
+assets/icons/isometric/ (MIT, Copyright 2023 Mark Mankarious): the two sets have
+no path or polygon data in common, use different outline colours and palettes,
+and were produced with different tooling.
+
+Some filenames deliberately mirror the isopacks inventory so the two sets are
+interchangeable at the same call sites. Filenames and subject matter are not
+themselves subject to copyright.
+
+
+TRADEMARKS
+
+These icons depict generic network hardware in a style evocative of UniFi
+equipment. "UniFi" and "Ubiquiti" are trademarks of Ubiquiti Inc. This project
+is not affiliated with, endorsed by, or sponsored by Ubiquiti Inc., and the set
+contains no Ubiquiti logo, wordmark, or other brand asset.

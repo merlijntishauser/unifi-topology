@@ -60,7 +60,7 @@ src/unifi_topology/
 │   ├── templates/       # Jinja2 templates (*.j2)
 │   └── _svg_*, _markdown_*  # Private rendering helpers
 └── assets/
-    ├── icons/           # SVG device icons (isometric, modern, modern-flat)
+    ├── icons/           # SVG device icons (isometric, modern, modern-flat, icons-unifi)
     ├── themes/          # Default theme YAML files
     └── fonts/           # Embedded web fonts (woff2)
 ```

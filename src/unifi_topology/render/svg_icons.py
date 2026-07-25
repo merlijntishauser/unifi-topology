@@ -63,6 +63,26 @@ _ICON_FILES_MODERN = {
     "other": "other.svg",
 }
 
+# UniFi set: original artwork, one file per node type, no fallbacks needed.
+# Every icon is normalized to fill 88% of a square viewBox (see
+# scripts/normalize_icon_viewbox.py) so they render at a consistent optical size.
+_ICON_FILES_UNIFI = {
+    "gateway": "gateway.svg",
+    "switch": "switch.svg",
+    "ap": "ap.svg",
+    "camera": "camera.svg",
+    "tv": "tv.svg",
+    "phone": "phone.svg",
+    "printer": "printer.svg",
+    "nas": "nas.svg",
+    "speaker": "speaker.svg",
+    "game_console": "game_console.svg",
+    "iot": "iot.svg",
+    "client": "client.svg",
+    "client_cluster": "client_cluster.svg",
+    "other": "other.svg",
+}
+
 # Icon set registry: maps set names to (flat_dir, iso_dir, flat_files, iso_files)
 _ICON_SETS = {
     "isometric": (
@@ -76,6 +96,12 @@ _ICON_SETS = {
         "modern",  # Isometric icons for iso SVG
         _ICON_FILES_MODERN,
         _ICON_FILES_MODERN,
+    ),
+    "unifi": (
+        "icons-unifi",  # Same artwork for orthogonal and isometric output
+        "icons-unifi",
+        _ICON_FILES_UNIFI,
+        _ICON_FILES_UNIFI,
     ),
 }
 
