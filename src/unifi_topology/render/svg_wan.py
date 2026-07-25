@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from ..model.topology import WanInfo
-from ._svg_render_common import _find_gateway_position as _find_gateway_position
 from ._svg_render_common import _overlay_box_size, _vlan_group_colors
 from .svg_labels import _build_wan_label_lines, _escape_attr, _escape_text
 from .svg_layout import GroupBounds

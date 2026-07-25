@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..model.topology import VpnTunnel, WanInfo
-from ._svg_render_common import _find_gateway_position as _find_gateway_position
 from ._svg_render_common import _overlay_box_size
 from .svg_iso_geometry import IsoLayout
 from .svg_labels import _build_wan_label_lines, _escape_text

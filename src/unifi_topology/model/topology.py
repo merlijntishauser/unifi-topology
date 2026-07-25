@@ -66,16 +66,30 @@ def _client_name_entry(client: object) -> tuple[str, str] | None:
     return node_id, client_display_name(client) or node_id
 
 
+def _client_matches_mode(client: object, mode: str) -> bool:
+    from ._client_access import _client_is_wired
+
+    if mode == "all":
+        return True
+    wired = _client_is_wired(client)
+    return not wired if mode == "wireless" else wired
+
+
 def _filtered_clients(
     clients: Iterable[object],
     client_mode: str,
     only_unifi: bool,
 ) -> Iterable[object]:
-    from .clients import client_matches_filters
+    # Uses _client_access/classify (not clients) to avoid a topology -> clients
+    # import cycle; clients already imports topology.
+    from .classify import client_is_unifi
 
     for client in clients:
-        if client_matches_filters(client, client_mode=client_mode, only_unifi=only_unifi):
-            yield client
+        if not _client_matches_mode(client, client_mode):
+            continue
+        if only_unifi and not client_is_unifi(client):
+            continue
+        yield client
 
 
 def _client_node_names(

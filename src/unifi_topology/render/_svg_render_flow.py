@@ -5,11 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
-from ._svg_render_common import render_at_gateway
+from ._svg_render_common import _find_gateway_position, render_at_gateway
 from .svg_layout import GroupBounds, _layout_grouped_nodes, _layout_nodes
 from .svg_theme import SvgOptions, SvgTheme
 from .svg_vpn import _render_vpn_tunnels, _vpn_box_height_estimate
-from .svg_wan import _apply_wan_offset, _find_gateway_position, _render_wan_upstream
+from .svg_wan import _apply_wan_offset, _render_wan_upstream
 
 
 @dataclass(frozen=True)
