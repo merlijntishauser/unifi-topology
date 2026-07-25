@@ -80,6 +80,7 @@ def _render_iso_nodes_and_edges(
     theme: SvgTheme,
     offset_x: float,
     offset_y: float,
+    node_elevation: dict[str, float] | None = None,
 ) -> None:
     node_port_labels: dict[str, str] = {}
     node_port_prefix: dict[str, str] = {}
@@ -108,6 +109,7 @@ def _render_iso_nodes_and_edges(
         node_port_labels=node_port_labels,
         node_port_prefix=node_port_prefix,
         theme=theme,
+        node_elevation=node_elevation,
     )
 
 
@@ -199,11 +201,16 @@ def render_svg_isometric(
     group_vlan_ids: dict[str, int] | None = None,
     wan_info: WanInfo | None = None,
     vpn_tunnels: list[VpnTunnel] | None = None,
+    node_elevation: dict[str, float] | None = None,
 ) -> str:
     """Render an isometric (2.5D) SVG network diagram.
 
     Same interface as :func:`~unifi_network_maps.render.render_svg` but produces
     a 30-degree isometric projection with 3D-style device tiles and grid floor.
+
+    ``node_elevation`` maps a node id to a normalized 0..1 height, letting the
+    vertical axis carry data (client count, throughput, PoE draw). It applies
+    only when ``SvgOptions.iso_elevation_scale`` is greater than zero.
     """
     options = options or SvgOptions()
     per_type_decals = _build_decal_colors(theme)
@@ -269,6 +276,7 @@ def render_svg_isometric(
         theme=theme,
         offset_x=layout_positions.offset_x,
         offset_y=layout_positions.offset_y,
+        node_elevation=node_elevation,
     )
     _render_iso_gateway_overlays(
         lines,

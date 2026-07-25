@@ -175,6 +175,12 @@ def svg_defs(prefix: str, theme: SvgTheme = DEFAULT_THEME) -> str:
         '<feGaussianBlur stdDeviation="4" result="blur"/>'
         "</filter>"
     )
+    # Contact shadow that seats an isometric node on the floor plane.
+    parts.append(
+        f'<filter id="{filter_prefix}contact-shadow" x="-60%" y="-60%" width="220%" height="220%">'
+        '<feGaussianBlur stdDeviation="6" result="blur"/>'
+        "</filter>"
+    )
     # Emboss filter for icon decals - iOS glass effect
     parts.append(
         f'<filter id="{filter_prefix}icon-emboss" x="-50%" y="-50%" width="200%" height="200%">'
@@ -235,6 +241,12 @@ class SvgOptions:
     layout_mode: str = "physical"  # "physical" | "grouped"
     group_padding: int = 20
     group_gap: int = 40
+    # Isometric depth cues. iso_lighting shades side faces from each node's own
+    # colour under a single light direction and seats nodes with a contact
+    # shadow; iso_elevation_scale is the extra extrusion (in tile heights)
+    # applied to a node at normalized elevation 1.0 (see node_elevation).
+    iso_lighting: bool = False
+    iso_elevation_scale: float = 0.0
 
 
 _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"
