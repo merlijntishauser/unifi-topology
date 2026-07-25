@@ -1,4 +1,9 @@
-"""Generate isometric device icons matching the bundled isopacks style.
+"""Generate placeholder isometric device icons for types isopacks does not cover.
+
+NOTE: these are primitive-built stand-ins, visibly simpler than the hand-drawn
+isopacks art they sit beside (which uses near-white bodies, rounded forms and
+small colour accents). They are informative but not final; replace them with
+proper art when available. printer.svg now comes from upstream isopacks.
 
 True 30-degree isometric projection, three-tone blue-grey faces with a dark
 outline and a soft ground shadow, matching the palette sampled from the
@@ -109,23 +114,6 @@ def camera():
     return s
 
 
-def printer():
-    """Body with a paper tray and a sheet feeding out of the top."""
-    s = ground_shadow(-40, -34, 40, 34)
-    s += box(-38, -32, 0, 38, 32, 34)  # body
-    s += box(-30, -24, 34, 30, 24, 42, top="#C3D5EA", left="#9DB4D2", right="#5F7B99")  # tray lip
-    s += poly(  # paper
-        [(-18, -14, 42), (16, -14, 42), (16, 10, 42), (-18, 10, 42)],
-        "#FFFFFF",
-    )
-    s += poly(  # output slot
-        [(38.2, -22, 16), (38.2, 22, 16), (38.2, 22, 24), (38.2, -22, 24)],
-        "#1B2733",
-        width=2.0,
-    )
-    return s
-
-
 def speaker():
     """Tall cabinet with a woofer and tweeter on the front-right face."""
     s = ground_shadow(-24, -22, 26, 22)
@@ -167,7 +155,6 @@ def iot():
 
 ICONS = {
     "camera": camera,
-    "printer": printer,
     "speaker": speaker,
     "gameconsole": game_console,
     "sensor": iot,

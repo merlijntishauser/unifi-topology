@@ -33,7 +33,8 @@ def test_node_type_keys_match_across_icon_sets():
 
 
 def test_generated_icons_are_well_formed():
-    for name in ("camera.svg", "printer.svg", "speaker.svg", "gameconsole.svg", "sensor.svg"):
+    # printer.svg comes from upstream isopacks; these four are generated placeholders.
+    for name in ("camera.svg", "speaker.svg", "gameconsole.svg", "sensor.svg"):
         markup = (_ISO_DIR / name).read_text()
         assert markup.startswith("<svg"), f"{name} is not an svg root"
         assert markup.rstrip().endswith("</svg>"), f"{name} is truncated"
