@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<g transform="translate(256.00,350.91) scale(1.7840)">
+<polygon points="68.42,48.50 47.96,57.08 23.90,61.59 -1.39,61.59 -25.44,57.08 -45.90,48.50 -60.76,36.69 -68.58,22.80 -68.58,8.20 -60.76,-5.69 -45.90,-17.50 -25.44,-26.08 -1.39,-30.59 23.90,-30.59 47.96,-26.08 68.42,-17.50 83.28,-5.69 91.10,8.20 91.10,22.80 83.28,36.69" fill="#000000" opacity="0.4"></polygon>
+<polygon points="-95.26,-60.00 0.00,-5.00 0.00,0.00" fill="#C6CDD4" stroke="#24282B" stroke-width="2.242" stroke-linejoin="round" stroke-miterlimit="10"></polygon>
+<polygon points="0.00,-5.00 95.26,-60.00 0.00,0.00" fill="#6F7A85" stroke="#24282B" stroke-width="2.242" stroke-linejoin="round" stroke-miterlimit="10"></polygon>
+<polygon points="-95.26,-60.00 0.00,-5.00 0.00,-168.00" fill="#DCE1E6" stroke="#24282B" stroke-width="2.242" stroke-linejoin="round" stroke-miterlimit="10"></polygon>
+<polygon points="0.00,-5.00 95.26,-60.00 0.00,-168.00" fill="#A0AAB4" stroke="#24282B" stroke-width="2.242" stroke-linejoin="round" stroke-miterlimit="10"></polygon>
+<polygon points="0.00,-5.00 0.00,-5.00 -95.26,-60.00 -95.26,-60.00 0.00,-115.00 0.00,-115.00 95.26,-60.00 95.26,-60.00" fill="none" stroke="#24282B" stroke-width="2.242" stroke-linejoin="round" stroke-miterlimit="10"></polygon>
+</g>
+</svg>

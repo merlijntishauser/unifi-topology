@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..model.topology import Edge
+from ._svg_iso_district_layout import _iso_district_grid
 from ._svg_tree_layout import _tree_layout_indices
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
 from .svg_theme import SvgOptions, SvgTheme
@@ -52,20 +53,47 @@ def _iso_layout(options: SvgOptions) -> IsoLayout:
     )
 
 
-def _project_iso_positions(
+def _tree_grid_positions(
     layout: IsoLayout,
     positions_index: Mapping[str, float],
     levels: Mapping[str, int],
-) -> tuple[dict[str, tuple[float, float]], dict[str, tuple[float, float]]]:
+) -> dict[str, tuple[float, float]]:
+    """Sibling order along one grid axis, tree depth along the other."""
     grid_positions: dict[str, tuple[float, float]] = {}
-    positions: dict[str, tuple[float, float]] = {}
     for name, idx in positions_index.items():
         level = levels.get(name, 0)
         gx = round(idx * layout.grid_spacing_x)
         gy = round(float(level) * layout.grid_spacing_y)
         grid_positions[name] = (float(gx), float(gy))
-        positions[name] = _iso_project_center(layout, float(gx), float(gy))
-    return grid_positions, positions
+    return grid_positions
+
+
+def _project_grid(
+    layout: IsoLayout,
+    grid_positions: Mapping[str, tuple[float, float]],
+) -> dict[str, tuple[float, float]]:
+    return {name: _iso_project_center(layout, gx, gy) for name, (gx, gy) in grid_positions.items()}
+
+
+def _project_iso_positions(
+    layout: IsoLayout,
+    positions_index: Mapping[str, float],
+    levels: Mapping[str, int],
+) -> tuple[dict[str, tuple[float, float]], dict[str, tuple[float, float]]]:
+    grid_positions = _tree_grid_positions(layout, positions_index, levels)
+    return grid_positions, _project_grid(layout, grid_positions)
+
+
+def _iso_grid_positions(
+    layout: IsoLayout,
+    edges: list[Edge],
+    node_types: dict[str, str],
+    options: SvgOptions,
+) -> dict[str, tuple[float, float]]:
+    if options.iso_compact_layout:
+        return _iso_district_grid(edges, node_types)
+    positions_index, levels = _tree_layout_indices(edges, node_types)
+    return _tree_grid_positions(layout, positions_index, levels)
 
 
 def _position_extents(
@@ -131,8 +159,8 @@ def _iso_layout_positions(
     options: SvgOptions,
 ) -> IsoLayoutPositions:
     layout = _iso_layout(options)
-    positions_index, levels = _tree_layout_indices(edges, node_types)
-    grid_positions, positions = _project_iso_positions(layout, positions_index, levels)
+    grid_positions = _iso_grid_positions(layout, edges, node_types, options)
+    positions = _project_grid(layout, grid_positions)
     min_x, min_y, max_x, max_y = _position_extents(positions)
     offset_x, offset_y = _iso_offsets(layout, min_x, min_y)
     width, height = _iso_viewport_size(layout, min_x, min_y, max_x, max_y)

@@ -245,6 +245,10 @@ class SvgOptions:
     # light direction, and seat each node with a contact shadow.
     iso_lighting: bool = False
 
+    # Pack isometric nodes into compact districts instead of laying siblings out
+    # along a single diagonal. Also guarantees one node per grid cell.
+    iso_compact_layout: bool = False
+
 
 _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"
 _SYSTEM_FONT_STACK = "Arial,Helvetica,sans-serif"
