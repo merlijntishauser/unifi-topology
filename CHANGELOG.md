@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.1.0] - 2026-07-27
 
 ### Added
 - `SvgOptions.iso_route_around_nodes` (default `False`): routes isometric edges around intervening nodes. Both legs of an edge already ran along grid axes, but the corner was always taken on the same axis regardless of what stood in the way, so on a live 50-node topology 20 of 31 edges passed over a node that was not one of their endpoints. Routing now picks whichever L-shaped route crosses fewer occupied cells, and falls back to a three-segment route that steps into a clear lane when both are blocked. On that topology it drops to 0 of 31; every leg still runs along a grid axis, so each projects to a true isometric line
@@ -285,7 +285,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...v3.1.0
 [3.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v3.0.1
 [2.2.2]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v2.2.2
