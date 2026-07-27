@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/normalize_icon_viewbox.py`: retargets an icon set's root `viewBox` so every icon fills the same fraction of its square frame. Icons are drawn into a fixed square with `xMidYMid meet`, so uneven internal margins made some devices render as specks
 
 ### Fixed
+- Isometric access point icons floated a full tile height above their node when using an icon set other than isopacks. The lift was tuned for the isopacks radio mast, whose artwork sits high in its own frame; applied to the normalized UniFi ceiling disc it left the icon hovering. The extra lift is now per icon set, so isopacks and modern output is unchanged
 - `FirewallPolicy.source_mac_addresses` was always empty against zone-based controllers. The nested parser read `mac_addresses`, but the controller sends `client_macs`; both keys are now accepted. On a live ruleset this left 8 MAC-restricted policies looking unrestricted
 - Isometric layout could place two nodes on the same grid cell, silently stacking them. A parent's position was the mean of its children's indices, so two switches feeding one client resolved to the same tile (three nodes shared a tile in a 30-node topology). Only affects the new compact layout path; the default tree layout is unchanged pending a wider fix
 

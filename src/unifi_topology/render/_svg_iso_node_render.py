@@ -188,16 +188,27 @@ def _icon_center(
     )
 
 
+# Extra lift, in tile heights, for icons whose artwork does not sit at the bottom
+# of its own frame. The isopacks access point is a tall radio mast that has to be
+# raised so its base meets the tile; the UniFi set is normalized to a common frame
+# (scripts/normalize_icon_viewbox.py), so the same lift leaves its flat ceiling
+# disc hovering. Sets absent here get no extra lift.
+_ICON_SET_EXTRA_LIFT: dict[str, dict[str, float]] = {
+    "isometric": {"ap": 0.4},
+    "modern": {"ap": 0.4},
+}
+
+
 def _icon_y_offset(
     *,
     node_type: str,
     is_client: bool,
     port_label: str | None,
     tile_h: float,
+    icon_set: str = "isometric",
 ) -> float:
     offset = tile_h * (0.02 if port_label else 0.04) + tile_h * 0.05
-    if node_type == "ap":
-        offset += tile_h * 0.4
+    offset += tile_h * _ICON_SET_EXTRA_LIFT.get(icon_set, {}).get(node_type, 0.0)
     if is_client:
         offset += tile_h * 0.05
     return offset
@@ -250,6 +261,7 @@ def _render_iso_node_icon(
             is_client=is_client,
             port_label=port_label,
             tile_h=tile_h,
+            icon_set=theme.icon_set,
         )
     )
     lines.append(
