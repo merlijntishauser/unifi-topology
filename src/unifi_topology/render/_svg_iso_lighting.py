@@ -11,10 +11,10 @@ from __future__ import annotations
 
 from ._svg_node_types import _TYPE_COLORS, _safe_node_type
 
-# Relative luminance of each visible face for a light source above and to the
-# upper-left. The top face takes full light; the left face is angled away; the
-# right face is angled furthest away and reads darkest.
-_FACE_TOP = 1.0
+# Relative luminance of the two shaded faces for a light source above and to the
+# upper-left: the left face is angled away, the right face furthest away and so
+# reads darkest. The top face is not listed because it is not shaded here -- it
+# keeps the node's own themed fill, which is what the sides are derived against.
 _FACE_LEFT = 0.76
 _FACE_RIGHT = 0.55
 
@@ -48,12 +48,6 @@ def iso_face_colors(node_type: str) -> tuple[str, str]:
     """Return (left_fill, right_fill) shaded from the node type's own colour."""
     base, _stroke = _TYPE_COLORS[_safe_node_type(node_type)]
     return _shade(base, _FACE_LEFT), _shade(base, _FACE_RIGHT)
-
-
-def iso_top_highlight(node_type: str) -> str:
-    """Return the specular edge colour for the top face's light-facing edge."""
-    base, _stroke = _TYPE_COLORS[_safe_node_type(node_type)]
-    return _shade(base, 1.18)
 
 
 def render_contact_shadow(

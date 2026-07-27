@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Remove dead code left over from the isometric light model: the `_FACE_TOP` constant (flagged by CodeQL as an unused global) and the `iso_top_highlight` function, which was never called from anywhere. The top face is not shaded — it keeps the node's own themed fill, which is what the side faces are derived against — so neither had a caller. Rendered output is unchanged
 - Isometric edges could be drawn outside the canvas and render clipped when `iso_route_around_nodes` and `iso_compact_layout` were combined (closes #69). A corner is chosen in grid space and screen x depends on `gx - gy`, so a turn between two nodes sharing that difference projects to one side of both; the viewport was sized from node positions only, so the corner fell outside the `viewBox`. The viewport now expands to contain the chosen corners, and only when one would otherwise fall outside — output is byte-identical for any diagram that already fitted, including every default render. Route selection moved to `render/_svg_iso_routing.py` so layout and drawing agree on which edges turn and where, rather than each deciding for itself
 
 ## [3.1.1] - 2026-07-27
