@@ -7,9 +7,10 @@ canvas. Averaging child indices also lets two parents land on the same cell,
 which stacks nodes on top of each other.
 
 This layout instead treats the ground plane as a plane. Each hub (a device with
-children) and its leaf children form a *district* -- a compact rectangular block
--- and districts are packed into shelves sized to keep the whole composition
-close to a target screen aspect.
+children) and its leaf children form a *district*, and a hub's sub-districts are
+placed directly beneath it, so a whole subtree occupies one contiguous
+rectangle. That keeps every parent adjacent to its children: infrastructure
+links stay short instead of stretching across the diagram.
 
 Coordinates are built in a screen-aligned (lateral, spine) lattice and converted
 to isometric grid coordinates at the end. The isometric projection maps grid
@@ -32,7 +33,6 @@ from ._svg_tree_layout import (
     _build_children_maps,
     _layout_nodeset,
     _resolve_roots,
-    _sort_children,
     _sort_key_for_nodes,
 )
 
@@ -44,9 +44,9 @@ _TILE_ASPECT = math.tan(math.radians(30.0))
 _LATERAL_STEP = 2
 _SPINE_STEP = 2
 
-# Blank lattice cells left between packed districts.
-_DISTRICT_GAP_LATERAL = 1
-_DISTRICT_GAP_SPINE = 1
+# Blank lattice cells left between packed blocks.
+_GAP_LATERAL = 1
+_GAP_SPINE = 1
 
 # Width-to-height ratio the packed composition aims for, in screen pixels.
 _TARGET_SCREEN_ASPECT = 1.45
@@ -57,29 +57,24 @@ _MAX_BLOCK_ROWS = 6
 
 
 @dataclass(frozen=True)
-class _District:
-    """A hub and its leaf children. Stays contiguous so its edges stay short."""
+class _Placed:
+    """Nodes positioned in a (lateral, spine) rectangle with origin at (0, 0)."""
 
-    hub: str | None
-    members: tuple[str, ...] = ()
+    cells: dict[str, tuple[int, int]]
+    width: int
+    height: int
 
 
-@dataclass(frozen=True)
-class _Shaped:
-    """A district resolved to a concrete rectangle of lattice cells."""
+_EMPTY = _Placed(cells={}, width=0, height=0)
 
-    district: _District
-    cols: int
-    rows: int
 
-    @property
-    def width(self) -> int:
-        return max(self.cols, 1)
+def _shift(placed: _Placed, lateral: int, spine: int) -> _Placed:
+    moved = {node: (lat + lateral, sp + spine) for node, (lat, sp) in placed.cells.items()}
+    return _Placed(cells=moved, width=placed.width, height=placed.height)
 
-    @property
-    def height(self) -> int:
-        # One row for the hub tile, then the block of members beneath it.
-        return (1 if self.district.hub else 0) + self.rows
+
+def _centre(placed: _Placed, width: int) -> _Placed:
+    return _shift(placed, (width - placed.width) // 2, 0)
 
 
 def _block_shape(count: int, max_cols: int) -> tuple[int, int]:
@@ -88,7 +83,7 @@ def _block_shape(count: int, max_cols: int) -> tuple[int, int]:
     A lateral step is wider on screen than a spine step, so a visually square
     block needs more rows than columns -- that is the ``natural`` width. Blocks
     that would exceed ``_MAX_BLOCK_ROWS`` widen instead, and nothing is allowed
-    to grow past the shelf width.
+    to grow past the enclosing width.
     """
     if count <= 0:
         return 1, 0
@@ -98,123 +93,186 @@ def _block_shape(count: int, max_cols: int) -> tuple[int, int]:
     return max(cols, 1), math.ceil(count / max(cols, 1))
 
 
-def _partition_children(
-    node: str,
-    children: dict[str, list[str]],
-) -> tuple[list[str], list[str]]:
-    """Split a node's children into leaves (own district) and hubs (their own)."""
-    leaves = [c for c in children.get(node, []) if not children.get(c)]
-    hubs = [c for c in children.get(node, []) if children.get(c)]
-    return leaves, hubs
+def _leaf_block(members: list[str], max_cols: int) -> _Placed:
+    """Lay leaf nodes out row-major in a compact rectangle."""
+    if not members:
+        return _EMPTY
+    cols, rows = _block_shape(len(members), max_cols)
+    cells = {node: (index % cols, index // cols) for index, node in enumerate(members)}
+    return _Placed(cells=cells, width=cols, height=rows)
 
 
-def _take_district(
-    node: str,
-    children: dict[str, list[str]],
-    placed: set[str],
-) -> tuple[_District, list[str]]:
-    """Claim *node* and its unplaced leaf children; return it and the hubs to visit."""
-    placed.add(node)
-    leaves, hubs = _partition_children(node, children)
-    fresh = [leaf for leaf in leaves if leaf not in placed]
-    placed.update(fresh)
-    return _District(hub=node, members=tuple(fresh)), [h for h in hubs if h not in placed]
+def _hub_over_block(hub: str, block: _Placed) -> _Placed:
+    """Put the hub tile on its own row, centred above its leaf children."""
+    width = max(block.width, 1)
+    cells = {hub: ((width - 1) // 2, 0)}
+    cells.update(_shift(_centre(block, width), 0, 1).cells)
+    return _Placed(cells=cells, width=width, height=block.height + 1)
 
 
-def _walk_districts(
-    roots: list[str],
-    children: dict[str, list[str]],
-) -> tuple[list[_District], set[str]]:
-    """Breadth-first walk building one district per hub, parents before children."""
-    districts: list[_District] = []
-    placed: set[str] = set()
-    queue = list(roots)
-    while queue:
-        node = queue.pop(0)
-        if node in placed:
-            continue
-        district, pending = _take_district(node, children, placed)
-        districts.append(district)
-        queue.extend(pending)
-    return districts, placed
-
-
-def _orphan_districts(nodes: set[str], placed: set[str], sort_key) -> list[_District]:
-    """Nodes the walk never reached get parked in their own block."""
-    stragglers = sorted(nodes - placed, key=sort_key)
-    return [_District(hub=None, members=tuple(stragglers))] if stragglers else []
-
-
-def _shape_all(districts: list[_District], max_cols: int) -> list[_Shaped]:
-    shaped = []
-    for district in districts:
-        cols, rows = _block_shape(len(district.members), max_cols)
-        shaped.append(_Shaped(district=district, cols=cols, rows=rows))
-    return shaped
-
-
-def _ideal_shelf_width(districts: list[_District]) -> int:
-    """First guess at a shelf width, ignoring the gaps packing will introduce."""
-    total = sum(len(d.members) + 1 for d in districts) or 1
-    return max(1, int(round(math.sqrt(total * _TARGET_SCREEN_ASPECT * _TILE_ASPECT))))
+def _stack(top: _Placed, bottom: _Placed) -> _Placed:
+    """Place *bottom* below *top*, each centred on the combined width."""
+    if not bottom.cells:
+        return top
+    if not top.cells:
+        return bottom
+    width = max(top.width, bottom.width)
+    cells = dict(_centre(top, width).cells)
+    cells.update(_shift(_centre(bottom, width), 0, top.height + _GAP_SPINE).cells)
+    return _Placed(cells=cells, width=width, height=top.height + _GAP_SPINE + bottom.height)
 
 
 @dataclass
-class _ShelfState:
-    target: int
-    cursor_lat: int = 0
-    shelf_spine: int = 0
-    shelf_height: int = 0
+class _RowState:
+    max_width: int
+    lateral: int = 0
+    spine: int = 0
+    row_height: int = 0
+    width: int = 0
 
 
-def _advance_shelf(state: _ShelfState, shaped: _Shaped) -> tuple[int, int]:
-    """Return the (lateral, spine) origin for *shaped*, wrapping when full."""
-    if state.cursor_lat and state.cursor_lat + shaped.width > state.target:
-        state.shelf_spine += state.shelf_height + _DISTRICT_GAP_SPINE
-        state.cursor_lat = 0
-        state.shelf_height = 0
-    origin = (state.cursor_lat, state.shelf_spine)
-    state.cursor_lat += shaped.width + _DISTRICT_GAP_LATERAL
-    state.shelf_height = max(state.shelf_height, shaped.height)
+def _row_origin(state: _RowState, block: _Placed) -> tuple[int, int]:
+    """Origin for *block* on the current row, wrapping to a new one when full."""
+    if state.lateral and state.lateral + block.width > state.max_width:
+        state.spine += state.row_height + _GAP_SPINE
+        state.lateral = 0
+        state.row_height = 0
+    origin = (state.lateral, state.spine)
+    state.lateral += block.width + _GAP_LATERAL
+    state.row_height = max(state.row_height, block.height)
+    state.width = max(state.width, state.lateral - _GAP_LATERAL)
     return origin
 
 
-def _place_members(
-    shaped: _Shaped,
-    origin_lat: int,
-    origin_spine: int,
-) -> dict[str, tuple[int, int]]:
-    """Lay the district's leaf members out row-major beneath the hub."""
+def _pack_row(blocks: list[_Placed], max_width: int) -> _Placed:
+    """Lay sibling blocks left to right, wrapping when they exceed *max_width*."""
+    state = _RowState(max_width=max(max_width, 1))
     cells: dict[str, tuple[int, int]] = {}
-    member_spine = origin_spine + (1 if shaped.district.hub else 0)
-    for index, member in enumerate(shaped.district.members):
-        cells[member] = (
-            origin_lat + index % shaped.cols,
-            member_spine + index // shaped.cols,
-        )
-    return cells
+    for block in blocks:
+        lateral, spine = _row_origin(state, block)
+        cells.update(_shift(block, lateral, spine).cells)
+    return _Placed(cells=cells, width=state.width, height=state.spine + state.row_height)
 
 
-def _place_hub(
-    shaped: _Shaped,
-    origin_lat: int,
-    origin_spine: int,
-) -> dict[str, tuple[int, int]]:
-    """Centre the hub tile over its block of members."""
-    hub = shaped.district.hub
-    if hub is None:
-        return {}
-    return {hub: (origin_lat + (shaped.width - 1) // 2, origin_spine)}
+def _claim_leaves(node: str, children: dict[str, list[str]], visited: set[str]) -> list[str]:
+    leaves = [c for c in children.get(node, []) if not children.get(c) and c not in visited]
+    visited.update(leaves)
+    return leaves
 
 
-def _pack_at_width(districts: list[_District], target: int) -> dict[str, tuple[int, int]]:
-    state = _ShelfState(target=target)
-    cells: dict[str, tuple[int, int]] = {}
-    for shaped in _shape_all(districts, target):
-        origin_lat, origin_spine = _advance_shelf(state, shaped)
-        cells.update(_place_hub(shaped, origin_lat, origin_spine))
-        cells.update(_place_members(shaped, origin_lat, origin_spine))
-    return cells
+def _place_children(
+    node: str,
+    children: dict[str, list[str]],
+    visited: set[str],
+    max_width: int,
+) -> _Placed:
+    """Place every sub-hub of *node* as its own subtree, side by side."""
+    blocks: list[_Placed] = []
+    for child in children.get(node, []):
+        # Re-checked each pass: an earlier sibling's subtree may have claimed it.
+        if child in visited or not children.get(child):
+            continue
+        blocks.append(_place_subtree(child, children, visited, max_width))
+    return _pack_row(blocks, max_width)
+
+
+def _place_subtree(
+    node: str,
+    children: dict[str, list[str]],
+    visited: set[str],
+    max_width: int,
+) -> _Placed:
+    """Place *node*, its leaf children, and every sub-hub beneath it."""
+    visited.add(node)
+    own = _hub_over_block(node, _leaf_block(_claim_leaves(node, children, visited), max_width))
+    return _stack(own, _place_children(node, children, visited, max_width))
+
+
+def _subtree_blocks(
+    order: list[str],
+    children: dict[str, list[str]],
+    visited: set[str],
+    max_width: int,
+) -> list[_Placed]:
+    blocks: list[_Placed] = []
+    for node in order:
+        if node in visited or not children.get(node):
+            continue
+        blocks.append(_place_subtree(node, children, visited, max_width))
+    return blocks
+
+
+def _ideal_width(node_count: int) -> int:
+    """First guess at an enclosing width, ignoring gaps and ragged rows."""
+    total = max(node_count, 1)
+    return max(1, int(round(math.sqrt(total * _TARGET_SCREEN_ASPECT * _TILE_ASPECT))))
+
+
+def _place_forest(
+    roots: list[str],
+    children: dict[str, list[str]],
+    nodes: set[str],
+    max_width: int,
+    sort_key,
+) -> _Placed:
+    """Place every subtree, then park whatever the walk never reached."""
+    visited: set[str] = set()
+    order = list(roots) + sorted(nodes, key=sort_key)
+    blocks = _subtree_blocks(order, children, visited, max_width)
+    orphans = sorted(nodes - visited, key=sort_key)
+    if orphans:
+        blocks.append(_leaf_block(orphans, max_width))
+    return _pack_row(blocks, max_width)
+
+
+def _adjacency(edges: list[Edge], nodes: set[str]) -> dict[str, list[str]]:
+    """Undirected neighbour map."""
+    adj: dict[str, list[str]] = {node: [] for node in nodes}
+    for edge in edges:
+        adj[edge.left].append(edge.right)
+        adj[edge.right].append(edge.left)
+    return adj
+
+
+def _grow_tree(
+    adj: dict[str, list[str]],
+    start: str,
+    seen: set[str],
+    children: dict[str, list[str]],
+    sort_key,
+) -> None:
+    """Breadth-first expansion from *start*, recording the tree it spans."""
+    seen.add(start)
+    queue = [start]
+    while queue:
+        node = queue.pop(0)
+        for neighbour in sorted(adj.get(node, []), key=sort_key):
+            if neighbour in seen:
+                continue
+            seen.add(neighbour)
+            children[node].append(neighbour)
+            queue.append(neighbour)
+
+
+def _spanning_children(
+    adj: dict[str, list[str]],
+    roots: list[str],
+    sort_key,
+) -> dict[str, list[str]]:
+    """Build a placement tree from connectivity rather than edge direction.
+
+    LLDP reports a link from whichever end saw it, so following ``left -> right``
+    alone leaves part of the infrastructure unrooted. On a live 10-device network
+    four switches and access points ended up outside the gateway's tree and were
+    packed as separate top-level blocks, stretching the links back to them across
+    the whole diagram.
+    """
+    children: dict[str, list[str]] = {node: [] for node in adj}
+    seen: set[str] = set()
+    for start in list(roots) + sorted(adj, key=sort_key):
+        if start not in seen:
+            _grow_tree(adj, start, seen, children, sort_key)
+    return children
 
 
 def _screen_aspect(cells: dict[str, tuple[int, int]]) -> float:
@@ -226,23 +284,28 @@ def _screen_aspect(cells: dict[str, tuple[int, int]]) -> float:
     return (width / height) / _TILE_ASPECT
 
 
-def _aspect_error(cells: dict[str, tuple[int, int]]) -> float:
+def _aspect_error(placed: _Placed) -> float:
     """Log-ratio distance from the target aspect, so too-wide and too-tall rank alike."""
-    return abs(math.log(_screen_aspect(cells) / _TARGET_SCREEN_ASPECT))
+    if not placed.cells:
+        return 0.0
+    return abs(math.log(_screen_aspect(placed.cells) / _TARGET_SCREEN_ASPECT))
 
 
-def _pack_districts(districts: list[_District]) -> dict[str, tuple[int, int]]:
-    """Shelf-pack the districts, choosing the width whose result reads squarest.
+def _best_placement(
+    roots: list[str],
+    children: dict[str, list[str]],
+    nodes: set[str],
+    sort_key,
+) -> _Placed:
+    """Try every plausible enclosing width and keep the squarest result.
 
-    Shelf packing leaves ragged gaps, so the closed-form ideal width consistently
-    overshoots. Trying the plausible widths and measuring is cheap and exact.
+    Wrapping leaves ragged gaps that no closed-form width can predict, so the
+    layout is run at each candidate and measured.
     """
-    if not districts:
-        return {}
-    ideal = _ideal_shelf_width(districts)
+    ideal = _ideal_width(len(nodes))
     candidates = range(1, ideal * 3 + 2)
-    packed = [_pack_at_width(districts, target) for target in candidates]
-    return min(packed, key=_aspect_error)
+    placements = [_place_forest(roots, children, nodes, w, sort_key) for w in candidates]
+    return min(placements, key=_aspect_error)
 
 
 def _to_iso_grid(cells: dict[str, tuple[int, int]]) -> dict[str, tuple[float, float]]:
@@ -259,12 +322,10 @@ def _iso_district_grid(
     edges: list[Edge],
     node_types: dict[str, str],
 ) -> dict[str, tuple[float, float]]:
-    """Assign every node a unique isometric grid cell using district packing."""
+    """Assign every node a unique isometric grid cell using subtree packing."""
     nodes = _layout_nodeset(edges, node_types)
-    children, incoming = _build_children_maps(edges, nodes)
+    _directed, incoming = _build_children_maps(edges, nodes)
     sort_key = _sort_key_for_nodes(node_types)
-    _sort_children(children, sort_key)
     roots = _resolve_roots(nodes, incoming, node_types, sort_key)
-    districts, placed = _walk_districts(roots, children)
-    districts.extend(_orphan_districts(nodes, placed, sort_key))
-    return _to_iso_grid(_pack_districts(districts))
+    children = _spanning_children(_adjacency(edges, nodes), roots, sort_key)
+    return _to_iso_grid(_best_placement(roots, children, nodes, sort_key).cells)
