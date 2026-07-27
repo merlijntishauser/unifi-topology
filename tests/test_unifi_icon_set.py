@@ -64,19 +64,49 @@ def test_icons_load_through_the_public_loader():
     assert all(uri.startswith("data:image/svg+xml;base64,") for uri in icons.values())
 
 
+# These four live in the isopacks directory but are recoloured copies of this
+# set's own artwork (scripts/recolour_icons.py), because isopacks covers none of
+# those subjects. They share geometry with icons-unifi by construction.
+_RECOLOURED_INTO_ISOPACKS = frozenset(
+    {"camera.svg", "speaker.svg", "gameconsole.svg", "sensor.svg"}
+)
+
+
 def test_no_isopacks_geometry_is_reused():
     """The set is licensed as original work; shared path data would undermine that."""
     isometric = pathlib.Path(_icon_base_path()) / "isometric"
 
-    def shapes(directory: pathlib.Path) -> set[str]:
+    def shapes(directory: pathlib.Path, skip: frozenset[str] = frozenset()) -> set[str]:
         found: set[str] = set()
         for path in directory.glob("*.svg"):
+            if path.name in skip:
+                continue
             text = path.read_text(encoding="utf-8")
             for raw in re.findall(r'(?:\sd|points)="([^"]{40,})"', text):
                 found.add(re.sub(r"\s+", " ", raw).strip())
         return found
 
-    assert shapes(_DIR) & shapes(isometric) == set()
+    assert shapes(_DIR) & shapes(isometric, skip=_RECOLOURED_INTO_ISOPACKS) == set()
+
+
+# Filenames that must stay byte-identical: the node-type map and the isopacks
+# inventory reach the same artwork under two names.
+_ALIASES = [
+    ("nas.svg", "storage.svg"),
+    ("switch.svg", "switch-module.svg"),
+    ("gateway.svg", "router.svg"),
+    ("iot.svg", "sensor.svg"),
+    ("client.svg", "laptop.svg"),
+    ("phone.svg", "mobiledevice.svg"),
+    ("other.svg", "cube.svg"),
+    ("game_console.svg", "gameconsole.svg"),
+]
+
+
+@pytest.mark.parametrize(("primary", "alias"), _ALIASES)
+def test_alias_files_stay_in_sync(primary: str, alias: str):
+    """Updating one name and not the other silently splits the set in two."""
+    assert _markup(primary) == _markup(alias)
 
 
 def test_the_set_ships_a_license():

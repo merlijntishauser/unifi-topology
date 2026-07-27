@@ -1,0 +1,20 @@
+Most of this directory is the isopacks icon set (MIT, Copyright 2023 Mark
+Mankarious) -- see ISOPACKS_LICENSE. Those files are unmodified.
+
+FOUR FILES ARE NOT FROM ISOPACKS:
+
+    camera.svg
+    speaker.svg
+    gameconsole.svg
+    sensor.svg
+
+isopacks covers none of these subjects; no SVG in any of its collections does.
+These four are derived from the UniFi icon set bundled under
+../icons-unifi/ (MIT, Copyright 2026 Merlijn Tishauser -- see
+../icons-unifi/LICENSE), restyled into the isopacks blue palette by
+scripts/recolour_icons.py. Geometry is unchanged from that set; only fill and
+stroke colours differ.
+
+They replaced primitive-built stand-ins that did not match the surrounding
+artwork. The isopacks copyright does not extend to them, and the UniFi set's
+licence and trademark statement do.
