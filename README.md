@@ -105,9 +105,9 @@ from unifi_topology.render.svg_theme import SvgOptions, SvgTheme, DEFAULT_THEME
 import dataclasses
 
 options = SvgOptions(
-    iso_compact_layout=True,      # group devices instead of one long diagonal
+    iso_compact_layout=True,  # group devices instead of one long diagonal
     iso_route_around_nodes=True,  # route links around intervening devices
-    iso_lighting=True,            # shaded side faces and contact shadows
+    iso_lighting=True,  # shaded side faces and contact shadows
 )
 theme = dataclasses.replace(DEFAULT_THEME, icon_set="unifi")
 
