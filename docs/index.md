@@ -69,10 +69,10 @@ svg = render_svg(
 - `SvgOptions.iso_lighting` -- shaded side faces and contact shadows
 - `SvgTheme.icon_set` -- `isometric` (default), `modern`, or `unifi`
 
-See the [render options table](https://github.com/merlijntishauser/unifi-topology#isometric-render-options)
-for what each changes, and
-[`docs/examples/`](https://github.com/merlijntishauser/unifi-topology/tree/main/docs/examples)
-for rendered comparisons.
+See [Examples](examples/README.md) for rendered comparisons of each option on a
+real network, and the
+[README](https://github.com/merlijntishauser/unifi-topology#isometric-render-options)
+for the full table of what each one changes.
 
 ## Release Notes
 

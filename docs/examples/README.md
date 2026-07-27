@@ -24,8 +24,8 @@ sibling order to one grid axis and tree depth to the other, and a home network
 is shallow and wide. The compact layout packs each switch and its clients into
 a district instead, and routing then keeps links out of those districts.
 
-See the [render options table](../../README.md#isometric-render-options) for
-what each one does.
+See [Isometric Render Options](../index.md#isometric-render-options) for what
+each one does.
 
 ## Anonymization
 
