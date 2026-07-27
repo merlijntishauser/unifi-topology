@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ..model.topology import Edge
 from ._svg_iso_district_layout import _iso_district_grid
+from ._svg_iso_routing import edge_corners, edge_occupancy
 from ._svg_tree_layout import _tree_layout_indices
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
 from .svg_theme import SvgOptions, SvgTheme
@@ -96,6 +97,32 @@ def _iso_grid_positions(
     return _tree_grid_positions(layout, positions_index, levels)
 
 
+def _route_corner_positions(
+    layout: IsoLayout,
+    edges: list[Edge],
+    grid_positions: dict[str, tuple[float, float]],
+    options: SvgOptions,
+) -> list[tuple[float, float]]:
+    """Where edge corners land, so the canvas can be sized to hold them.
+
+    A corner is chosen in grid space and can sit outside the box the nodes span:
+    screen x depends on ``gx - gy``, so a turn between two nodes that share that
+    difference projects to one side of both. The viewport is computed from node
+    positions, so without this the edge is drawn off-canvas and clipped (#69).
+    """
+    occupied = edge_occupancy(grid_positions, avoid_nodes=options.iso_route_around_nodes)
+    points: list[tuple[float, float]] = []
+    for edge in edges:
+        src = grid_positions.get(edge.left)
+        dst = grid_positions.get(edge.right)
+        if src is None or dst is None:
+            continue
+        points.extend(
+            _iso_project_center(layout, gx, gy) for gx, gy in edge_corners(src, dst, occupied)
+        )
+    return points
+
+
 def _position_extents(
     positions: dict[str, tuple[float, float]],
 ) -> tuple[float, float, float, float]:
@@ -153,6 +180,50 @@ def _iso_viewport_size(
     return width, height
 
 
+@dataclass(frozen=True)
+class _Viewport:
+    offset_x: float
+    offset_y: float
+    width: float
+    height: float
+
+
+def _corner_pixels(
+    layout: IsoLayout,
+    corners: list[tuple[float, float]],
+    viewport: _Viewport,
+) -> list[tuple[float, float]]:
+    """Where corners land once drawn -- edges anchor at the tile front, not centre."""
+    half_w = layout.tile_width / 2
+    half_h = layout.tile_height / 2
+    return [(x + viewport.offset_x + half_w, y + viewport.offset_y + half_h) for x, y in corners]
+
+
+def _expand_viewport(
+    viewport: _Viewport,
+    points: list[tuple[float, float]],
+    margin: float,
+) -> _Viewport:
+    """Shift and grow the canvas so every point sits inside it, with a margin.
+
+    Returns the viewport untouched when nothing overflows, which is the common
+    case: node tiles and their labels are already covered by the fixed padding.
+    Only a routed corner reaching past the nodes forces a change.
+    """
+    if not points:
+        return viewport
+    xs = [x for x, _y in points]
+    ys = [y for _x, y in points]
+    shift_x = max(0.0, margin - min(xs))
+    shift_y = max(0.0, margin - min(ys))
+    return _Viewport(
+        offset_x=viewport.offset_x + shift_x,
+        offset_y=viewport.offset_y + shift_y,
+        width=max(viewport.width + shift_x, max(xs) + shift_x + margin),
+        height=max(viewport.height + shift_y, max(ys) + shift_y + margin),
+    )
+
+
 def _iso_layout_positions(
     edges: list[Edge],
     node_types: dict[str, str],
@@ -164,14 +235,17 @@ def _iso_layout_positions(
     min_x, min_y, max_x, max_y = _position_extents(positions)
     offset_x, offset_y = _iso_offsets(layout, min_x, min_y)
     width, height = _iso_viewport_size(layout, min_x, min_y, max_x, max_y)
+    viewport = _Viewport(offset_x=offset_x, offset_y=offset_y, width=width, height=height)
+    corners = _route_corner_positions(layout, edges, grid_positions, options)
+    viewport = _expand_viewport(viewport, _corner_pixels(layout, corners, viewport), layout.padding)
     return IsoLayoutPositions(
         layout=layout,
         grid_positions=grid_positions,
-        positions=_apply_iso_offsets(positions, offset_x, offset_y),
-        width=width,
-        height=height,
-        offset_x=offset_x,
-        offset_y=offset_y,
+        positions=_apply_iso_offsets(positions, viewport.offset_x, viewport.offset_y),
+        width=viewport.width,
+        height=viewport.height,
+        offset_x=viewport.offset_x,
+        offset_y=viewport.offset_y,
     )
 
 

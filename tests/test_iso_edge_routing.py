@@ -9,13 +9,13 @@ from __future__ import annotations
 
 import pytest
 
-from unifi_topology.render._svg_iso_edge_draw import _route_corners, occupied_cells
+from unifi_topology.render._svg_iso_routing import occupied_cells, route_corners
 
 pytestmark = pytest.mark.unit
 
 
 def _legs(src: tuple[int, int], dst: tuple[int, int], occupied) -> list[tuple]:
-    corners = [(int(x), int(y)) for x, y in _route_corners(*src, *dst, occupied)]
+    corners = [(int(x), int(y)) for x, y in route_corners(*src, *dst, occupied)]
     points = [src, *corners, dst]
     return list(zip(points, points[1:], strict=False))
 
@@ -40,7 +40,7 @@ def test_every_leg_runs_along_a_grid_axis():
 
 
 def test_a_clear_route_uses_a_single_corner():
-    corners = _route_corners(0, 0, 6, 4, frozenset())
+    corners = route_corners(0, 0, 6, 4, frozenset())
     assert len(corners) == 1
 
 
@@ -52,7 +52,7 @@ def test_the_route_avoids_a_blocked_lane():
 
 def test_a_three_segment_route_is_used_when_both_l_shapes_are_blocked():
     blocked = frozenset({(6, 0), (0, 4)})  # both corners occupied
-    corners = _route_corners(0, 0, 6, 4, blocked)
+    corners = route_corners(0, 0, 6, 4, blocked)
     assert len(corners) == 2
     assert not (_crossed((0, 0), (6, 4), blocked) & blocked)
 
@@ -64,12 +64,12 @@ def test_a_route_around_a_wall_crosses_nothing():
 
 def test_endpoints_do_not_count_as_obstacles():
     occupied = frozenset({(0, 0), (6, 4)})
-    assert _route_corners(0, 0, 6, 4, occupied) == _route_corners(0, 0, 6, 4, frozenset())
+    assert route_corners(0, 0, 6, 4, occupied) == route_corners(0, 0, 6, 4, frozenset())
 
 
 def test_routing_is_deterministic():
     blocked = frozenset({(6, 0), (0, 4), (3, 2)})
-    assert _route_corners(0, 0, 6, 4, blocked) == _route_corners(0, 0, 6, 4, blocked)
+    assert route_corners(0, 0, 6, 4, blocked) == route_corners(0, 0, 6, 4, blocked)
 
 
 def test_occupied_cells_rounds_grid_positions():
@@ -122,4 +122,4 @@ class TestOptIn:
 
     def test_empty_occupancy_reproduces_the_original_corner(self):
         """The flag-off path relies on this: no obstacles means the first candidate."""
-        assert _route_corners(0, 0, 6, 4, frozenset()) == [(6.0, 0.0)]
+        assert route_corners(0, 0, 6, 4, frozenset()) == [(6.0, 0.0)]
