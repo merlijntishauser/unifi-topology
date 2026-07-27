@@ -6,13 +6,26 @@ render options actually change on real data rather than on mock topologies.
 
 | File | Options | Icon set |
 | --- | --- | --- |
-| `topology-tree-isopacks.svg` | defaults | `isometric` (isopacks) |
-| `topology-compact-unifi.svg` | `iso_lighting=True, iso_compact_layout=True` | `unifi` |
+| `topology-tree-isopacks.svg` | all defaults | `isometric` (isopacks) |
+| `topology-compact-unifi.svg` | `iso_compact_layout`, `iso_route_around_nodes`, `iso_lighting` | `unifi` |
+
+Every option is off by default, so the first file is what the library produces
+out of the box and the second is every refinement turned on. Measured on this
+network:
+
+| | defaults | all options on |
+| --- | --- | --- |
+| Canvas | 11904 x 6892 | 5424 x 4397 |
+| Node density | 0.8 /Mpx | 3.5 /Mpx |
+| Links drawn over an unrelated device | 20 of 31 | 0 of 31 |
 
 The default layout puts this network on a single diagonal, because it maps
 sibling order to one grid axis and tree depth to the other, and a home network
 is shallow and wide. The compact layout packs each switch and its clients into
-a district instead.
+a district instead, and routing then keeps links out of those districts.
+
+See the [render options table](../../README.md#isometric-render-options) for
+what each one does.
 
 ## Anonymization
 

@@ -96,6 +96,7 @@ def _render_iso_nodes_and_edges(
         node_port_labels=node_port_labels,
         node_port_prefix=node_port_prefix,
         node_names=node_names,
+        avoid_nodes=options.iso_route_around_nodes,
     )
     _render_iso_nodes(
         lines,

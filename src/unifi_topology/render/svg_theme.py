@@ -249,6 +249,10 @@ class SvgOptions:
     # along a single diagonal. Also guarantees one node per grid cell.
     iso_compact_layout: bool = False
 
+    # Route isometric edges around intervening nodes rather than always turning
+    # on the same axis. Legs stay grid-aligned either way; only the corner moves.
+    iso_route_around_nodes: bool = False
+
 
 _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"
 _SYSTEM_FONT_STACK = "Arial,Helvetica,sans-serif"

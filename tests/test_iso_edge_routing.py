@@ -80,3 +80,46 @@ def test_a_dense_field_still_yields_a_clear_route():
     """The case from the live topology: blocks of clients between two switches."""
     occupied = frozenset({(x, y) for x in range(2, 9, 2) for y in range(2, 9, 2)})
     assert not (_crossed((0, 0), (10, 10), occupied) & occupied)
+
+
+class TestOptIn:
+    """Routing is opt-in; the default must keep drawing what it always did."""
+
+    @staticmethod
+    def _edge_paths(**option_kwargs) -> list[str]:
+        import re
+
+        from unifi_topology import render_svg_isometric
+        from unifi_topology.model.topology import Edge
+        from unifi_topology.render.svg_theme import SvgOptions
+
+        edges = [
+            Edge(left="gw", right="sw"),
+            Edge(left="sw", right="ap"),
+            Edge(left="sw", right="c1"),
+            Edge(left="sw", right="c2"),
+            Edge(left="ap", right="c3"),
+        ]
+        types = {
+            "gw": "gateway",
+            "sw": "switch",
+            "ap": "ap",
+            "c1": "client",
+            "c2": "client",
+            "c3": "client",
+        }
+        svg = render_svg_isometric(edges, node_types=types, options=SvgOptions(**option_kwargs))
+        return re.findall(r'<path d="(M [^"]+)"', svg)
+
+    def test_default_is_unchanged(self):
+        """Equivalent to always turning on the gx axis, as before the option existed."""
+        assert self._edge_paths() == self._edge_paths(iso_route_around_nodes=False)
+
+    def test_the_option_changes_routing(self):
+        plain = self._edge_paths()
+        routed = self._edge_paths(iso_route_around_nodes=True, iso_compact_layout=True)
+        assert plain != routed
+
+    def test_empty_occupancy_reproduces_the_original_corner(self):
+        """The flag-off path relies on this: no obstacles means the first candidate."""
+        assert _route_corners(0, 0, 6, 4, frozenset()) == [(6.0, 0.0)]

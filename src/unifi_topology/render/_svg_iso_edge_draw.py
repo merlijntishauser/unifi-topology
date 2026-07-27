@@ -350,6 +350,22 @@ def _render_single_iso_edge(
         )
 
 
+def _edge_occupancy(
+    grid_positions: dict[str, tuple[float, float]],
+    *,
+    avoid_nodes: bool,
+) -> frozenset[tuple[int, int]]:
+    """Cells routing must avoid, or nothing when the option is off.
+
+    With an empty set every candidate route scores zero, so the tie-break falls
+    through to the fewest-corners, first-listed candidate -- which is the
+    original gx-first elbow. Output is therefore unchanged by default.
+    """
+    if not avoid_nodes:
+        return frozenset()
+    return occupied_cells(grid_positions)
+
+
 def _render_iso_edges(
     lines: list[str],
     edges: list[Edge],
@@ -365,9 +381,10 @@ def _render_iso_edges(
     node_port_prefix: dict[str, str],
     max_vlan_colors: int | None = None,
     node_names: dict[str, str] | None = None,
+    avoid_nodes: bool = False,
 ) -> None:
     _record_iso_edge_labels(edges, node_types, node_port_labels, node_port_prefix, node_names)
-    occupied = occupied_cells(grid_positions)
+    occupied = _edge_occupancy(grid_positions, avoid_nodes=avoid_nodes)
     for edge in sorted(edges, key=lambda item: item.poe):
         if edge.left not in positions or edge.right not in positions:
             continue

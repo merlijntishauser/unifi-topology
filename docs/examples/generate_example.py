@@ -88,7 +88,10 @@ print(f"{len(devices)} devices, {len(clients)} clients -> {len(nodes)} anonymize
 
 VARIANTS = {
     "tree-isopacks": (SvgOptions(), "isometric"),
-    "compact-unifi": (SvgOptions(iso_lighting=True, iso_compact_layout=True), "unifi"),
+    "compact-unifi": (
+        SvgOptions(iso_lighting=True, iso_compact_layout=True, iso_route_around_nodes=True),
+        "unifi",
+    ),
 }
 for label, (options, icon_set) in VARIANTS.items():
     theme = dataclasses.replace(DEFAULT_THEME, icon_set=icon_set)

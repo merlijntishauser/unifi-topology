@@ -60,6 +60,20 @@ svg = render_svg(
 
 `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
 
+## Isometric Render Options
+
+`render_svg_isometric` has four opt-in refinements, all off by default:
+
+- `SvgOptions.iso_compact_layout` -- group devices into blocks instead of one long diagonal
+- `SvgOptions.iso_route_around_nodes` -- route links around intervening devices
+- `SvgOptions.iso_lighting` -- shaded side faces and contact shadows
+- `SvgTheme.icon_set` -- `isometric` (default), `modern`, or `unifi`
+
+See the [render options table](https://github.com/merlijntishauser/unifi-topology#isometric-render-options)
+for what each changes, and
+[`docs/examples/`](https://github.com/merlijntishauser/unifi-topology/tree/main/docs/examples)
+for rendered comparisons.
+
 ## Release Notes
 
 See the [release notes](release-notes.md) for compatibility notes, verification status, and upgrade guidance for the latest patch release.

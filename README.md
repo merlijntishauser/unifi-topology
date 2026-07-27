@@ -95,6 +95,42 @@ svg = render_svg(
 
 Built-in themes: `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
 
+### Isometric render options
+
+`render_svg_isometric` has four opt-in refinements. **All default to off**, so
+upgrading never changes an existing diagram -- turn on the ones you want.
+
+```python
+from unifi_topology.render.svg_theme import SvgOptions, SvgTheme, DEFAULT_THEME
+import dataclasses
+
+options = SvgOptions(
+    iso_compact_layout=True,      # group devices instead of one long diagonal
+    iso_route_around_nodes=True,  # route links around intervening devices
+    iso_lighting=True,            # shaded side faces and contact shadows
+)
+theme = dataclasses.replace(DEFAULT_THEME, icon_set="unifi")
+
+svg = render_svg_isometric(edges, node_types=types, options=options, theme=theme)
+```
+
+| Option | Where | What it changes |
+| --- | --- | --- |
+| `iso_compact_layout` | `SvgOptions` | Packs each device and its clients into a block, and each block beneath its parent. The default maps sibling order to one grid axis and tree depth to the other; because home networks are shallow and wide, that draws everything along a single diagonal. On a 50-node network this takes the canvas from 11904x6892 to 5424x4397. Also guarantees one node per grid cell -- the default can place two devices on the same tile. |
+| `iso_route_around_nodes` | `SvgOptions` | Picks the link corner that crosses fewest devices, and steps into a clear lane when every simple route is blocked. Without it the corner is always taken on the same axis, so links are drawn over unrelated devices and their labels (20 of 31 links on that same network; 0 with it on). Legs stay grid-aligned either way, so they always project to true isometric lines. |
+| `iso_lighting` | `SvgOptions` | Shades each tile's side faces from its own colour under one light direction, and seats it with a contact shadow. |
+| `icon_set` | `SvgTheme` | `isometric` (default, isopacks artwork), `modern`, or `unifi`. |
+
+#### Icon sets
+
+| Set | Contents |
+| --- | --- |
+| `isometric` | Default. [isopacks](https://github.com/markmanx/isopacks) artwork (MIT). Generic rather than network-specific: access points are radio masts, NAS is a database cylinder, a client cluster is a person. Four subjects isopacks does not cover -- camera, speaker, games console, sensor -- are supplied from the `unifi` set, restyled into the isopacks palette. |
+| `modern` | Flat icons with a per-type accent colour. |
+| `unifi` | Original MIT artwork drawn for this project, one file per node type with no fallbacks. Devices look like the hardware they represent. Neutral grey-white bodies with a cyan accent -- a different visual family from `isometric`, so pick one rather than mixing. |
+
+Rendered comparisons of each option live in [`docs/examples/`](docs/examples/).
+
 ## Development
 
 ```bash

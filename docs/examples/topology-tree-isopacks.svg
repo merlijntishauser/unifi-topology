@@ -240,7 +240,7 @@
 <line x1="-8180.0" y1="686.4101615137754" x2="10540.0" y2="11494.407200743566" stroke="#efefef" stroke-width="0.6"/>
 <line x1="-8300.0" y1="755.6921938165304" x2="10420.0" y2="11563.689233046322" stroke="#efefef" stroke-width="0.6"/>
 </g>
-<path d="M 2620.0 1309.9484522385712 L 2380.0 1448.5125168440811 L 1420.0 894.2562584220406" stroke="url(#iso-link-standard)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" data-edge-left="02:00:00:00:00:06" data-edge-right="02:00:00:00:00:20"/>
+<path d="M 2620.0 1309.9484522385712 L 1660.0 755.6921938165304 L 1420.0 894.2562584220406" stroke="url(#iso-link-standard)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" data-edge-left="02:00:00:00:00:06" data-edge-right="02:00:00:00:00:20"/>
 <path d="M 1180.0 478.5640646055101 L 700.0 755.6921938165304" stroke="url(#iso-link-standard)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" data-edge-left="02:00:00:00:00:2b" data-edge-right="02:00:00:00:00:0b"/>
 <path d="M 2620.0 1309.9484522385712 L 3460.0 1794.9226783578565 L 3220.0 1933.4867429633666" stroke="url(#iso-link-standard)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" data-edge-left="02:00:00:00:00:06" data-edge-right="02:00:00:00:00:2d"/>
 <path d="M 5140.0 2764.8711305964275 L 3460.0 1794.9226783578565 L 3220.0 1933.4867429633666" stroke="url(#iso-link-standard)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" data-edge-left="02:00:00:00:00:2c" data-edge-right="02:00:00:00:00:2d"/>
