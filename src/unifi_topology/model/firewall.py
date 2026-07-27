@@ -43,6 +43,16 @@ class FirewallPolicy:
     destination_port_group_id: str = ""
     source_address_group_id: str = ""
     destination_address_group_id: str = ""
+    # What each side matches on: "ANY", "IP", "CLIENT", "APP", "WEB", ...
+    # A target other than "ANY" means the rule is narrowed, even when the
+    # criteria are not parsed into one of the lists below. Empty means the
+    # payload carried no target (older controllers).
+    source_matching_target: str = ""
+    destination_matching_target: str = ""
+    # Destination matching beyond IP/MAC/network
+    destination_web_domains: tuple[str, ...] = ()
+    destination_web_matching_type: str = ""  # e.g. "CUSTOM" for an explicit list
+    destination_app_ids: tuple[str, ...] = ()
     # Connection state / metadata
     connection_state_type: str = ""
     connection_logging: bool = False

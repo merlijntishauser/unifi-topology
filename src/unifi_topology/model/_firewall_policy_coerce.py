@@ -86,6 +86,13 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
             "destination",
             "address_group_id",
         ),
+        source_matching_target=_firewall_nested._matching_target_from_nested(entry, "source"),
+        destination_matching_target=_firewall_nested._matching_target_from_nested(
+            entry, "destination"
+        ),
+        destination_web_domains=_firewall_nested._web_domains_from_nested(entry),
+        destination_web_matching_type=_firewall_nested._web_matching_type_from_nested(entry),
+        destination_app_ids=_firewall_nested._app_ids_from_nested(entry),
         connection_state_type=_firewall_nested._as_str(
             first_attr(entry, "connection_state_type", "state_type")
         ),
