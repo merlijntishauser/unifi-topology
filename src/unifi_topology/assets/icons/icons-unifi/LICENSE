@@ -33,6 +33,12 @@ Some filenames deliberately mirror the isopacks inventory so the two sets are
 interchangeable at the same call sites. Filenames and subject matter are not
 themselves subject to copyright.
 
+The gateway (and its router alias) as delivered carried a stylised "U" mark on
+its top face. That mark was removed before the icon was shipped here, so the
+trademark statement below holds for the artwork as bundled. Every icon's root
+viewBox is also retargeted by scripts/normalize_icon_viewbox.py so the set
+renders at a consistent optical size; no geometry is altered by that step.
+
 
 TRADEMARKS
 
