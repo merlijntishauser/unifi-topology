@@ -69,6 +69,7 @@ def _render_iso_poe_icon(
     theme: SvgTheme,
     *,
     has_port_labels: bool = False,
+    occupied: frozenset[tuple[int, int]] = frozenset(),
 ) -> None:
     """Render PoE icon on an edge path."""
     poe_size = 30
@@ -82,6 +83,7 @@ def _render_iso_poe_icon(
         dst_gy=dst_gy,
         src_cx=src_cx,
         src_cy=src_cy,
+        occupied=occupied,
     )
     t = 0.15 if has_port_labels else 0.6
     icon_center_x = seg_start_x + t * (dst_cx - seg_start_x)
@@ -95,6 +97,96 @@ def _render_iso_poe_icon(
     )
 
 
+def occupied_cells(grid_positions: dict[str, tuple[float, float]]) -> frozenset[tuple[int, int]]:
+    """Lattice cells that hold a node, so edges can be routed around them."""
+    return frozenset((int(round(gx)), int(round(gy))) for gx, gy in grid_positions.values())
+
+
+def _span(start: int, end: int) -> range:
+    """The values strictly between two integers, in travel order."""
+    step = 1 if end > start else -1
+    return range(start + step, end, step)
+
+
+def _cells_between(
+    start: tuple[int, int],
+    end: tuple[int, int],
+) -> list[tuple[int, int]]:
+    """Lattice cells strictly between two points on a shared grid axis."""
+    (x0, y0), (x1, y1) = start, end
+    if x0 == x1:
+        return [(x0, y) for y in _span(y0, y1)]
+    if y0 == y1:
+        return [(x, y0) for x in _span(x0, x1)]
+    return []
+
+
+def _inclusive(start: int, end: int) -> range:
+    """Every value from start to end, both ends included, in travel order."""
+    step = 1 if end >= start else -1
+    return range(start, end + step, step)
+
+
+def _route_cost(
+    src: tuple[int, int],
+    corners: list[tuple[int, int]],
+    dst: tuple[int, int],
+    occupied: frozenset[tuple[int, int]],
+) -> int:
+    """How many occupied cells a route would be drawn over."""
+    points = [src, *corners, dst]
+    cells = list(corners)
+    for start, end in zip(points, points[1:], strict=False):
+        cells.extend(_cells_between(start, end))
+    return sum(1 for cell in cells if cell in occupied and cell not in (src, dst))
+
+
+def _candidate_routes(
+    src: tuple[int, int],
+    dst: tuple[int, int],
+) -> list[list[tuple[int, int]]]:
+    """Every axis-aligned route worth considering, as lists of corner cells.
+
+    Two L shapes, differing only in which axis is travelled first, then the Z
+    shapes that step sideways into a clear lane before completing the turn. All
+    of them run along grid axes, so each leg projects to a true isometric line.
+    """
+    routes = [[(dst[0], src[1])], [(src[0], dst[1])]]
+    routes += [[(mx, src[1]), (mx, dst[1])] for mx in _inclusive(src[0], dst[0])]
+    routes += [[(src[0], my), (dst[0], my)] for my in _inclusive(src[1], dst[1])]
+    return routes
+
+
+def _route_score(
+    src: tuple[int, int],
+    dst: tuple[int, int],
+    occupied: frozenset[tuple[int, int]],
+    route: list[tuple[int, int]],
+) -> tuple[int, int, float]:
+    """Fewest nodes crossed, then fewest corners, then the most centred turn."""
+    mid_x = (src[0] + dst[0]) / 2
+    mid_y = (src[1] + dst[1]) / 2
+    off_centre = min(abs(x - mid_x) + abs(y - mid_y) for x, y in route)
+    return _route_cost(src, route, dst, occupied), len(route), off_centre
+
+
+def _route_corners(
+    src_gx: float,
+    src_gy: float,
+    dst_gx: float,
+    dst_gy: float,
+    occupied: frozenset[tuple[int, int]],
+) -> list[tuple[float, float]]:
+    """Corner cells for the clearest route between two nodes."""
+    src = (int(round(src_gx)), int(round(src_gy)))
+    dst = (int(round(dst_gx)), int(round(dst_gy)))
+    best = min(
+        _candidate_routes(src, dst),
+        key=lambda route: _route_score(src, dst, occupied, route),
+    )
+    return [(float(x), float(y)) for x, y in best]
+
+
 def _poe_segment_start(
     layout: IsoLayout,
     *,
@@ -106,12 +198,16 @@ def _poe_segment_start(
     dst_gy: float,
     src_cx: float,
     src_cy: float,
+    occupied: frozenset[tuple[int, int]] = frozenset(),
 ) -> tuple[float, float]:
     dx = dst_gx - src_gx
     dy = dst_gy - src_gy
     if dx == 0 or dy == 0:
         return src_cx, src_cy
-    return _iso_front_anchor(layout, gx=dst_gx, gy=src_gy, offset_x=offset_x, offset_y=offset_y)
+    corner_gx, corner_gy = _route_corners(src_gx, src_gy, dst_gx, dst_gy, occupied)[0]
+    return _iso_front_anchor(
+        layout, gx=corner_gx, gy=corner_gy, offset_x=offset_x, offset_y=offset_y
+    )
 
 
 def _render_iso_standard_edge(
@@ -144,23 +240,21 @@ def _iso_edge_path(
     src_cy: float,
     dst_cx: float,
     dst_cy: float,
+    occupied: frozenset[tuple[int, int]] = frozenset(),
 ) -> list[str]:
     dx = dst_gx - src_gx
     dy = dst_gy - src_gy
     if dx == 0 or dy == 0:
         return [f"M {src_cx} {src_cy}", f"L {dst_cx} {dst_cy}"]
-    elbow_cx, elbow_cy = _iso_front_anchor(
-        layout,
-        gx=dst_gx,
-        gy=src_gy,
-        offset_x=offset_x,
-        offset_y=offset_y,
-    )
-    return [
-        f"M {src_cx} {src_cy}",
-        f"L {elbow_cx} {elbow_cy}",
-        f"L {dst_cx} {dst_cy}",
-    ]
+    corners = _route_corners(src_gx, src_gy, dst_gx, dst_gy, occupied)
+    steps = [f"M {src_cx} {src_cy}"]
+    for corner_gx, corner_gy in corners:
+        cx, cy = _iso_front_anchor(
+            layout, gx=corner_gx, gy=corner_gy, offset_x=offset_x, offset_y=offset_y
+        )
+        steps.append(f"L {cx} {cy}")
+    steps.append(f"L {dst_cx} {dst_cy}")
+    return steps
 
 
 def _resolve_edge_coords(
@@ -197,6 +291,7 @@ def _render_single_iso_edge(
     offset_y: float,
     node_port_labels: dict[str, str],
     max_vlan_colors: int | None,
+    occupied: frozenset[tuple[int, int]] = frozenset(),
 ) -> None:
     src_gx, src_gy, dst_gx, dst_gy, src_cx, src_cy, dst_cx, dst_cy = coords
     width_px = 5 if edge.poe else 4
@@ -213,6 +308,7 @@ def _render_single_iso_edge(
             src_cy,
             dst_cx,
             dst_cy,
+            occupied,
         )
     )
     state = _edge_render_state(edge, node_types, max_vlan_colors=max_vlan_colors)
@@ -250,6 +346,7 @@ def _render_single_iso_edge(
             dst_cy,
             theme,
             has_port_labels=edge.right in node_port_labels,
+            occupied=occupied,
         )
 
 
@@ -270,6 +367,7 @@ def _render_iso_edges(
     node_names: dict[str, str] | None = None,
 ) -> None:
     _record_iso_edge_labels(edges, node_types, node_port_labels, node_port_prefix, node_names)
+    occupied = occupied_cells(grid_positions)
     for edge in sorted(edges, key=lambda item: item.poe):
         if edge.left not in positions or edge.right not in positions:
             continue
@@ -287,4 +385,5 @@ def _render_iso_edges(
             offset_y=offset_y,
             node_port_labels=node_port_labels,
             max_vlan_colors=max_vlan_colors,
+            occupied=occupied,
         )
