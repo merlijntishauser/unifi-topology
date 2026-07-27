@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.1.2] - 2026-07-27
 
 ### Fixed
 - Remove dead code left over from the isometric light model: the `_FACE_TOP` constant (flagged by CodeQL as an unused global) and the `iso_top_highlight` function, which was never called from anywhere. The top face is not shaded — it keeps the node's own themed fill, which is what the side faces are derived against — so neither had a caller. Rendered output is unchanged
@@ -291,7 +291,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.2...HEAD
+[3.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...v3.1.2
 [3.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...v3.1.1
 [3.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v3.0.1
