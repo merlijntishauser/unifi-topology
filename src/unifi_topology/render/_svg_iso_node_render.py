@@ -336,7 +336,7 @@ def _render_iso_node(
     theme: SvgTheme,
 ) -> None:
     safe_type = _safe_node_type(node_type)
-    _, stroke = _TYPE_COLORS[safe_type]
+    stroke = theme.node_stroke or _TYPE_COLORS[safe_type][1]
     fill = f"url(#iso-node-{safe_type})"
     tile_w = layout.tile_width
     tile_h = layout.tile_height

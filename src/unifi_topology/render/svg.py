@@ -182,9 +182,10 @@ def _append_svg_node_frame(
     node_type: str,
     group_attrs: str,
     options: SvgOptions,
+    theme: SvgTheme,
 ) -> None:
     safe_type = _safe_node_type(node_type)
-    _, stroke = _TYPE_COLORS[safe_type]
+    stroke = theme.node_stroke or _TYPE_COLORS[safe_type][1]
     lines.append(f"<g{group_attrs}>")
     lines.append(f"<title>{_escape_text(name)}</title>")
     lines.append(
@@ -291,6 +292,7 @@ def _render_svg_nodes(
             node_type=node_type,
             group_attrs=group_attrs,
             options=options,
+            theme=theme,
         )
         text_x = _append_svg_node_icon(
             lines,

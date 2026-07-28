@@ -207,8 +207,11 @@ def render_svg_isometric(
     a 30-degree isometric projection with 3D-style device tiles and grid floor.
     """
     options = options or SvgOptions()
-    per_type_decals = _build_decal_colors(theme)
-    icons = _load_isometric_icons(theme.icon_set, theme.icon_decal, per_type_decals)
+    # Derived per-type decals darken each node's gradient, which vanishes on
+    # dark fills; a theme can demand one flat decal colour instead.
+    per_type_decals = None if theme.icon_decal_iso else _build_decal_colors(theme)
+    decal_color = theme.icon_decal_iso or theme.icon_decal
+    icons = _load_isometric_icons(theme.icon_set, decal_color, per_type_decals)
     layout_positions = _iso_layout_positions(edges, node_types, options)
     layout = layout_positions.layout
     grid_positions = layout_positions.grid_positions

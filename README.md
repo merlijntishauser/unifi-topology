@@ -93,7 +93,9 @@ svg = render_svg(
 - `render_dual(edges, *, node_types, theme, options, ...)` -- Physical + VLAN grouped SVG output
 - `resolve_svg_themes(theme_name, theme_file)` -- Load built-in or custom SVG theme
 
-Built-in themes: `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
+Built-in themes: `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`,
+`classic-dark`, `blueprint` (white line work on blueprint-blue paper --
+monochrome outlines, white icons, graph-paper grid)
 
 ### Isometric render options
 

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `blueprint` built-in theme: classic white line work on blueprint-blue paper. Monochrome outlines, flat white icon decals, graph-paper grid. Enabled by two new optional theme fields usable from any theme YAML: `node_stroke` (one outline colour for every node, overriding the per-type palette) and `icon_decal_iso` (flat isometric decal colour, bypassing the per-type derivation that darkens each node's gradient and so vanishes on dark fills). Both default to unset, leaving every existing theme byte-identical
 - `SvgOptions.iso_show_grid` (default `True`): draws the isometric floor grid. Set `False` for a plain background; nothing else about the render changes, including the canvas size
 
 ### Changed

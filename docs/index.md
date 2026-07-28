@@ -58,7 +58,7 @@ svg = render_svg(
 
 ## Built-in Themes
 
-`unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`
+`unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `classic-dark`, `blueprint`
 
 ## Isometric Render Options
 

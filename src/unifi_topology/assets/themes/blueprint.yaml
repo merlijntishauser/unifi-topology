@@ -1,0 +1,108 @@
+# Classic blueprint: white line work on Prussian-blue paper, outlines only.
+# Every node type shares one flat fill a step lighter than the paper, so shape
+# is carried by the white stroke and the icon rather than by colour coding.
+mermaid:
+  nodes:
+    gateway:
+      fill: "#22477c"
+      stroke: "#eaf2ff"
+    switch:
+      fill: "#22477c"
+      stroke: "#eaf2ff"
+    ap:
+      fill: "#22477c"
+      stroke: "#eaf2ff"
+    client:
+      fill: "#1e4173"
+      stroke: "#c9dcff"
+    other:
+      fill: "#1e4173"
+      stroke: "#c9dcff"
+    wan:
+      fill: "#22477c"
+      stroke: "#eaf2ff"
+  node_text: "#eaf2ff"
+  edge_label_border: "#5f83b8"
+  edge_label_border_width: 1
+  poe_link: "#9cc4ff"
+  poe_link_width: 2
+  poe_link_arrow: "none"
+  standard_link: "#eaf2ff"
+  standard_link_width: 2
+  standard_link_arrow: "none"
+svg:
+  font_family: "Inter"
+  icon_set: modern
+  icon_decal: "#eaf2ff"
+  icon_decal_iso: "#eaf2ff"
+  node_stroke: "#eaf2ff"
+  background: "#1a3a67"
+  wan_background: "#16325c"
+  grid_color: "#4d7cbd"
+  node_side_left: "#1b3a68"
+  node_side_right: "#153057"
+  text:
+    primary: "#eaf2ff"
+    secondary: "#dbe8fc"
+  status:
+    online: "#8fe6b0"
+    offline: "#ffa1a1"
+  wan_globe:
+    from: "#eaf2ff"
+    to: "#c9dcff"
+  links:
+    standard:
+      from: "#eaf2ff"
+      to: "#c9dcff"
+    poe:
+      from: "#9cc4ff"
+      to: "#7fb0f5"
+  nodes:
+    gateway:
+      from: "#22477c"
+      to: "#22477c"
+    switch:
+      from: "#22477c"
+      to: "#22477c"
+    ap:
+      from: "#22477c"
+      to: "#22477c"
+    client:
+      from: "#1e4173"
+      to: "#1e4173"
+    client_cluster:
+      from: "#1e4173"
+      to: "#1e4173"
+    other:
+      from: "#1e4173"
+      to: "#1e4173"
+    camera:
+      from: "#22477c"
+      to: "#22477c"
+    tv:
+      from: "#1e4173"
+      to: "#1e4173"
+    phone:
+      from: "#1e4173"
+      to: "#1e4173"
+    printer:
+      from: "#1e4173"
+      to: "#1e4173"
+    nas:
+      from: "#22477c"
+      to: "#22477c"
+    speaker:
+      from: "#1e4173"
+      to: "#1e4173"
+    game_console:
+      from: "#1e4173"
+      to: "#1e4173"
+    iot:
+      from: "#1e4173"
+      to: "#1e4173"
+  vlan_colors:
+    1: "#c9dcff"
+    10: "#ffa1a1"
+    20: "#9cc4ff"
+    30: "#ffd9a1"
+    100: "#d4c2ff"

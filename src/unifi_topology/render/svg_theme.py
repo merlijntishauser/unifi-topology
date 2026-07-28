@@ -87,6 +87,16 @@ class SvgTheme:
     node_side_left: str = "#dcdcdc"
     node_side_right: str = "#c8c8c8"
 
+    # Single outline colour for every node, overriding the per-type strokes.
+    # Monochrome themes (blueprint) need one line colour; None keeps the
+    # per-type palette.
+    node_stroke: str | None = None
+
+    # Flat decal colour for isometric modern icons, bypassing the per-type
+    # colours derived by darkening each node's gradient. Derived decals vanish
+    # on dark fills; None keeps the derivation.
+    icon_decal_iso: str | None = None
+
     def group_colors(self, group_name: str) -> tuple[str, str]:
         """Return (fill, stroke) colors for a group based on its type."""
         color_map = {

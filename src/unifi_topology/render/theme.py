@@ -18,6 +18,7 @@ BUILTIN_THEMES = {
     "minimal-dark": "minimal-dark.yaml",
     "classic": "default.yaml",
     "classic-dark": "dark.yaml",
+    "blueprint": "blueprint.yaml",
 }
 
 _ASSETS_DIR = Path(__file__).parent.parent / "assets" / "themes"
@@ -131,7 +132,16 @@ def _svg_theme_from_dict(data: dict, base: SvgTheme) -> SvgTheme:
         grid_color=_coerce_color(data.get("grid_color"), base.grid_color),
         node_side_left=_coerce_color(data.get("node_side_left"), base.node_side_left),
         node_side_right=_coerce_color(data.get("node_side_right"), base.node_side_right),
+        node_stroke=_coerce_optional_color(data.get("node_stroke"), base.node_stroke),
+        icon_decal_iso=_coerce_optional_color(data.get("icon_decal_iso"), base.icon_decal_iso),
     )
+
+
+def _coerce_optional_color(value: object, default: str | None) -> str | None:
+    """A colour that may legitimately be absent -- None means "not overridden"."""
+    if isinstance(value, str) and value.strip():
+        return value
+    return default
 
 
 def _load_svg_theme_from_path(theme_path: Path) -> SvgTheme:
