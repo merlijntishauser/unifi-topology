@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from unifi_topology.render._svg_iso_routing import occupied_cells, route_corners
+from unifi_topology.render._svg_iso_routing import edge_route, occupied_cells, route_corners
 
 pytestmark = pytest.mark.unit
 
@@ -123,3 +123,68 @@ class TestOptIn:
     def test_empty_occupancy_reproduces_the_original_corner(self):
         """The flag-off path relies on this: no obstacles means the first candidate."""
         assert route_corners(0, 0, 6, 4, frozenset()) == [(6.0, 0.0)]
+
+
+class TestEdgeRoute:
+    """The final lane of an edge, escapes and fan separation included."""
+
+    @staticmethod
+    def _clearance(points, occupied, endpoints):
+        """Smallest grid distance from any sampled leg point to an occupied cell."""
+        best = 99.0
+        cells = occupied - {tuple(map(int, e)) for e in endpoints}
+        for (ax, ay), (bx, by) in zip(points, points[1:], strict=False):
+            for i in range(1, 40):
+                x, y = ax + (bx - ax) * i / 40, ay + (by - ay) * i / 40
+                for cx, cy in cells:
+                    best = min(best, abs(x - cx) + abs(y - cy))
+        return best
+
+    def test_a_clear_edge_is_untouched(self):
+        assert edge_route((0, 0), (6, 4), frozenset()) == [(0, 0), (6.0, 0.0), (6, 4)]
+
+    def test_a_blocked_straight_run_escapes_to_the_half_lane(self):
+        occupied = frozenset({(0, 0), (4, 0), (8, 0)})
+        points = edge_route((0, 0), (8, 0), occupied)
+        assert points[0] == (0, 0) and points[-1] == (8, 0)
+        assert self._clearance(points, occupied, [(0, 0), (8, 0)]) >= 0.45
+
+    def test_a_fully_blocked_bent_route_escapes(self):
+        """Both L corners and every Z lane can cross something; the half-lane
+        shift cannot, because no node cell has fractional coordinates."""
+        occupied = frozenset(
+            {(0, 0), (16, -4)} | {(x, y) for x in range(2, 15, 2) for y in (-4, -2, 0)}
+        )
+        points = edge_route((0, 0), (16, -4), occupied)
+        assert points[0] == (0, 0) and points[-1] == (16, -4)
+        assert self._clearance(points, occupied, [(0, 0), (16, -4)]) >= 0.45
+
+    def test_every_leg_stays_grid_aligned_even_when_escaped(self):
+        occupied = frozenset({(4, 0)})
+        for a, b in zip(
+            *(lambda p: (p, p[1:]))(edge_route((0, 0), (8, 0), occupied)), strict=False
+        ):
+            assert abs(a[0] - b[0]) < 1e-9 or abs(a[1] - b[1]) < 1e-9
+
+    def test_lane_offsets_separate_a_fan(self):
+        from unifi_topology.model.topology import Edge
+        from unifi_topology.render._svg_iso_routing import edge_lane_offsets
+
+        edges = [Edge("hub", f"c{i}") for i in range(4)] + [Edge("other", "x")]
+        offsets = edge_lane_offsets(edges)
+        assert len(set(offsets[:4])) == 4, "fan edges share a lane"
+        assert offsets[4] == 0.0, "a lone edge needs no offset"
+
+    def test_offset_paths_keep_their_endpoints(self):
+        from unifi_topology.render._svg_iso_routing import offset_route
+
+        points = offset_route((0, 0), [(6.0, 0.0)], (6, 4), 0.3)
+        assert points[0] == (0, 0) and points[-1] == (6, 4)
+
+    def test_escape_lanes_stay_clear_of_integer_lanes(self):
+        """0.5 plus a compressed fan offset must never reach a whole lane."""
+        from unifi_topology.render._svg_iso_routing import _OFFSET_CYCLE
+
+        for offset in _OFFSET_CYCLE:
+            shift = 0.5 + offset * 0.25
+            assert 0.3 <= shift <= 0.7

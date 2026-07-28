@@ -5,7 +5,12 @@ from __future__ import annotations
 from ..model.topology import Edge
 from . import _svg_edge_shared
 from ._svg_iso_edge_labels import _record_iso_edge_labels
-from ._svg_iso_routing import edge_corners, edge_occupancy, route_corners
+from ._svg_iso_routing import (
+    edge_lane_offsets,
+    edge_occupancy,
+    edge_route,
+    route_corners,
+)
 from .svg_iso_geometry import IsoLayout, _iso_project_center
 from .svg_theme import SvgTheme
 
@@ -71,10 +76,11 @@ def _render_iso_poe_icon(
     *,
     has_port_labels: bool = False,
     occupied: frozenset[tuple[int, int]] = frozenset(),
+    seg_start: tuple[float, float] | None = None,
 ) -> None:
     """Render PoE icon on an edge path."""
     poe_size = 30
-    seg_start_x, seg_start_y = _poe_segment_start(
+    seg_start_x, seg_start_y = seg_start or _poe_segment_start(
         layout,
         offset_x=offset_x,
         offset_y=offset_y,
@@ -139,6 +145,33 @@ def _render_iso_standard_edge(
     )
 
 
+def _edge_grid_points(
+    src_grid: tuple[float, float],
+    dst_grid: tuple[float, float],
+    occupied: frozenset[tuple[int, int]],
+    lane_offset: float,
+) -> list[tuple[float, float]]:
+    """Every grid point of the edge, endpoints included, on its assigned lane."""
+    return edge_route(src_grid, dst_grid, occupied, lane_offset)
+
+
+def _steps_from_points(
+    layout: IsoLayout,
+    points: list[tuple[float, float]],
+    offset_x: float,
+    offset_y: float,
+    src_px: tuple[float, float],
+    dst_px: tuple[float, float],
+) -> list[str]:
+    """Project intermediate grid points; endpoints keep their tile anchors."""
+    steps = [f"M {src_px[0]} {src_px[1]}"]
+    for gx, gy in points[1:-1]:
+        cx, cy = _iso_front_anchor(layout, gx=gx, gy=gy, offset_x=offset_x, offset_y=offset_y)
+        steps.append(f"L {cx} {cy}")
+    steps.append(f"L {dst_px[0]} {dst_px[1]}")
+    return steps
+
+
 def _iso_edge_path(
     layout: IsoLayout,
     offset_x: float,
@@ -152,16 +185,12 @@ def _iso_edge_path(
     dst_cx: float,
     dst_cy: float,
     occupied: frozenset[tuple[int, int]] = frozenset(),
+    lane_offset: float = 0.0,
 ) -> list[str]:
-    corners = edge_corners((src_gx, src_gy), (dst_gx, dst_gy), occupied)
-    steps = [f"M {src_cx} {src_cy}"]
-    for corner_gx, corner_gy in corners:
-        cx, cy = _iso_front_anchor(
-            layout, gx=corner_gx, gy=corner_gy, offset_x=offset_x, offset_y=offset_y
-        )
-        steps.append(f"L {cx} {cy}")
-    steps.append(f"L {dst_cx} {dst_cy}")
-    return steps
+    points = _edge_grid_points((src_gx, src_gy), (dst_gx, dst_gy), occupied, lane_offset)
+    return _steps_from_points(
+        layout, points, offset_x, offset_y, (src_cx, src_cy), (dst_cx, dst_cy)
+    )
 
 
 def _resolve_edge_coords(
@@ -199,25 +228,18 @@ def _render_single_iso_edge(
     node_port_labels: dict[str, str],
     max_vlan_colors: int | None,
     occupied: frozenset[tuple[int, int]] = frozenset(),
+    lane_offset: float = 0.0,
 ) -> None:
     src_gx, src_gy, dst_gx, dst_gy, src_cx, src_cy, dst_cx, dst_cy = coords
     width_px = 5 if edge.poe else 4
+    points = _edge_grid_points((src_gx, src_gy), (dst_gx, dst_gy), occupied, lane_offset)
     path = " ".join(
-        _iso_edge_path(
-            layout,
-            offset_x,
-            offset_y,
-            src_gx,
-            src_gy,
-            dst_gx,
-            dst_gy,
-            src_cx,
-            src_cy,
-            dst_cx,
-            dst_cy,
-            occupied,
-        )
+        _steps_from_points(layout, points, offset_x, offset_y, (src_cx, src_cy), (dst_cx, dst_cy))
     )
+    poe_start = None
+    if len(points) > 2:
+        gx, gy = points[1]
+        poe_start = _iso_front_anchor(layout, gx=gx, gy=gy, offset_x=offset_x, offset_y=offset_y)
     state = _edge_render_state(edge, node_types, max_vlan_colors=max_vlan_colors)
 
     if state.display_vlans:
@@ -254,7 +276,19 @@ def _render_single_iso_edge(
             theme,
             has_port_labels=edge.right in node_port_labels,
             occupied=occupied,
+            seg_start=poe_start,
         )
+
+
+def _edge_lane_plan(edges: list[Edge], *, avoid_nodes: bool) -> list[tuple[Edge, float]]:
+    """Draw order plus each edge's lane offset.
+
+    Lane offsets separate fan-outs that would otherwise superimpose; without
+    avoidance they stay zero, keeping default output unchanged.
+    """
+    ordered = sorted(edges, key=lambda item: item.poe)
+    offsets = edge_lane_offsets(ordered) if avoid_nodes else [0.0] * len(ordered)
+    return list(zip(ordered, offsets, strict=True))
 
 
 def _render_iso_edges(
@@ -276,7 +310,7 @@ def _render_iso_edges(
 ) -> None:
     _record_iso_edge_labels(edges, node_types, node_port_labels, node_port_prefix, node_names)
     occupied = edge_occupancy(grid_positions, avoid_nodes=avoid_nodes)
-    for edge in sorted(edges, key=lambda item: item.poe):
+    for edge, lane_offset in _edge_lane_plan(edges, avoid_nodes=avoid_nodes):
         if edge.left not in positions or edge.right not in positions:
             continue
         coords = _resolve_edge_coords(edge, grid_positions, layout, offset_x, offset_y)
@@ -294,4 +328,5 @@ def _render_iso_edges(
             node_port_labels=node_port_labels,
             max_vlan_colors=max_vlan_colors,
             occupied=occupied,
+            lane_offset=lane_offset,
         )

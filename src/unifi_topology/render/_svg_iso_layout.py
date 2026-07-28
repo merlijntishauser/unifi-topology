@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from ..model.topology import Edge
 from ._svg_iso_district_layout import _iso_district_grid
-from ._svg_iso_routing import edge_corners, edge_occupancy
+from ._svg_iso_routing import edge_occupancy, edge_route
 from ._svg_tree_layout import _tree_layout_indices
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
 from .svg_theme import SvgOptions, SvgTheme
@@ -117,9 +117,8 @@ def _route_corner_positions(
         dst = grid_positions.get(edge.right)
         if src is None or dst is None:
             continue
-        points.extend(
-            _iso_project_center(layout, gx, gy) for gx, gy in edge_corners(src, dst, occupied)
-        )
+        route = edge_route(src, dst, occupied)
+        points.extend(_iso_project_center(layout, gx, gy) for gx, gy in route[1:-1])
     return points
 
 
@@ -237,7 +236,10 @@ def _iso_layout_positions(
     width, height = _iso_viewport_size(layout, min_x, min_y, max_x, max_y)
     viewport = _Viewport(offset_x=offset_x, offset_y=offset_y, width=width, height=height)
     corners = _route_corner_positions(layout, edges, grid_positions, options)
-    viewport = _expand_viewport(viewport, _corner_pixels(layout, corners, viewport), layout.padding)
+    # Half a grid unit of slack: routed edges may ride a lane offset from
+    # their corners, and the outermost lane must still land inside.
+    margin = layout.padding + layout.step_width / 4
+    viewport = _expand_viewport(viewport, _corner_pixels(layout, corners, viewport), margin)
     return IsoLayoutPositions(
         layout=layout,
         grid_positions=grid_positions,

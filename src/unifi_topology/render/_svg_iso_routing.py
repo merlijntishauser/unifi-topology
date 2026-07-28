@@ -120,10 +120,98 @@ def edge_corners(
     dst_grid: tuple[float, float],
     occupied: frozenset[tuple[int, int]],
 ) -> list[tuple[float, float]]:
-    """Corners an edge actually turns through -- none when it runs along one axis.
-
-    The single source of truth for both drawing and canvas sizing.
-    """
+    """Corners an edge turns through -- none when it runs along one grid axis."""
     if src_grid[0] == dst_grid[0] or src_grid[1] == dst_grid[1]:
         return []
     return route_corners(src_grid[0], src_grid[1], dst_grid[0], dst_grid[1], occupied)
+
+
+def _blocked(
+    src_grid: tuple[float, float],
+    corners: list[tuple[float, float]],
+    dst_grid: tuple[float, float],
+    occupied: frozenset[tuple[int, int]],
+) -> bool:
+    """Whether even the best route is still drawn over some node.
+
+    A hub's grid diagonals run through its own client field, so every
+    two-corner candidate between certain nodes crosses a tile: the minimum is
+    not always zero.
+    """
+    if not occupied:
+        return False
+    src = (int(round(src_grid[0])), int(round(src_grid[1])))
+    dst = (int(round(dst_grid[0])), int(round(dst_grid[1])))
+    cells = [(int(round(x)), int(round(y))) for x, y in corners]
+    return _route_cost(src, cells, dst, occupied) > 0
+
+
+def edge_route(
+    src_grid: tuple[float, float],
+    dst_grid: tuple[float, float],
+    occupied: frozenset[tuple[int, int]],
+    lane_offset: float = 0.0,
+) -> list[tuple[float, float]]:
+    """Every grid point of an edge, endpoints included, on its final lane.
+
+    The single source of truth for drawing and canvas sizing. Nodes sit on even
+    grid coordinates, so when the best route is still blocked the whole run is
+    shifted one unit onto the adjacent half-lane -- which can never hold a node
+    -- with short jogs joining the true endpoints. Every leg stays grid-aligned
+    and projects to a true isometric line.
+    """
+    corners = edge_corners(src_grid, dst_grid, occupied)
+    if _blocked(src_grid, corners, dst_grid, occupied):
+        # Node cells all have integer coordinates, so the half-integer lanes
+        # can never hold one. An integer shift is no escape at all: it lands on
+        # integer lanes again, and a leg that sat safely on an odd column moves
+        # onto an even one -- straight through whatever node lives there. The
+        # fan offset is compressed so the total stays clear of whole lanes.
+        shift = 0.5 + lane_offset * 0.25
+    else:
+        shift = lane_offset
+    return offset_route(src_grid, corners, dst_grid, shift)
+
+
+# Parallel lane offsets, in grid units, cycled across edges that share a source.
+# Superimposed fan-outs read as one wire chaining every node it passes; small
+# offsets separate them into distinct traces that visibly end where they end.
+_OFFSET_CYCLE = (0.0, 0.3, -0.3, 0.5, -0.5, 0.15, -0.15)
+
+
+def edge_lane_offsets(edges) -> list[float]:
+    """A deterministic lane offset per edge, spreading edges that share a source."""
+    seen: dict[str, int] = {}
+    offsets: list[float] = []
+    for edge in edges:
+        index = seen.get(edge.left, 0)
+        seen[edge.left] = index + 1
+        offsets.append(_OFFSET_CYCLE[index % len(_OFFSET_CYCLE)])
+    return offsets
+
+
+def _jog(point: tuple[float, float], toward: tuple[float, float], offset: float):
+    """Shift *point* onto the offset lane of the leg leading to *toward*."""
+    if abs(point[1] - toward[1]) < 1e-9:
+        return (point[0], point[1] + offset)
+    return (point[0] + offset, point[1])
+
+
+def offset_route(
+    src: tuple[float, float],
+    corners: list[tuple[float, float]],
+    dst: tuple[float, float],
+    offset: float,
+) -> list[tuple[float, float]]:
+    """The grid points of a route shifted onto a parallel lane.
+
+    Endpoints stay put; short perpendicular stubs join them to the shifted
+    lane, so every leg stays grid-aligned and still projects to a true
+    isometric line.
+    """
+    if not offset:
+        return [src, *corners, dst]
+    if not corners:
+        return [src, _jog(src, dst, offset), _jog(dst, src, offset), dst]
+    shifted = [(x + offset, y + offset) for x, y in corners]
+    return [src, _jog(src, corners[0], offset), *shifted, _jog(dst, corners[-1], offset), dst]
