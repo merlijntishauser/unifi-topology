@@ -5,7 +5,7 @@ from __future__ import annotations
 from unifi_topology.model.topology import Edge
 from unifi_topology.render._svg_iso_lighting import _shade, iso_face_colors
 from unifi_topology.render.svg_isometric import render_svg_isometric
-from unifi_topology.render.svg_theme import SvgOptions
+from unifi_topology.render.svg_theme import DEFAULT_THEME, SvgOptions
 
 _EDGES = [Edge("gw", "sw"), Edge("sw", "ap")]
 _TYPES = {"gw": "gateway", "sw": "switch", "ap": "ap"}
@@ -18,7 +18,7 @@ def test_shade_scales_channels():
 
 
 def test_face_colors_derive_from_node_type():
-    left, right = iso_face_colors("switch")
+    left, right = iso_face_colors("switch", DEFAULT_THEME)
     # Both faces are shaded from the node's own colour, and the right face
     # (angled furthest from the light) is darker than the left.
     assert left != right

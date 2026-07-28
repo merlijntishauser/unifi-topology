@@ -9,7 +9,8 @@ seats a node on the floor plane.
 
 from __future__ import annotations
 
-from ._svg_node_types import _TYPE_COLORS, _safe_node_type
+from ._svg_node_types import _safe_node_type
+from .svg_theme import SvgTheme, node_type_gradients
 
 # Relative luminance of the two shaded faces for a light source above and to the
 # upper-left: the left face is angled away, the right face furthest away and so
@@ -44,9 +45,14 @@ def _shade(color: str, factor: float) -> str:
     return f"#{scaled[0]:02x}{scaled[1]:02x}{scaled[2]:02x}"
 
 
-def iso_face_colors(node_type: str) -> tuple[str, str]:
-    """Return (left_fill, right_fill) shaded from the node type's own colour."""
-    base, _stroke = _TYPE_COLORS[_safe_node_type(node_type)]
+def iso_face_colors(node_type: str, theme: SvgTheme) -> tuple[str, str]:
+    """Return (left_fill, right_fill) shaded from the node's own themed colour.
+
+    Derived from the same gradient the top face is painted with, so the faces of
+    a node agree. Reading a fixed palette here instead left the sides green under
+    a theme whose access points are blue.
+    """
+    base = dict(node_type_gradients(theme))[_safe_node_type(node_type)][0]
     return _shade(base, _FACE_LEFT), _shade(base, _FACE_RIGHT)
 
 

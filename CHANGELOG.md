@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `SvgOptions.iso_show_grid` (default `True`): draws the isometric floor grid. Set `False` for a plain background; nothing else about the render changes, including the canvas size
+
+### Changed
+- Isometric icons are drawn slightly smaller relative to their tile (1.26 to 1.08 tile heights). At the previous size they overhung the top face they are meant to be standing on, most visibly for the flat access point disc
+
+### Fixed
+- Isometric node side faces ignored the theme. They were shaded from `_TYPE_COLORS`, the palette documented as being for orthogonal rendering, while the top face used the theme gradient — so under the `unifi` theme an access point drew a blue top on green sides. Both now come from `svg_theme.node_type_gradients`, the single source for node colour. Output is unchanged for the default theme, whose values happened to match
+
 ## [3.1.2] - 2026-07-27
 
 ### Fixed

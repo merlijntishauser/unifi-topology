@@ -127,6 +127,32 @@ DEFAULT_THEME = SvgTheme(
 )
 
 
+def node_type_gradients(theme: SvgTheme) -> list[tuple[str, tuple[str, str]]]:
+    """Gradient endpoints per node type, taken from the theme.
+
+    The single source for node colour. Anything deriving a face, edge or decal
+    colour must come through here, or a non-default theme will disagree with
+    itself -- the isometric side faces once read from a hardcoded orthogonal
+    palette and so turned green under a blue theme.
+    """
+    return [
+        ("gateway", theme.node_gateway),
+        ("switch", theme.node_switch),
+        ("ap", theme.node_ap),
+        ("client", theme.node_client),
+        ("client_cluster", theme.node_client_cluster),
+        ("other", theme.node_other),
+        ("camera", theme.node_camera),
+        ("tv", theme.node_tv),
+        ("phone", theme.node_phone),
+        ("printer", theme.node_printer),
+        ("nas", theme.node_nas),
+        ("speaker", theme.node_speaker),
+        ("game_console", theme.node_game_console),
+        ("iot", theme.node_iot),
+    ]
+
+
 def _gradient(grad_id: str, colors: tuple[str, str], *, horizontal: bool = False) -> str:
     """Build a single linearGradient element."""
     x2, y2 = ("100%", "0%") if horizontal else ("100%", "100%")
@@ -150,23 +176,7 @@ def svg_defs(prefix: str, theme: SvgTheme = DEFAULT_THEME) -> str:
     parts.append(_gradient(f"{gradient_prefix}link-poe", theme.link_poe, horizontal=True))
 
     # Node gradients (diagonal)
-    node_types: list[tuple[str, tuple[str, str]]] = [
-        ("gateway", theme.node_gateway),
-        ("switch", theme.node_switch),
-        ("ap", theme.node_ap),
-        ("client", theme.node_client),
-        ("client_cluster", theme.node_client_cluster),
-        ("other", theme.node_other),
-        ("camera", theme.node_camera),
-        ("tv", theme.node_tv),
-        ("phone", theme.node_phone),
-        ("printer", theme.node_printer),
-        ("nas", theme.node_nas),
-        ("speaker", theme.node_speaker),
-        ("game_console", theme.node_game_console),
-        ("iot", theme.node_iot),
-    ]
-    for name, colors in node_types:
+    for name, colors in node_type_gradients(theme):
         parts.append(_gradient(f"{node_prefix}{name}", colors))
 
     # Filters
@@ -252,6 +262,9 @@ class SvgOptions:
     # Route isometric edges around intervening nodes rather than always turning
     # on the same axis. Legs stay grid-aligned either way; only the corner moves.
     iso_route_around_nodes: bool = False
+
+    # Draw the isometric floor grid behind the nodes.
+    iso_show_grid: bool = True
 
 
 _FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"

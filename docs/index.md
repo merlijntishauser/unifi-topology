@@ -68,6 +68,7 @@ svg = render_svg(
 - `SvgOptions.iso_route_around_nodes` -- route links around intervening devices
 - `SvgOptions.iso_lighting` -- shaded side faces and contact shadows
 - `SvgTheme.icon_set` -- `isometric` (default), `modern`, or `unifi`
+- `SvgOptions.iso_show_grid` -- draw the isometric floor grid (on by default; set `False` to hide it)
 
 See [Examples](examples/README.md) for rendered comparisons of each option on a
 real network, and the

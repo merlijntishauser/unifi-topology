@@ -97,8 +97,9 @@ Built-in themes: `unifi`, `unifi-dark`, `minimal`, `minimal-dark`, `classic`, `c
 
 ### Isometric render options
 
-`render_svg_isometric` has four opt-in refinements. **All default to off**, so
-upgrading never changes an existing diagram -- turn on the ones you want.
+`render_svg_isometric` has several refinements. The four listed first **default
+to off**, so upgrading never changes an existing diagram -- turn on the ones you
+want.
 
 ```python
 from unifi_topology.render.svg_theme import SvgOptions, SvgTheme, DEFAULT_THEME
@@ -108,6 +109,7 @@ options = SvgOptions(
     iso_compact_layout=True,  # group devices instead of one long diagonal
     iso_route_around_nodes=True,  # route links around intervening devices
     iso_lighting=True,  # shaded side faces and contact shadows
+    iso_show_grid=False,  # hide the isometric floor grid (on by default)
 )
 theme = dataclasses.replace(DEFAULT_THEME, icon_set="unifi")
 
@@ -120,6 +122,7 @@ svg = render_svg_isometric(edges, node_types=types, options=options, theme=theme
 | `iso_route_around_nodes` | `SvgOptions` | Picks the link corner that crosses fewest devices, and steps into a clear lane when every simple route is blocked. Without it the corner is always taken on the same axis, so links are drawn over unrelated devices and their labels (20 of 31 links on that same network; 0 with it on). Legs stay grid-aligned either way, so they always project to true isometric lines. |
 | `iso_lighting` | `SvgOptions` | Shades each tile's side faces from its own colour under one light direction, and seats it with a contact shadow. |
 | `icon_set` | `SvgTheme` | `isometric` (default, isopacks artwork), `modern`, or `unifi`. |
+| `iso_show_grid` | `SvgOptions` | Draws the isometric floor grid behind the diagram. **On by default** -- set `False` for a plain background. Nothing else about the render changes, including the canvas size. |
 
 #### Icon sets
 

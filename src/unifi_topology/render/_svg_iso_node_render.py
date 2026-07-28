@@ -199,6 +199,9 @@ _ICON_SET_EXTRA_LIFT: dict[str, dict[str, float]] = {
 }
 
 
+_ICON_TILE_RATIO = 1.08
+
+
 def _icon_y_offset(
     *,
     node_type: str,
@@ -251,7 +254,9 @@ def _render_iso_node_icon(
     )
     if not icon_href:
         return
-    iso_icon_size = min(tile_w, tile_h) * 1.26
+    # Icons sit on the tile rather than filling it; much above this and they
+    # overhang the top face they are meant to be standing on.
+    iso_icon_size = min(tile_w, tile_h) * _ICON_TILE_RATIO
     icon_x = icon_center_x - iso_icon_size / 2
     icon_y = (
         icon_center_y
@@ -357,7 +362,7 @@ def _render_iso_node(
         'pointer-events="all" class="node-hitbox"/>'
     )
     if options.iso_lighting:
-        left_fill, right_fill = iso_face_colors(node_type)
+        left_fill, right_fill = iso_face_colors(node_type, theme)
     else:
         left_fill = theme.node_side_left
         right_fill = theme.node_side_right
