@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SvgOptions.iso_show_grid` (default `True`): draws the isometric floor grid. Set `False` for a plain background; nothing else about the render changes, including the canvas size
 
 ### Changed
+- The compact isometric layout was rebuilt around one grammar per subtree: child hubs sit directly below their hub so the infrastructure trunk runs unbroken, and a hub's clients form a block immediately to its right. The previous composition put the leaf block between hub and children, which pushed connected infrastructure 4-7 cells apart, drew a 12-node chain as a 1x15 tower, and left 62 percent of the bounding box empty. The placement search now also varies leaf-block width (without it the search was a no-op for narrow trees) and scores density alongside aspect. Measured: chain 1x15 to 5x5, two-tier fill 38 to 58 percent, mean hub-to-hub distance 4.3 to 2.0 cells. Only affects `iso_compact_layout=True`
 - Isometric icons are drawn slightly smaller relative to their tile (1.26 to 1.08 tile heights). At the previous size they overhung the top face they are meant to be standing on, most visibly for the flat access point disc
 
 ### Fixed

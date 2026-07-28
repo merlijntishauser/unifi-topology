@@ -6,11 +6,18 @@ strip: a 22x4 grid for 15 nodes, drawn as a thin line across a mostly empty
 canvas. Averaging child indices also lets two parents land on the same cell,
 which stacks nodes on top of each other.
 
-This layout instead treats the ground plane as a plane. Each hub (a device with
-children) and its leaf children form a *district*, and a hub's sub-districts are
-placed directly beneath it, so a whole subtree occupies one contiguous
-rectangle. That keeps every parent adjacent to its children: infrastructure
-links stay short instead of stretching across the diagram.
+This layout treats the ground plane as a plane, with one grammar per subtree:
+the hub's child hubs sit directly below it, so the infrastructure trunk runs
+unbroken down the left of each subtree, and the hub's own leaf clients form a
+block immediately to its right. An earlier version put the leaf block between
+hub and children, which pushed connected infrastructure four to seven cells
+apart and left most of the bounding box empty.
+
+Placement is searched, not computed: candidate wrap widths and leaf-block widen
+factors are each laid out in full, then scored by distance from the target
+screen aspect with density breaking ties. Without the widen factors the search
+is a no-op for narrow trees -- a chain renders one cell wide no matter what
+width it is offered.
 
 Coordinates are built in a screen-aligned (lateral, spine) lattice and converted
 to isometric grid coordinates at the end. The isometric projection maps grid
@@ -44,15 +51,18 @@ _TILE_ASPECT = math.tan(math.radians(30.0))
 _LATERAL_STEP = 2
 _SPINE_STEP = 2
 
-# Blank lattice cells left between packed blocks.
+# Blank lattice cells left between sibling blocks on a row.
 _GAP_LATERAL = 1
-_GAP_SPINE = 1
 
 # Width-to-height ratio the packed composition aims for, in screen pixels.
 _TARGET_SCREEN_ASPECT = 1.45
 
-# Blocks taller than this widen instead of growing further down, so a switch with
-# many clients spreads sideways rather than becoming a narrow tower.
+# Leaf-block widen factors tried by the placement search. Narrow trees cannot
+# reach the target aspect by wrapping alone; widening their leaf fields can.
+_WIDEN_FACTORS = (1.0, 1.5, 2.0)
+
+# Blocks taller than this widen instead of growing further down, so a switch
+# with many clients spreads sideways rather than becoming a narrow tower.
 _MAX_BLOCK_ROWS = 6
 
 
@@ -65,93 +75,121 @@ class _Placed:
     height: int
 
 
+@dataclass(frozen=True)
+class _PackSpec:
+    """One candidate of the placement search: wrap width and leaf widen factor."""
+
+    width: int
+    widen: float
+
+
 _EMPTY = _Placed(cells={}, width=0, height=0)
 
 
-def _shift(placed: _Placed, lateral: int, spine: int) -> _Placed:
-    moved = {node: (lat + lateral, sp + spine) for node, (lat, sp) in placed.cells.items()}
-    return _Placed(cells=moved, width=placed.width, height=placed.height)
+def _shift(placed: _Placed, lateral: int, spine: int) -> dict[str, tuple[int, int]]:
+    return {node: (lat + lateral, sp + spine) for node, (lat, sp) in placed.cells.items()}
 
 
-def _centre(placed: _Placed, width: int) -> _Placed:
-    return _shift(placed, (width - placed.width) // 2, 0)
-
-
-def _block_shape(count: int, max_cols: int) -> tuple[int, int]:
-    """Choose (cols, rows) for a block of *count* tiles.
+def _block_shape(count: int, spec: _PackSpec) -> tuple[int, int]:
+    """Choose (cols, rows) for a leaf block.
 
     A lateral step is wider on screen than a spine step, so a visually square
-    block needs more rows than columns -- that is the ``natural`` width. Blocks
-    that would exceed ``_MAX_BLOCK_ROWS`` widen instead, and nothing is allowed
-    to grow past the enclosing width.
+    block needs more rows than columns -- that is the ``natural`` width, which
+    the search's widen factor scales. Blocks that would exceed
+    ``_MAX_BLOCK_ROWS`` widen regardless, and nothing grows past the wrap width.
     """
     if count <= 0:
         return 1, 0
-    natural = max(1, round(math.sqrt(count * _TILE_ASPECT)))
+    natural = max(1, round(math.sqrt(count * _TILE_ASPECT) * spec.widen))
     unstacked = math.ceil(count / _MAX_BLOCK_ROWS)
-    cols = min(count, max_cols, max(natural, unstacked))
+    cols = min(count, max(spec.width, 1), max(natural, unstacked))
     return max(cols, 1), math.ceil(count / max(cols, 1))
 
 
-def _leaf_block(members: list[str], max_cols: int) -> _Placed:
+def _leaf_block(members: list[str], spec: _PackSpec) -> _Placed:
     """Lay leaf nodes out row-major in a compact rectangle."""
     if not members:
         return _EMPTY
-    cols, rows = _block_shape(len(members), max_cols)
+    cols, rows = _block_shape(len(members), spec)
     cells = {node: (index % cols, index // cols) for index, node in enumerate(members)}
     return _Placed(cells=cells, width=cols, height=rows)
 
 
-def _hub_over_block(hub: str, block: _Placed) -> _Placed:
-    """Put the hub tile on its own row, centred above its leaf children."""
-    width = max(block.width, 1)
-    cells = {hub: ((width - 1) // 2, 0)}
-    cells.update(_shift(_centre(block, width), 0, 1).cells)
-    return _Placed(cells=cells, width=width, height=block.height + 1)
+def _bare_hub(hub: str) -> _Placed:
+    return _Placed(cells={hub: (0, 0)}, width=1, height=1)
 
 
-def _stack(top: _Placed, bottom: _Placed) -> _Placed:
-    """Place *bottom* below *top*, each centred on the combined width."""
+def _stack_left(top: _Placed, bottom: _Placed) -> _Placed:
+    """Place *bottom* directly below *top*, both flush left.
+
+    No gap and no centring: this joins a hub to its child hubs, and the trunk
+    they form should be straight and adjacent.
+    """
     if not bottom.cells:
         return top
-    if not top.cells:
-        return bottom
-    width = max(top.width, bottom.width)
-    cells = dict(_centre(top, width).cells)
-    cells.update(_shift(_centre(bottom, width), 0, top.height + _GAP_SPINE).cells)
-    return _Placed(cells=cells, width=width, height=top.height + _GAP_SPINE + bottom.height)
+    cells = dict(top.cells)
+    cells.update(_shift(bottom, 0, top.height))
+    return _Placed(
+        cells=cells, width=max(top.width, bottom.width), height=top.height + bottom.height
+    )
 
 
-@dataclass
-class _RowState:
-    max_width: int
-    lateral: int = 0
-    spine: int = 0
-    row_height: int = 0
-    width: int = 0
+def _beside(left: _Placed, right: _Placed) -> _Placed:
+    """Place *right* immediately to the right of *left*, both flush top."""
+    if not right.cells:
+        return left
+    cells = dict(left.cells)
+    cells.update(_shift(right, left.width, 0))
+    return _Placed(
+        cells=cells, width=left.width + right.width, height=max(left.height, right.height)
+    )
 
 
-def _row_origin(state: _RowState, block: _Placed) -> tuple[int, int]:
-    """Origin for *block* on the current row, wrapping to a new one when full."""
-    if state.lateral and state.lateral + block.width > state.max_width:
-        state.spine += state.row_height + _GAP_SPINE
-        state.lateral = 0
-        state.row_height = 0
-    origin = (state.lateral, state.spine)
-    state.lateral += block.width + _GAP_LATERAL
-    state.row_height = max(state.row_height, block.height)
-    state.width = max(state.width, state.lateral - _GAP_LATERAL)
-    return origin
-
-
-def _pack_row(blocks: list[_Placed], max_width: int) -> _Placed:
-    """Lay sibling blocks left to right, wrapping when they exceed *max_width*."""
-    state = _RowState(max_width=max(max_width, 1))
-    cells: dict[str, tuple[int, int]] = {}
+def _plan_rows(blocks: list[_Placed], width: int) -> list[list[tuple[_Placed, int]]]:
+    """Assign blocks to wrap rows, greedily, returning (block, lateral) per row."""
+    rows: list[list[tuple[_Placed, int]]] = [[]]
+    lateral = 0
     for block in blocks:
-        lateral, spine = _row_origin(state, block)
-        cells.update(_shift(block, lateral, spine).cells)
-    return _Placed(cells=cells, width=state.width, height=state.spine + state.row_height)
+        if lateral and lateral + block.width > max(width, 1):
+            rows.append([])
+            lateral = 0
+        rows[-1].append((block, lateral))
+        lateral += block.width + _GAP_LATERAL
+    return rows
+
+
+def _emit_row(
+    cells: dict[str, tuple[int, int]],
+    row: list[tuple[_Placed, int]],
+    spine: int,
+    *,
+    centre: bool,
+) -> tuple[int, int]:
+    """Write one row's blocks into *cells*; return (row height, row width)."""
+    height = max((block.height for block, _lat in row), default=0)
+    width = 0
+    for block, lateral in row:
+        drop = (height - block.height) // 2 if centre else 0
+        cells.update(_shift(block, lateral, spine + drop))
+        width = max(width, lateral + block.width)
+    return height, width
+
+
+def _pack_row(blocks: list[_Placed], width: int, *, centre: bool = False) -> _Placed:
+    """Lay blocks left to right, wrapping at *width*.
+
+    Child rows stay flush top so every hub is adjacent to the parent above it;
+    the forest row centres instead, so a short orphan block sits balanced beside
+    a tall tree rather than pinned to its top corner.
+    """
+    cells: dict[str, tuple[int, int]] = {}
+    spine = 0
+    total_width = 0
+    for row in _plan_rows(blocks, width):
+        height, row_width = _emit_row(cells, row, spine, centre=centre)
+        spine += height
+        total_width = max(total_width, row_width)
+    return _Placed(cells=cells, width=total_width, height=spine)
 
 
 def _claim_leaves(node: str, children: dict[str, list[str]], visited: set[str]) -> list[str]:
@@ -164,7 +202,7 @@ def _place_children(
     node: str,
     children: dict[str, list[str]],
     visited: set[str],
-    max_width: int,
+    spec: _PackSpec,
 ) -> _Placed:
     """Place every sub-hub of *node* as its own subtree, side by side."""
     blocks: list[_Placed] = []
@@ -172,38 +210,39 @@ def _place_children(
         # Re-checked each pass: an earlier sibling's subtree may have claimed it.
         if child in visited or not children.get(child):
             continue
-        blocks.append(_place_subtree(child, children, visited, max_width))
-    return _pack_row(blocks, max_width)
+        blocks.append(_place_subtree(child, children, visited, spec))
+    return _pack_row(blocks, spec.width)
 
 
 def _place_subtree(
     node: str,
     children: dict[str, list[str]],
     visited: set[str],
-    max_width: int,
+    spec: _PackSpec,
 ) -> _Placed:
-    """Place *node*, its leaf children, and every sub-hub beneath it."""
+    """Place *node* with its child hubs below and its leaf clients beside it."""
     visited.add(node)
-    own = _hub_over_block(node, _leaf_block(_claim_leaves(node, children, visited), max_width))
-    return _stack(own, _place_children(node, children, visited, max_width))
+    leaves = _claim_leaves(node, children, visited)
+    trunk = _stack_left(_bare_hub(node), _place_children(node, children, visited, spec))
+    return _beside(trunk, _leaf_block(leaves, spec))
 
 
 def _subtree_blocks(
     order: list[str],
     children: dict[str, list[str]],
     visited: set[str],
-    max_width: int,
+    spec: _PackSpec,
 ) -> list[_Placed]:
     blocks: list[_Placed] = []
     for node in order:
         if node in visited or not children.get(node):
             continue
-        blocks.append(_place_subtree(node, children, visited, max_width))
+        blocks.append(_place_subtree(node, children, visited, spec))
     return blocks
 
 
 def _ideal_width(node_count: int) -> int:
-    """First guess at an enclosing width, ignoring gaps and ragged rows."""
+    """First guess at a wrap width, ignoring gaps and ragged rows."""
     total = max(node_count, 1)
     return max(1, int(round(math.sqrt(total * _TARGET_SCREEN_ASPECT * _TILE_ASPECT))))
 
@@ -212,17 +251,17 @@ def _place_forest(
     roots: list[str],
     children: dict[str, list[str]],
     nodes: set[str],
-    max_width: int,
+    spec: _PackSpec,
     sort_key,
 ) -> _Placed:
     """Place every subtree, then park whatever the walk never reached."""
     visited: set[str] = set()
     order = list(roots) + sorted(nodes, key=sort_key)
-    blocks = _subtree_blocks(order, children, visited, max_width)
+    blocks = _subtree_blocks(order, children, visited, spec)
     orphans = sorted(nodes - visited, key=sort_key)
     if orphans:
-        blocks.append(_leaf_block(orphans, max_width))
-    return _pack_row(blocks, max_width)
+        blocks.append(_leaf_block(orphans, spec))
+    return _pack_row(blocks, spec.width, centre=True)
 
 
 def _adjacency(edges: list[Edge], nodes: set[str]) -> dict[str, list[str]]:
@@ -284,11 +323,25 @@ def _screen_aspect(cells: dict[str, tuple[int, int]]) -> float:
     return (width / height) / _TILE_ASPECT
 
 
-def _aspect_error(placed: _Placed) -> float:
-    """Log-ratio distance from the target aspect, so too-wide and too-tall rank alike."""
+def _fill(cells: dict[str, tuple[int, int]]) -> float:
+    """Fraction of the content bounding box that holds a node."""
+    lats = [lat for lat, _spine in cells.values()]
+    spines = [spine for _lat, spine in cells.values()]
+    area = (max(lats) - min(lats) + 1) * (max(spines) - min(spines) + 1)
+    return len(cells) / area
+
+
+def _placement_score(placed: _Placed) -> tuple[int, float]:
+    """Near the target aspect first, then as dense as possible.
+
+    Aspect error is bucketed so that candidates in the same neighbourhood
+    compete on density instead of on meaningless third-decimal aspect wins --
+    density is what stops the search wrapping a composition full of holes.
+    """
     if not placed.cells:
-        return 0.0
-    return abs(math.log(_screen_aspect(placed.cells) / _TARGET_SCREEN_ASPECT))
+        return (0, 0.0)
+    error = abs(math.log(_screen_aspect(placed.cells) / _TARGET_SCREEN_ASPECT))
+    return (int(error * 8), -_fill(placed.cells))
 
 
 def _best_placement(
@@ -297,15 +350,19 @@ def _best_placement(
     nodes: set[str],
     sort_key,
 ) -> _Placed:
-    """Try every plausible enclosing width and keep the squarest result.
+    """Lay the forest out at every plausible width and widen factor; keep the best.
 
-    Wrapping leaves ragged gaps that no closed-form width can predict, so the
-    layout is run at each candidate and measured.
+    Wrapping leaves ragged rows no closed form can predict, and narrow trees
+    only reach the target aspect when their leaf blocks widen, so both axes of
+    the search are laid out in full and measured.
     """
     ideal = _ideal_width(len(nodes))
-    candidates = range(1, ideal * 3 + 2)
-    placements = [_place_forest(roots, children, nodes, w, sort_key) for w in candidates]
-    return min(placements, key=_aspect_error)
+    candidates = [
+        _place_forest(roots, children, nodes, _PackSpec(width, widen), sort_key)
+        for width in range(1, ideal * 3 + 2)
+        for widen in _WIDEN_FACTORS
+    ]
+    return min(candidates, key=_placement_score)
 
 
 def _to_iso_grid(cells: dict[str, tuple[int, int]]) -> dict[str, tuple[float, float]]:
