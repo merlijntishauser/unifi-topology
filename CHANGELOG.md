@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.2.0] - 2026-07-28
 
 ### Added
 - `blueprint` built-in theme: classic white line work on blueprint-blue paper. Monochrome outlines, flat white icon decals, graph-paper grid. Enabled by two new optional theme fields usable from any theme YAML: `node_stroke` (one outline colour for every node, overriding the per-type palette) and `icon_decal_iso` (flat isometric decal colour, bypassing the per-type derivation that darkens each node's gradient and so vanishes on dark fills). Both default to unset, leaving every existing theme byte-identical
@@ -305,8 +305,9 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.2...HEAD
-[3.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...v3.1.2
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.2...v3.2.0
+[3.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.2...v3.1.1
 [3.0.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/merlijntishauser/unifi-topology/compare/v2.2.1...v3.0.1
