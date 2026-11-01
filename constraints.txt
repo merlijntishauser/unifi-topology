@@ -9,7 +9,7 @@ pytest==9.1.1
 pytest-cov==7.1.0
 ruff==0.16.8
 pyright==1.1.414
-setuptools==84.0.0
+setuptools==84.1.0
 wheel==0.48.0
 # Transitive/tooling pins bumped to patched versions (pip-audit remediation)
 click==8.5.0
