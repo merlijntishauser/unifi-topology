@@ -63,3 +63,28 @@ def test_toggle_preserves_client_session(monkeypatch, tmp_path):
     # A successful write must not discard the authenticated session.
     unifi.fetch_devices(config, use_cache=False)
     assert create_calls["count"] == 1
+
+
+def test_firewall_writes_use_remembered_legacy_auth(monkeypatch, tmp_path):
+    monkeypatch.setenv("UNIFI_CACHE_DIR", str(tmp_path))
+    unifi.clear_client_cache()
+    config = make_config()
+    styles: list[bool] = []
+
+    class FakeClient:
+        def update_firewall_policy(self, *_args: object) -> dict[str, object]:
+            return {}
+
+        def swap_firewall_policy_order(self, *_args: object) -> None:
+            return None
+
+    def create(_config: object, *, is_udm_pro: bool) -> FakeClient:
+        styles.append(is_udm_pro)
+        return FakeClient()
+
+    monkeypatch.setattr(unifi, "_create_client", create)
+    monkeypatch.setitem(unifi._auth_style_cache, config.url, False)
+    unifi.toggle_firewall_policy(config, "p1", enabled=False)
+    unifi.swap_firewall_policy_order(config, "pa", "pb")
+    unifi.clear_client_cache()
+    assert styles == [False]

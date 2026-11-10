@@ -171,7 +171,8 @@ def _load_cache_with_age(path: Path) -> tuple[Sequence[object] | None, float | N
 
 def _save_cache(path: Path, data: Sequence[object]) -> None:
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
+        # Owner-only, so the directory passes _is_cache_dir_safe under any umask.
+        path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         if not _is_cache_dir_safe(path.parent):
             return
         payload = {"timestamp": time.time(), "data": data}

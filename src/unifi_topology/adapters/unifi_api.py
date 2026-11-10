@@ -274,12 +274,23 @@ class UnifiClient:
         self._validate_auth_response(response)
         self._csrf_token = response.headers.get("X-CSRF-Token")
 
+    @staticmethod
+    def _auth_json(response: requests.Response) -> object:
+        """Parse a login response, keeping the HTTP status on a non-JSON body.
+
+        A rate-limited or failing controller often answers with HTML; callers
+        need the status code to tell that apart from rejected credentials.
+        """
+        try:
+            return response.json()
+        except ValueError as exc:
+            raise UnifiAuthError(
+                f"Non-JSON auth response (HTTP {response.status_code})",
+                status_code=response.status_code,
+            ) from exc
+
     def _validate_auth_response(self, response: requests.Response) -> None:
-        data = self._parse_json(
-            response,
-            error_type=UnifiAuthError,
-            error_message=f"Non-JSON auth response (HTTP {response.status_code})",
-        )
+        data = self._auth_json(response)
         if not response.ok:
             detail = self._error_detail(data)
             if detail:

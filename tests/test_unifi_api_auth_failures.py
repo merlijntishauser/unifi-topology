@@ -60,3 +60,10 @@ def test_authenticate_http_error_does_not_treat_roles_as_success(monkeypatch):
     session = FakeSession([error_resp])
     with pytest.raises(UnifiAuthError, match="HTTP 403"):
         make_client(monkeypatch, session)
+
+
+def test_authenticate_non_json_error_keeps_status_code(monkeypatch):
+    session = FakeSession([FakeResponse(status_code=429, ok=False)])
+    with pytest.raises(UnifiAuthError, match="Non-JSON auth response") as excinfo:
+        make_client(monkeypatch, session)
+    assert excinfo.value.status_code == 429

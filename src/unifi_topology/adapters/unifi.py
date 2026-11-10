@@ -439,7 +439,7 @@ def toggle_firewall_policy(
 ) -> None:
     """Toggle a firewall policy's enabled state and invalidate cache."""
     site_name = site or config.site
-    client = _get_or_create_client(config, is_udm_pro=True)
+    client = _connect_client(config)
     client.update_firewall_policy(site_name, policy_id, {"enabled": enabled})
     invalidate_cache(config, site=site)
 
@@ -477,6 +477,6 @@ def swap_firewall_policy_order(
 ) -> None:
     """Swap the index of two firewall policies and invalidate cache."""
     site_name = site or config.site
-    client = _get_or_create_client(config, is_udm_pro=True)
+    client = _connect_client(config)
     client.swap_firewall_policy_order(site_name, policy_id_a, policy_id_b)
     invalidate_cache(config, site=site)

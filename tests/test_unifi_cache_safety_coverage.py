@@ -76,3 +76,17 @@ def test_save_cache_writes_owner_only_file(tmp_path):
     assert cache_path.exists()
     mode = stat.S_IMODE(cache_path.stat().st_mode)
     assert mode & (stat.S_IRWXG | stat.S_IRWXO) == 0
+
+
+def test_save_cache_creates_usable_dir_under_group_writable_umask(tmp_path):
+    import os
+
+    from unifi_topology.adapters import _cache_store
+
+    cache_path = tmp_path / "cache" / "devices_abc.json"
+    previous = os.umask(0o002)
+    try:
+        _cache_store._save_cache(cache_path, [{"mac": "aa"}])
+    finally:
+        os.umask(previous)
+    assert cache_path.exists()
