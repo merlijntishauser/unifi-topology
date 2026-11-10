@@ -138,6 +138,41 @@ def _resolve_vlan_id(value: object, network_vlan_map: dict[str, int] | None = No
     return None
 
 
+_ALLOW_ALL_VLAN_MODES = ("auto", "all")
+_CUSTOM_VLAN_MODE = "custom"
+
+
+def _tagged_vlan_mode(value: object) -> str | None:
+    return value.strip().lower() if isinstance(value, str) else None
+
+
+def _allowed_vlans(
+    network_vlan_map: dict[str, int] | None,
+    *,
+    native_vlan: int | None,
+    excluded: object = None,
+) -> tuple[int, ...]:
+    """Return every known VLAN except the native one and the excluded networks."""
+    blocked: set[int | None] = {native_vlan, *_coerce_vlan_list(excluded, network_vlan_map)}
+    return tuple(sorted(set((network_vlan_map or {}).values()) - blocked))
+
+
+def _tagged_vlans(
+    record: RawRecord,
+    native_vlan: int | None,
+    network_vlan_map: dict[str, int] | None,
+) -> tuple[int, ...]:
+    """Resolve a port's tagged VLANs from an explicit list or a UniFi trunk mode."""
+    value = record.first(*TAGGED_VLAN_KEYS)
+    mode = _tagged_vlan_mode(value)
+    if mode in _ALLOW_ALL_VLAN_MODES:
+        return _allowed_vlans(network_vlan_map, native_vlan=native_vlan)
+    if mode == _CUSTOM_VLAN_MODE:
+        excluded = record.get("excluded_networkconf_ids")
+        return _allowed_vlans(network_vlan_map, native_vlan=native_vlan, excluded=excluded)
+    return _coerce_vlan_list(value, network_vlan_map)
+
+
 def _extract_wan_networkconf_id(port_entry: object) -> str | None:
     """Extract WAN network configuration ID from a port entry."""
     return RawRecord(port_entry).text("wan_networkconf_id")
@@ -147,6 +182,7 @@ def _port_info_from_entry(
     port_entry: object, network_vlan_map: dict[str, int] | None = None
 ) -> PortInfo:
     record = RawRecord(port_entry)
+    native_vlan = _resolve_vlan_id(record.first(*NATIVE_VLAN_KEYS), network_vlan_map)
     return PortInfo(
         port_idx=record.integer("port_idx", "portIdx"),
         name=record.text("name"),
@@ -158,8 +194,8 @@ def _port_info_from_entry(
         poe_good=as_bool(record.get("poe_good")),
         poe_power=_as_float(record.get("poe_power")),
         up=record.optional_bool("up"),
-        native_vlan=_resolve_vlan_id(record.first(*NATIVE_VLAN_KEYS), network_vlan_map),
-        tagged_vlans=_coerce_vlan_list(record.first(*TAGGED_VLAN_KEYS), network_vlan_map),
+        native_vlan=native_vlan,
+        tagged_vlans=_tagged_vlans(record, native_vlan, network_vlan_map),
         wan_networkconf_id=_extract_wan_networkconf_id(port_entry),
     )
 
@@ -172,12 +208,8 @@ def _coerce_port_table(
 
 
 def _port_has_active_poe(port_entry: PortInfo) -> bool:
-    return (
-        port_entry.poe_enable
-        or port_entry.port_poe
-        or port_entry.poe_good
-        or _as_float(port_entry.poe_power) > 0.0
-    )
+    # port_poe only says the port is PoE-capable, so it does not count as active.
+    return port_entry.poe_enable or port_entry.poe_good or _as_float(port_entry.poe_power) > 0.0
 
 
 def _poe_ports_from_device(

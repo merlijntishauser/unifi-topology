@@ -140,11 +140,12 @@ def _resolve_lldp_info(
 
 
 def _device_identity(device: DeviceSource) -> tuple[str, str]:
+    """Return the device name and MAC; an un-aliased device is named after its model."""
     record = RawRecord(device)
-    name = record.get("name")
     mac = record.get("mac")
-    if not name or not mac:
-        raise ValueError("Device missing name or mac")
+    if not mac:
+        raise ValueError("Device missing mac")
+    name = record.get("name") or _get_model_display_name(device) or record.get("model") or mac
     return str(name), str(mac)
 
 

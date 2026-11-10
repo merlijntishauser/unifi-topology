@@ -18,14 +18,17 @@ class TestCoerceDevice:
         assert device.name == "Test Switch"
         assert device.mac == "aa:bb:cc:dd:ee:ff"
 
-    def test_missing_name_raises(self):
+    def test_missing_name_falls_back_to_model(self):
+        raw = {"mac": "aa:bb:cc:dd:ee:ff", "model": "US8P60", "lldp_info": []}
+        assert coerce_device(raw).name == "US8P60"
+
+    def test_missing_name_and_model_falls_back_to_mac(self):
         raw = {"mac": "aa:bb:cc:dd:ee:ff", "lldp_info": []}
-        with pytest.raises(ValueError, match="missing name or mac"):
-            coerce_device(raw)
+        assert coerce_device(raw).name == "aa:bb:cc:dd:ee:ff"
 
     def test_missing_mac_raises(self):
         raw = {"name": "Switch", "lldp_info": []}
-        with pytest.raises(ValueError, match="missing name or mac"):
+        with pytest.raises(ValueError, match="missing mac"):
             coerce_device(raw)
 
     def test_missing_lldp_with_uplink_uses_fallback(self, caplog):

@@ -56,12 +56,12 @@ def test_build_edges_sets_poe_with_poe_good():
     assert edges[0].poe is True
 
 
-def test_build_edges_sets_poe_with_port_poe():
+def test_build_edges_ignores_poe_capability_without_delivery():
     dev_switch = DummyDevice(
         "Switch A",
         "aa:bb:cc:dd:ee:01",
         [LLDPEntry("aa:bb:cc:dd:ee:02", "eth1", local_port_idx=1)],
-        port_table=[{"port_idx": 1, "port_poe": True}],
+        port_table=[{"port_idx": 1, "port_poe": True, "poe_enable": False, "poe_power": "0.00"}],
     )
     dev_ap = DummyDevice(
         "AP One",
@@ -69,4 +69,4 @@ def test_build_edges_sets_poe_with_port_poe():
         [LLDPEntry("aa:bb:cc:dd:ee:01", "eth0")],
     )
     edges = build_edges(normalize_devices([dev_switch, dev_ap]))
-    assert edges[0].poe is True
+    assert edges[0].poe is False

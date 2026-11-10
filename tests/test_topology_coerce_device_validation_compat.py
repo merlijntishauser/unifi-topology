@@ -10,7 +10,7 @@ from unifi_topology.model.lldp import LLDPEntry
 from unifi_topology.model.topology_coerce import coerce_device
 
 
-def test_coerce_device_requires_name():
+def test_coerce_device_without_name_uses_mac():
     class MissingName:
         name = ""
         model_name = ""
@@ -20,8 +20,7 @@ def test_coerce_device_requires_name():
         lldp_info = [LLDPEntry("bb", "1")]
         port_table = []
 
-    with pytest.raises(ValueError):
-        coerce_device(MissingName())
+    assert coerce_device(MissingName()).name == "aa"
 
 
 def test_coerce_device_requires_lldp():
@@ -39,9 +38,9 @@ def test_coerce_device_requires_lldp():
         coerce_device(MissingLldp())
 
 
-def test_coerce_device_missing_name_raises():
+def test_coerce_device_missing_mac_raises():
     with pytest.raises(ValueError):
-        coerce_device(SimpleNamespace(name=None, mac="aa", lldp_info=[]))
+        coerce_device(SimpleNamespace(name="Dev", mac=None, lldp_info=[]))
 
 
 def test_coerce_device_missing_lldp_raises():

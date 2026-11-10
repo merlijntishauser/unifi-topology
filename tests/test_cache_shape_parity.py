@@ -12,7 +12,7 @@ from unifi_topology.model.topology_coerce import normalize_devices
 
 pytestmark = pytest.mark.integration
 
-_NETWORK_VLAN_MAP = {"net-default": 1, "net-iot": 30}
+_NETWORK_VLAN_MAP = {"net-default": 1, "net-iot": 30, "net-guest": 40}
 
 
 def _raw_device() -> dict[str, object]:
@@ -44,6 +44,13 @@ def _raw_device() -> dict[str, object]:
                 "tagged_vlan_mgmt": "block_all",
             },
             {"port_idx": 2, "native_networkconf_id": "net-default", "tagged_vlans": [30]},
+            {"port_idx": 3, "native_networkconf_id": "net-default", "tagged_vlan_mgmt": "auto"},
+            {
+                "port_idx": 4,
+                "native_networkconf_id": "net-default",
+                "tagged_vlan_mgmt": "custom",
+                "excluded_networkconf_ids": ["net-iot"],
+            },
         ],
     }
 
@@ -54,7 +61,13 @@ def _cached_device() -> dict[str, object]:
 
 def test_raw_port_resolves_native_vlan_from_networkconf_id():
     (device,) = normalize_devices([_raw_device()], _NETWORK_VLAN_MAP)
-    assert [port.native_vlan for port in device.port_table] == [30, 1]
+    assert [port.native_vlan for port in device.port_table] == [30, 1, 1, 1]
+
+
+def test_trunk_modes_resolve_tagged_vlans_from_known_networks():
+    (device,) = normalize_devices([_raw_device()], _NETWORK_VLAN_MAP)
+    tagged = {port.port_idx: port.tagged_vlans for port in device.port_table}
+    assert tagged == {1: (), 2: (30,), 3: (30, 40), 4: (40,)}
 
 
 def test_raw_and_cached_devices_normalize_identically():

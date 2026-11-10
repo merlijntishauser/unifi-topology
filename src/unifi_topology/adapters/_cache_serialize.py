@@ -46,6 +46,7 @@ def _serialize_port_entry(entry: object) -> dict[str, object]:
             "poe_power": first_attr(entry, "poe_power"),
             "native_vlan": first_attr(entry, *NATIVE_VLAN_KEYS),
             "tagged_vlans": first_attr(entry, *TAGGED_VLAN_KEYS),
+            "excluded_networkconf_ids": first_attr(entry, "excluded_networkconf_ids"),
             "wan_networkconf_id": first_attr(entry, "wan_networkconf_id"),
         }
     )
