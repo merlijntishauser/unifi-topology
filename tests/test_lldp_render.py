@@ -482,3 +482,43 @@ def test_client_display_name_uses_ucore_model_when_no_hostname():
         "unifi_device_info_from_ucore": {"computed_model": "G6 Pro Bullet"},
     }
     assert client_display_name(client) == "G6 Pro Bullet"
+
+
+def test_client_display_name_skips_root_name_that_is_the_model():
+    """Some controllers copy the camera model into the root ``name``.
+
+    Seen on a G6 Pro Bullet (unifi-network-maps-ha#303): the root ``name`` is
+    "G6 Pro Bullet" while the Protect alias sits in the ucore ``name``.
+    """
+    client = {
+        "hostname": "kamerakapu",
+        "name": "G6 Pro Bullet",
+        "unifi_device_info_from_ucore": {
+            "name": "Kamera_Kapu",
+            "computed_model": "G6 Pro Bullet",
+            "product_model": "G6 Pro Bullet",
+            "product_shortname": "UVC-G6-Pro-Bullet-B",
+            "product_line": "PROTECT",
+        },
+    }
+    assert client_display_name(client) == "Kamera_Kapu"
+
+
+def test_client_display_name_skips_root_model_name_down_to_hostname():
+    client = {
+        "hostname": "kamerakapu",
+        "name": "UVC-G6-Pro-Bullet-B",
+        "unifi_device_info_from_ucore": {"product_shortname": "UVC-G6-Pro-Bullet-B"},
+    }
+    assert client_display_name(client) == "kamerakapu"
+
+
+def test_client_display_name_keeps_root_alias_that_differs_from_model():
+    client = {
+        "name": "Front Door",
+        "unifi_device_info_from_ucore": {
+            "name": "Kamera_Kapu",
+            "computed_model": "G6 Pro Bullet",
+        },
+    }
+    assert client_display_name(client) == "Front Door"
