@@ -8,7 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Port VLANs were only read from the cache-shaped keys, so a fresh fetch (cache miss or `use_cache=False`) produced edges without VLANs while the same call on a cache hit had them. The port coercer now reads the raw API keys (`native_networkconf_id`, `tagged_vlan_mgmt` and the other aliases) as well, sharing one alias list with the cache serializer
+- The device cache dropped `connect_request_ip`, `version`, port `poe_mode` and the model display fields, and wrote absent fields as `null`. On a cache hit `Device.public_ip` was lost, `model_name` could differ, and `normalize_device_stats` returned `name='None'`. Cached records now keep those fields and omit absent ones. Cache files written before this change lack the new fields until they expire or `invalidate_cache` is called
+- SVG attribute injection through edge VLANs: `data-vlans` and `data-active-vlans` were written unescaped and `edge_from_dict` accepted arbitrary values. The attributes are now escaped, and snapshot loading drops non-integer VLAN entries
+- Clients classified as camera, tv, phone and so on were not treated as clients by `collapse_client_edges`, Mermaid node classes, SVG edge dimming and client port labels, which all compared against the literal type `client`. They now share one check, `is_client_node_type`
+- A PoE-capable port (`port_poe`) counted as actively delivering PoE, so most links on a PoE switch were drawn as PoE links. Only `poe_enable`, `poe_good` or a non-zero `poe_power` count now
+- A device without a `name` was skipped as malformed, which detached everything downstream of an un-aliased switch. It is now named after its model, falling back to its MAC; only a missing MAC is malformed
+- Trunk ports in `tagged_vlan_mgmt` mode `auto` (or `all`) resolved to no tagged VLANs. They now carry every known VLAN except the native one, and `custom` carries every known VLAN except those in `excluded_networkconf_ids`. This needs `network_vlan_map`; without it the result is still empty
+- `toggle_firewall_policy` and `swap_firewall_policy_order` always used UDM-style auth, so writes failed on legacy-auth controllers where reads worked. They now connect the same way fetches do
+- A login answered with a non-JSON body (for example an HTML 429 page) raised `UnifiAuthError` without a `status_code`, so a rate-limited login was followed straight away by a second attempt via the legacy fallback. The status code is now kept
+- The cache directory was created with the default mode and then rejected as group-writable under umask 002, so caching never worked on such hosts. It is now created owner-only
+- Isometric grouped layout placed nodes by topology alone and then drew each group as the bounding box of its members, so group regions overlapped and enclosed non-members. In `layout_mode="grouped"` each group is now laid out on its own and the blocks are set side by side. Physical layout is unchanged
+- Mermaid diagrams with `groups` showed nodes outside every group by their slug ID instead of their name
+- The Markdown port overview listed a connection on a LAG member port twice, once in the aggregate row and once as an orphan row
+- VLAN endpoint markers were drawn inside the destination node's footprint and painted over by the node. They now sit beside the edge just above the node (orthogonal) or past the tile's right corner (isometric)
+- `_darken_hex` raised `ValueError` on six-letter colour names such as `orange`
 - Some controllers copy a client's product model into its root `name` (seen on G6 Pro Bullet cameras), which `client_display_name` took as the Network alias, so the camera was still labelled "G6 Pro Bullet" even though its Protect alias was present in `unifi_device_info_from_ucore.name`. A root `name` equal to one of the ucore model fields (`computed_model`, `product_model`, `product_shortname`) is no longer treated as an alias; a root name that differs from the model still wins. Reported in merlijntishauser/unifi-network-maps-ha#303
+
+### Changed
+- Node outlines follow the theme. A theme that restyles a node type now gets an outline derived from its own fill; previously the outline came from the default palette unless `node_stroke` was set, giving for example a blue `unifi` gateway an orange outline. This changes the SVG output of every built-in theme except `blueprint`; the default (no theme) output is unchanged
 
 ## [3.2.1] - 2026-09-27
 
