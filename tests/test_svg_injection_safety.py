@@ -72,3 +72,22 @@ def test_render_svg_isometric_group_name_control_chars_produce_parseable_svg():
     )
     assert "network-group" in output
     ET.fromstring(output)
+
+
+_HOSTILE_VLAN = '1" onload="alert(1)'
+
+
+def test_render_svg_rejects_attribute_injection_via_edge_vlans():
+    edge = Edge("a", "b", vlans=(_HOSTILE_VLAN,))  # type: ignore[arg-type]
+    assert 'onload="' not in render_svg([edge], node_types={})
+    assert 'onload="' not in render_svg_isometric([edge], node_types={})
+
+
+def test_edge_from_dict_drops_non_integer_vlans():
+    from unifi_topology.model.snapshot import edge_from_dict
+
+    edge = edge_from_dict(
+        {"left": "a", "right": "b", "vlans": [10, _HOSTILE_VLAN, True], "active_vlans": ["x"]}
+    )
+    assert edge.vlans == (10,)
+    assert edge.active_vlans == ()

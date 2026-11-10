@@ -13,7 +13,7 @@ from .svg_theme import SvgTheme
 def _joined_vlans(vlans: tuple[int, ...]) -> str | None:
     if not vlans:
         return None
-    return ",".join(str(vlan_id) for vlan_id in vlans)
+    return _escape_attr(",".join(str(vlan_id) for vlan_id in vlans))
 
 
 def _edge_vlan_attrs(edge: Edge) -> list[str]:

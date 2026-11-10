@@ -128,12 +128,16 @@ def _typed_list[T](
     return [loader(value) for value in values if isinstance(value, dict)]
 
 
-def _vlan_tuple(data: dict[str, Any], key: str) -> tuple[Any, ...]:
-    """Read a list field into a tuple, tolerating a missing or null value."""
+def _vlan_tuple(data: dict[str, Any], key: str) -> tuple[int, ...]:
+    """Read a VLAN id list into a tuple, dropping null, missing, or non-integer values."""
     value = data.get(key)
     if not isinstance(value, list | tuple):
         return ()
-    return tuple(value)
+    return tuple(item for item in value if _is_vlan_id(item))
+
+
+def _is_vlan_id(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
 
 
 def _poe_ports_to_dict(poe_ports: dict[int, bool]) -> dict[str, bool]:
