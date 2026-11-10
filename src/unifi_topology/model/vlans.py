@@ -32,9 +32,17 @@ def _network_vlan_id(network: object) -> int | None:
     vlan_id = _as_vlan_id(vlan_value)
     if vlan_id is not None:
         return vlan_id
-    if not vlan_enabled:
+    if not vlan_enabled and _is_lan_network(network):
         return 1
     return None
+
+
+def _is_lan_network(network: object) -> bool:
+    """WAN and VPN networks carry no LAN VLAN, so they must not default to VLAN 1."""
+    purpose = first_attr(network, "purpose")
+    if not isinstance(purpose, str):
+        return True
+    return not (purpose.startswith("wan") or "vpn" in purpose)
 
 
 def normalize_networks(networks: Iterable[object]) -> list[dict[str, object]]:

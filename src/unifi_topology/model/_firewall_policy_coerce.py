@@ -27,6 +27,20 @@ def _policy_tuple_field(
     return nested_resolver(entry)
 
 
+def _schedule_text(value: object) -> str:
+    """V2 policies send the schedule as an object; its mode is the readable part."""
+    if isinstance(value, dict):
+        return _firewall_nested._as_str(value.get("mode"))
+    return _firewall_nested._as_str(value)
+
+
+def _flag_text(value: object) -> str:
+    """Keep a string criterion as is; a boolean false means it is not set."""
+    if value is False:
+        return ""
+    return _firewall_nested._as_str(value)
+
+
 def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
     """Build a FirewallPolicy from a raw entry with a validated ID."""
     source_zone, dest_zone = _firewall_nested._resolve_zone_ids(entry)
@@ -97,8 +111,8 @@ def _build_policy(entry: object, policy_id: str) -> FirewallPolicy:
             first_attr(entry, "connection_state_type", "state_type")
         ),
         connection_logging=as_bool(first_attr(entry, "connection_logging", "logging")),
-        schedule=_firewall_nested._as_str(first_attr(entry, "schedule")),
-        match_ip_sec=_firewall_nested._as_str(first_attr(entry, "match_ip_sec", "ipsec")),
+        schedule=_schedule_text(first_attr(entry, "schedule")),
+        match_ip_sec=_flag_text(first_attr(entry, "match_ip_sec", "ipsec")),
     )
 
 

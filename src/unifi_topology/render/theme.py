@@ -7,6 +7,7 @@ from pathlib import Path
 import yaml
 
 from ..paths import resolve_theme_path
+from .svg_icons import _ICON_SETS
 from .svg_theme import DEFAULT_THEME as DEFAULT_SVG_THEME
 from .svg_theme import SvgTheme
 
@@ -88,7 +89,7 @@ def _coerce_font_family(value: object, default: str | None) -> str | None:
 
 def _coerce_icon_set(value: object, default: str) -> str:
     """Parse icon_set from theme YAML."""
-    if isinstance(value, str) and value in ("isometric", "modern"):
+    if isinstance(value, str) and value in _ICON_SETS:
         return value
     return default
 

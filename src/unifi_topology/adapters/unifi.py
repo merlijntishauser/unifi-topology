@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import time
 from collections.abc import Callable, Sequence
@@ -183,7 +184,8 @@ def _create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:
     )
 
 
-_client_cache: dict[tuple[str, str, bool], UnifiClient] = {}
+_ClientCacheKey = tuple[str, str, str, bool, bool]
+_client_cache: dict[_ClientCacheKey, UnifiClient] = {}
 
 # Remembers which auth style (True=UDM Pro, False=legacy) authenticated for a
 # controller URL, so a legacy controller is not re-probed with a doomed UDM
@@ -191,9 +193,14 @@ _client_cache: dict[tuple[str, str, bool], UnifiClient] = {}
 _auth_style_cache: dict[str, bool] = {}
 
 
-def _client_cache_key(config: Config, *, is_udm_pro: bool) -> tuple[str, str, bool]:
-    identity = config.user or config.api_key or ""
-    return (config.url, identity, is_udm_pro)
+def _client_cache_key(config: Config, *, is_udm_pro: bool) -> _ClientCacheKey:
+    """Key a session by everything that changes how it authenticates or connects.
+
+    The secrets are hashed so they are not held a second time as dict keys.
+    """
+    secrets = f"{config.password or ''}\0{config.api_key or ''}".encode()
+    secret_digest = hashlib.sha256(secrets).hexdigest()
+    return (config.url, config.user or "", secret_digest, config.verify_ssl, is_udm_pro)
 
 
 def _get_or_create_client(config: Config, *, is_udm_pro: bool) -> UnifiClient:

@@ -220,14 +220,22 @@ def _render_link_styles(
     wireless_links: list[int],
     theme: MermaidTheme,
 ) -> None:
+    standard = (
+        f"stroke:{theme.standard_link},stroke-width:{theme.standard_link_width}px,"
+        f"arrowhead:{theme.standard_link_arrow}"
+    )
+    lines.append(f"  linkStyle default {standard};")
     for index in poe_links:
         lines.append(
             "  linkStyle "
             f"{index} stroke:{theme.poe_link},stroke-width:{theme.poe_link_width}px,"
             f"arrowhead:{theme.poe_link_arrow};"
         )
+    # A per-link style replaces the default, so a dashed link restates its colour.
+    poe = set(poe_links)
     for index in wireless_links:
-        lines.append(f"  linkStyle {index} stroke-dasharray: 5 4;")
+        colour = "" if index in poe else f"{standard},"
+        lines.append(f"  linkStyle {index} {colour}stroke-dasharray: 5 4;")
 
 
 def _wan_interface_label(wan: WanInterface, prefix: str, *, is_dual: bool) -> str:

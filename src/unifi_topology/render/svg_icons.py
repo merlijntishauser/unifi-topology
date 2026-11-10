@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import functools
 from collections.abc import Callable
 from pathlib import Path
 
@@ -147,16 +148,21 @@ def _svg_data_uri(data: bytes) -> str:
 
 
 def _load_icon_text(path: Path, *, decal_color: str) -> str | None:
-    if not path.exists():
+    data = _read_icon(path)
+    if data is None:
         return None
-    data = path.read_text(encoding="utf-8").replace("#DECAL0", decal_color).encode("utf-8")
-    return _svg_data_uri(data)
+    return _svg_data_uri(data.decode("utf-8").replace("#DECAL0", decal_color).encode("utf-8"))
 
 
 def _load_icon_bytes(path: Path) -> str | None:
-    if not path.exists():
-        return None
-    return _svg_data_uri(path.read_bytes())
+    data = _read_icon(path)
+    return None if data is None else _svg_data_uri(data)
+
+
+@functools.cache
+def _read_icon(path: Path) -> bytes | None:
+    """Read a bundled icon once per process; every render reuses the bytes."""
+    return path.read_bytes() if path.exists() else None
 
 
 def _load_primary_icon(path: Path, *, decal_color: str | None) -> str | None:

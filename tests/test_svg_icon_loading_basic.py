@@ -1,14 +1,26 @@
 from pathlib import Path
 
+import pytest
+
 import unifi_topology.render.svg as svg_module
 import unifi_topology.render.svg_icons as svg_icons_module
 
 
+@pytest.fixture
+def _fresh_icon_cache():
+    """Icon files are read once per process; isolate tests that fake the filesystem."""
+    svg_icons_module._read_icon.cache_clear()
+    yield
+    svg_icons_module._read_icon.cache_clear()
+
+
+@pytest.mark.usefixtures("_fresh_icon_cache")
 def test_load_icons_missing_files_returns_empty(monkeypatch):
     monkeypatch.setattr(Path, "exists", lambda _self: False)
     assert svg_module._load_icons() == {}
 
 
+@pytest.mark.usefixtures("_fresh_icon_cache")
 def test_load_isometric_icons_missing_files_returns_empty(monkeypatch):
     monkeypatch.setattr(Path, "exists", lambda _self: False)
     assert svg_icons_module._load_isometric_icons() == {}

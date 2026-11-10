@@ -16,9 +16,13 @@ def test_build_font_style_unknown_font():
 def test_build_font_style_inter():
     face, family = svg_theme_module._build_font_style("Inter")
     assert "@font-face" in face
-    assert "font-weight:400" in face
-    assert "font-weight:600" in face
     assert "'Inter'" in family
+
+
+def test_build_font_style_embeds_identical_weight_files_once():
+    face, _family = svg_theme_module._build_font_style("Inter")
+    assert face.count("@font-face") == 1
+    assert "font-weight:400 600;" in face
 
 
 def test_build_font_style_space_grotesk():

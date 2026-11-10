@@ -23,9 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Markdown port overview listed a connection on a LAG member port twice, once in the aggregate row and once as an orphan row
 - VLAN endpoint markers were drawn inside the destination node's footprint and painted over by the node. They now sit beside the edge just above the node (orthogonal) or past the tile's right corner (isometric)
 - `_darken_hex` raised `ValueError` on six-letter colour names such as `orange`
+- `enrich_edges_with_active_vlans` only counted clients attached directly to a link's two devices, so an uplink trunk showed none of the VLANs in use further downstream. A link now also carries the VLANs of every client behind its right-hand (downstream) device
+- WAN and VPN networks without a VLAN defaulted to VLAN 1, so VLAN 1 could be named after the WAN ("Internet 1") in `build_vlan_names` and they appeared in `build_network_vlan_map`. Only LAN networks default to VLAN 1 now
+- Client classification matched name and vendor patterns as substrings: "Cameron's iPhone" and "Engineering-Laptop" became cameras and "Jonas" a NAS. Patterns must now occur as whole words (camelCase is split, so "FrontDoorCam" still matches). The Apple and Ubiquiti vendor rules are gone: an Apple OUI made every Mac a phone and a Ubiquiti OUI made every UniFi client a camera
+- The client session cache was keyed on URL and user only, so a changed password, API key or `verify_ssl` kept using the old session until `clear_client_cache`. The key now covers all of them
+- A cache directory under a root-owned symlink was rejected, which ruled out the system temp directory on macOS (`/var` links to `/private/var`). Root-owned symlinks in the parents are accepted; a symlinked cache directory itself is still refused, including on the fallback path that previously followed it
+- Theme YAML rejected `icon_set: unifi`, a bundled icon set, and silently fell back to the default
+- The Mermaid theme's `standard_link` colour, width and arrow were only used in the legend. The diagram now sets them with `linkStyle default`
+- Firewall policies from the v2 API have an object `schedule` and a boolean `match_ip_sec`; both were stringified (`"{'mode': 'ALWAYS'}"`, `"False"`). `schedule` is now the schedule mode and a false `match_ip_sec` is the empty string
 - Some controllers copy a client's product model into its root `name` (seen on G6 Pro Bullet cameras), which `client_display_name` took as the Network alias, so the camera was still labelled "G6 Pro Bullet" even though its Protect alias was present in `unifi_device_info_from_ucore.name`. A root `name` equal to one of the ucore model fields (`computed_model`, `product_model`, `product_shortname`) is no longer treated as an alias; a root name that differs from the model still wins. Reported in merlijntishauser/unifi-network-maps-ha#303
 
 ### Changed
+- A themed SVG embedded the bundled font twice because the regular and semibold files are byte-identical. It is now embedded once with `font-weight:400 600`, saving about 64 KB per SVG for Inter. Bundled icon files are read once per process instead of on every render
 - Node outlines follow the theme. A theme that restyles a node type now gets an outline derived from its own fill; previously the outline came from the default palette unless `node_stroke` was set, giving for example a blue `unifi` gateway an orange outline. This changes the SVG output of every built-in theme except `blueprint`; the default (no theme) output is unchanged
 
 ## [3.2.1] - 2026-09-27

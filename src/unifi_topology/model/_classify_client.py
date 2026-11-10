@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import functools
+import re
+
 from .helpers import first_string_field, get_field
 
 # Client device category detection patterns
@@ -9,18 +12,20 @@ _CLIENT_NAME_PATTERNS: dict[str, tuple[str, ...]] = {
     "camera": ("camera", "cam", "doorbell", "uvc", "protect", "ring", "nest cam", "arlo"),
     "tv": ("tv", "television", "apple tv", "chromecast", "roku", "fire tv", "shield", "smart tv"),
     "phone": ("phone", "iphone", "android", "pixel", "galaxy", "mobile", "voip", "handset"),
-    "printer": ("printer", "print", "laserjet", "inkjet", "epson", "canon", "brother", "hp "),
+    "printer": ("printer", "print", "laserjet", "inkjet", "epson", "canon", "brother", "hp"),
     "nas": ("nas", "synology", "qnap", "diskstation", "drobo", "freenas", "truenas"),
     "speaker": ("sonos", "homepod", "echo", "alexa", "google home", "speaker", "soundbar"),
     "game_console": ("playstation", "ps4", "ps5", "xbox", "nintendo", "switch", "steam deck"),
     "iot": ("sensor", "thermostat", "nest", "hue", "smart", "zigbee", "z-wave", "iot"),
 }
 
-# OUI/vendor patterns for manufacturer-based detection
+# OUI/vendor patterns for manufacturer-based detection. Vendors that make many
+# kinds of device (Apple, Ubiquiti) are left out: the OUI alone says nothing
+# about the category.
 _CLIENT_VENDOR_PATTERNS: dict[str, tuple[str, ...]] = {
-    "camera": ("ubiquiti", "hikvision", "dahua", "axis", "ring", "arlo", "nest", "wyze"),
+    "camera": ("hikvision", "dahua", "axis", "ring", "arlo", "nest", "wyze"),
     "tv": ("samsung tv", "lg tv", "sony tv", "vizio", "tcl", "roku", "apple tv"),
-    "phone": ("apple", "samsung mobile", "google pixel", "oneplus", "xiaomi"),
+    "phone": ("samsung mobile", "google pixel", "oneplus", "xiaomi"),
     "printer": ("hp inc", "canon", "epson", "brother", "lexmark", "xerox", "ricoh"),
     "nas": ("synology", "qnap", "western digital", "seagate", "netgear readynas"),
     "speaker": ("sonos", "bose", "harman", "bang & olufsen", "denon"),
@@ -38,10 +43,33 @@ _UNIFI_PRODUCT_CATEGORIES: dict[str, str] = {
 _UNIFI_MODEL_CAMERA_TOKENS = ("camera", "doorbell", "uvc", "g4", "g5")
 
 
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z])(?=[A-Z])")
+
+
+def _match_forms(value: str) -> tuple[str, str]:
+    """Return the lowercased value, plain and with camelCase words split apart."""
+    return value.lower(), _CAMEL_BOUNDARY.sub(" ", value).lower()
+
+
+@functools.cache
+def _word_pattern(pattern: str) -> re.Pattern[str]:
+    """Match *pattern* as whole words: no letter directly before or after it."""
+    return re.compile(rf"(?<![a-z]){re.escape(pattern)}(?![a-z])")
+
+
+def _matches_word(pattern: str, forms: tuple[str, str]) -> bool:
+    return any(_word_pattern(pattern).search(form) for form in forms)
+
+
 def _match_category(value: str, patterns_by_category: dict[str, tuple[str, ...]]) -> str | None:
-    normalized = value.lower()
+    """Return the first category with a pattern that occurs in *value* as a word.
+
+    Substring matching misfires on ordinary names ("Cameron" is not a camera,
+    "Engineering" is not a Ring doorbell), so a pattern must stand on its own.
+    """
+    forms = _match_forms(value)
     for category, patterns in patterns_by_category.items():
-        if any(pattern in normalized for pattern in patterns):
+        if any(_matches_word(pattern, forms) for pattern in patterns):
             return category
     return None
 

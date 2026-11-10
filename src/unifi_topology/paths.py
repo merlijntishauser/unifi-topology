@@ -71,13 +71,27 @@ def _ensure_within_allowed(path: Path, roots: Iterable[Path], *, label: str) -> 
 
 
 def _ensure_no_symlink(path: Path, *, label: str) -> None:
-    if path.exists() and path.is_symlink():
+    if path.is_symlink():
         raise ValueError(f"{label} must not be a symlink: {path}")
+
+
+def _is_system_symlink(path: Path) -> bool:
+    """Return True for a symlink owned by root, such as /tmp or /var on macOS.
+
+    The symlink guard exists to stop another user redirecting writes; a link
+    only root can create is part of the OS layout, not such a redirect.
+    """
+    if os.name == "nt":
+        return False
+    try:
+        return path.lstat().st_uid == 0
+    except OSError:
+        return False
 
 
 def _ensure_no_symlink_in_parents(path: Path, *, label: str) -> None:
     for parent in path.parents:
-        if parent.exists() and parent.is_symlink():
+        if parent.is_symlink() and not _is_system_symlink(parent):
             raise ValueError(f"{label} parent must not be a symlink: {parent}")
 
 

@@ -181,21 +181,47 @@ def enrich_edges_with_active_vlans(
     edges: list[Edge],
     client_edges: list[Edge],
 ) -> list[Edge]:
-    """Add active_vlans to edges based on client traffic."""
-    device_active_vlans: dict[str, set[int]] = {}
-    for client_edge in client_edges:
-        device_name = client_edge.left
-        for vlan in client_edge.active_vlans:
-            device_active_vlans.setdefault(device_name, set()).add(vlan)
+    """Add active_vlans to edges based on client traffic.
 
+    A VLAN is active on a link when a client on it sits on the link's left
+    device or anywhere behind its right device, so an uplink trunk carries the
+    VLANs of every client downstream of it. Edges are expected left-upstream,
+    as ``build_edges`` and ``build_tree_edges_by_topology`` produce them.
+    """
+    device_vlans = _client_vlans_by_device(client_edges)
+    adjacency = _build_adjacency(edges)
     enriched: list[Edge] = []
     for edge in edges:
-        left_active = device_active_vlans.get(edge.left, set())
-        right_active = device_active_vlans.get(edge.right, set())
-        combined_active = left_active | right_active
-        active_vlans = tuple(sorted(set(edge.vlans) & combined_active))
-        enriched.append(replace(edge, active_vlans=active_vlans))
+        carried = device_vlans.get(edge.left, set()) | _downstream_vlans(
+            edge, adjacency, device_vlans
+        )
+        enriched.append(replace(edge, active_vlans=tuple(sorted(set(edge.vlans) & carried))))
     return enriched
+
+
+def _client_vlans_by_device(client_edges: list[Edge]) -> dict[str, set[int]]:
+    device_vlans: dict[str, set[int]] = {}
+    for client_edge in client_edges:
+        device_vlans.setdefault(client_edge.left, set()).update(client_edge.active_vlans)
+    return device_vlans
+
+
+def _downstream_vlans(
+    edge: Edge,
+    adjacency: dict[str, set[str]],
+    device_vlans: dict[str, set[int]],
+) -> set[int]:
+    """Collect client VLANs on every device reachable from the edge's right end."""
+    seen = {edge.left, edge.right}
+    pending = [edge.right]
+    vlans: set[int] = set()
+    while pending:
+        node = pending.pop()
+        vlans |= device_vlans.get(node, set())
+        unseen = adjacency.get(node, set()) - seen
+        seen |= unseen
+        pending.extend(unseen)
+    return vlans
 
 
 def build_topology(

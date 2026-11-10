@@ -334,17 +334,26 @@ def _build_font_style(font_family: str | None) -> tuple[str, str]:
 
 
 def _font_face_rules(slug: str, font_family: str) -> list[str]:
-    parts: list[str] = []
+    return [
+        f"@font-face{{font-family:'{font_family}';font-weight:{weights};"
+        f"src:url(data:font/woff2;base64,{base64.b64encode(data).decode('ascii')}) "
+        "format('woff2');}"
+        for data, weights in _font_weights_by_file(slug).items()
+    ]
+
+
+def _font_weights_by_file(slug: str) -> dict[bytes, str]:
+    """Map each distinct font file to the weights it serves.
+
+    The bundled regular and semibold files are byte-identical, so the file is
+    embedded once with a weight range instead of twice.
+    """
+    weights_by_file: dict[bytes, list[int]] = {}
     for weight, suffix in ((400, "regular"), (600, "semibold")):
         path = _FONTS_DIR / f"{slug}-{suffix}.woff2"
-        if not path.exists():
-            continue
-        b64 = base64.b64encode(path.read_bytes()).decode("ascii")
-        parts.append(
-            f"@font-face{{font-family:'{font_family}';font-weight:{weight};"
-            f"src:url(data:font/woff2;base64,{b64}) format('woff2');}}"
-        )
-    return parts
+        if path.exists():
+            weights_by_file.setdefault(path.read_bytes(), []).append(weight)
+    return {data: " ".join(map(str, weights)) for data, weights in weights_by_file.items()}
 
 
 def _svg_style_block(theme: SvgTheme, font_size: int, *, iso: bool = False) -> str:

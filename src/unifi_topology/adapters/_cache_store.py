@@ -37,7 +37,8 @@ def _cache_dir() -> Path:
             )
     # Best-effort fallback so fetching degrades to no-cache instead of raising;
     # _is_cache_dir_safe and _save_cache still gate any actual read/write.
-    return Path(default_dir).expanduser().resolve(strict=False)
+    # The path is left unresolved so a symlinked directory stays detectable.
+    return Path(default_dir).expanduser().absolute()
 
 
 def _cache_lock_path(path: Path) -> Path:
@@ -81,16 +82,26 @@ def _cache_lock(path: Path) -> Iterator[None]:
                 logger.debug("Failed to release cache lock %s", lock_path)
 
 
-def _is_cache_dir_safe(path: Path) -> bool:
+def _cache_dir_problem(path: Path) -> str | None:
+    """Describe why *path* must not hold cache files, or None when it is fine."""
+    if path.is_symlink():
+        return "a symlink"
     if not path.exists():
-        return True
+        return None
+    mode = stat.S_IMODE(path.stat().st_mode)
+    if mode & (stat.S_IWGRP | stat.S_IWOTH):
+        return "group/world-writable"
+    return None
+
+
+def _is_cache_dir_safe(path: Path) -> bool:
     try:
-        mode = stat.S_IMODE(path.stat().st_mode)
+        problem = _cache_dir_problem(path)
     except OSError as exc:
         logger.warning("Failed to stat cache dir %s: %s", path, exc)
         return False
-    if mode & (stat.S_IWGRP | stat.S_IWOTH):
-        logger.warning("Cache dir %s is group/world-writable; skipping cache", path)
+    if problem:
+        logger.warning("Cache dir %s is %s; skipping cache", path, problem)
         return False
     return True
 
