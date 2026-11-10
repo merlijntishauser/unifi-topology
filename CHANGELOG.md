@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Some controllers copy a client's product model into its root `name` (seen on G6 Pro Bullet cameras), which `client_display_name` took as the Network alias, so the camera was still labelled "G6 Pro Bullet" even though its Protect alias was present in `unifi_device_info_from_ucore.name`. A root `name` equal to one of the ucore model fields (`computed_model`, `product_model`, `product_shortname`) is no longer treated as an alias; a root name that differs from the model still wins. Reported in merlijntishauser/unifi-network-maps-ha#303
+
 ## [3.2.1] - 2026-09-27
 
 ### Fixed

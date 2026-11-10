@@ -111,12 +111,35 @@ def _client_ucore_name(client: object) -> str | None:
     return first_string_field(ucore, "name")
 
 
+_UCORE_MODEL_FIELDS = ("computed_model", "product_model", "product_shortname")
+
+
 def _client_ucore_model(client: object) -> str | None:
     """Get the product model string from UniFi device info."""
     ucore = _client_ucore_info(client)
     if not ucore:
         return None
-    return first_string_field(ucore, "computed_model", "product_model", "product_shortname")
+    return first_string_field(ucore, *_UCORE_MODEL_FIELDS)
+
+
+def _client_ucore_model_names(client: object) -> set[str]:
+    """Get every product model string from UniFi device info."""
+    ucore = _client_ucore_info(client) or {}
+    return {
+        value for key in _UCORE_MODEL_FIELDS if isinstance(value := ucore.get(key), str) and value
+    }
+
+
+def _client_alias(client: object) -> str | None:
+    """Get the Network alias, unless the controller filled it with the model.
+
+    Some controllers copy the product model into the root ``name`` (seen on
+    G6 Pro Bullet cameras), which would hide the Protect alias in ucore.
+    """
+    name = first_string_field(client, "name")
+    if name and name in _client_ucore_model_names(client):
+        return None
+    return name
 
 
 def _client_vendor(client: object) -> str | None:
@@ -232,12 +255,13 @@ def client_display_name(client: object) -> str | None:
     """Get display name for a client.
 
     User-assigned names win (Network alias, then the UniFi device name that
-    Protect/Talk expose via ucore). The hostname ranks above the ucore model
+    Protect/Talk expose via ucore). A root ``name`` that is just the model
+    string is not treated as an alias. The hostname ranks above the ucore model
     string because it is per device, while the model is not: cameras whose
     ucore block lacks a name would otherwise all be labelled by their model.
     """
     return (
-        first_string_field(client, "name")
+        _client_alias(client)
         or _client_ucore_name(client)
         or first_string_field(client, "hostname")
         or _client_ucore_model(client)
