@@ -8,6 +8,19 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ._svg_node_types import _TYPE_COLORS
+
+_HEX_COLOR = re.compile(r"#[0-9a-fA-F]{6}")
+
+
+def _darken_hex(color: str, factor: float = 0.35) -> str:
+    """Darken a 6-digit hex color by *factor* (0..1); other values pass through."""
+    if not _HEX_COLOR.fullmatch(color):
+        return color
+    scale = 1.0 - factor
+    channels = (int(color[index : index + 2], 16) for index in (1, 3, 5))
+    return "#" + "".join(f"{int(channel * scale):02x}" for channel in channels)
+
 
 @dataclass(frozen=True)
 class SvgTheme:
@@ -116,6 +129,20 @@ class SvgTheme:
             "other": self.node_other,
         }
         return color_map.get(group_name.lower(), (self.group_fill, self.group_stroke))
+
+    def node_outline(self, node_type: str) -> str:
+        """Return the outline colour for a node of a known type.
+
+        ``node_stroke`` wins when set. Otherwise the built-in palette is kept for
+        types the theme leaves at their default fill, and a theme that restyles a
+        type gets an outline derived from its own fill so the two do not clash.
+        """
+        if self.node_stroke:
+            return self.node_stroke
+        fill = self.group_colors(node_type)
+        if fill == DEFAULT_THEME.group_colors(node_type):
+            return _TYPE_COLORS[node_type][1]
+        return _darken_hex(fill[1])
 
     def vlan_color(self, vlan_id: int) -> str:
         """Return color for a VLAN, using theme color or auto-generated fallback."""

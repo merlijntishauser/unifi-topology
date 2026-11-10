@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from ..model.classify import is_client_node_type
 from ..model.topology import Edge
 from .svg_labels import _escape_attr
 from .svg_theme import SvgTheme
@@ -37,9 +38,7 @@ def _vlan_data_attrs(edge: Edge) -> str:
 
 def _edge_opacity(node_types: dict[str, str], edge: Edge) -> float:
     """Return opacity for edge based on endpoint types."""
-    left_type = node_types.get(edge.left, "other")
-    right_type = node_types.get(edge.right, "other")
-    if right_type == "client" or left_type == "client":
+    if any(is_client_node_type(node_types.get(node)) for node in (edge.left, edge.right)):
         return 0.5
     return 1.0
 
@@ -90,22 +89,36 @@ def _edge_render_state(
     )
 
 
+_VLAN_MARKER_SIZE = 6
+_VLAN_MARKER_GAP = 2
+_VLAN_MARKER_MAX = 4
+
+
+def _vlan_marker_stack_height(vlans: tuple[int, ...]) -> int:
+    """Height of the marker stack for *vlans*, including the gap below it."""
+    return min(len(vlans), _VLAN_MARKER_MAX) * (_VLAN_MARKER_SIZE + _VLAN_MARKER_GAP)
+
+
 def _render_vlan_endpoint_markers(
     lines: list[str],
     x: float,
     y: float,
     vlans: tuple[int, ...],
     theme: SvgTheme,
-    marker_size: int = 6,
-    max_markers: int = 4,
+    marker_size: int = _VLAN_MARKER_SIZE,
+    max_markers: int = _VLAN_MARKER_MAX,
 ) -> None:
-    """Render small colored squares showing active VLANs at an endpoint."""
+    """Render small colored squares showing active VLANs at an endpoint.
+
+    The stack hangs down from *y*, left of *x*. Callers place it outside the
+    node footprint: nodes are drawn after edges and would paint over it.
+    """
     if not vlans:
         return
     for i, vlan_id in enumerate(vlans[:max_markers]):
         color = theme.vlan_color(vlan_id)
-        marker_x = x - marker_size - 2
-        marker_y = y + (i * (marker_size + 2))
+        marker_x = x - marker_size - _VLAN_MARKER_GAP
+        marker_y = y + (i * (marker_size + _VLAN_MARKER_GAP))
         lines.append(
             f'<rect x="{marker_x}" y="{marker_y}" width="{marker_size}" '
             f'height="{marker_size}" fill="{color}" stroke="#fff" '

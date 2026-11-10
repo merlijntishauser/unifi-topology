@@ -10,6 +10,7 @@ from .classify import (
     classify_client_type,
     classify_device_type,
     client_is_unifi,
+    is_client_node_type,
 )
 from .helpers import normalize_mac
 from .topology import ClientPortMap, Device, Edge
@@ -207,7 +208,7 @@ def _partition_client_edges(
     non_client_edges: list[Edge] = []
     collapsed_clients: set[str] = set()
     for edge in edges:
-        if node_types.get(edge.right) == "client":
+        if is_client_node_type(node_types.get(edge.right)):
             client_counts[edge.left] = client_counts.get(edge.left, 0) + 1
             collapsed_clients.add(edge.right)
         else:

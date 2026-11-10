@@ -301,7 +301,7 @@ def _build_port_rows(
             device.name,
             connections,
             client_connections,
-            seen_ports,
+            seen_ports | aggregated_indices,
             port_map,
         )
     )

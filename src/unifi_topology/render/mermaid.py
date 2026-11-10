@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 
+from ..model.classify import is_client_node_type
 from ..model.topology import Edge, WanInfo, WanInterface
 from ._templating import render_template
 from ._wan_format import format_wan_speed as _format_wan_speed
@@ -99,6 +100,31 @@ def _render_single_group(
     lines.append("  end")
 
 
+def _ungrouped_nodes(edges: list[Edge], groups: dict[str, list[str]]) -> list[str]:
+    """Return edge endpoints that belong to no group, in first-seen order."""
+    grouped = set(_group_nodes(groups))
+    endpoints = dict.fromkeys(node for edge in edges for node in (edge.left, edge.right))
+    return [node for node in endpoints if node not in grouped]
+
+
+def _render_ungrouped_nodes(
+    lines: list[str],
+    edges: list[Edge],
+    groups: dict[str, list[str]],
+    *,
+    id_map: dict[str, str],
+    node_names: dict[str, str] | None = None,
+) -> None:
+    """Declare labels for edge endpoints that no group declares.
+
+    Grouped diagrams reference bare node IDs on edges, so a node outside every
+    group would otherwise be shown with its slug ID as label.
+    """
+    names = node_names or {}
+    for node in _ungrouped_nodes(edges, groups):
+        lines.append(f"  {_node_ref(names.get(node, node), id_map[node])};")
+
+
 def _format_vlan_suffix(active_vlans: tuple[int, ...]) -> str:
     """Format VLAN suffix for edge labels."""
     if not active_vlans:
@@ -159,6 +185,19 @@ def _render_edge_lines(
     return poe_links, wireless_links
 
 
+_DEVICE_NODE_CLASSES = {
+    "gateway": "node_gateway",
+    "switch": "node_switch",
+    "ap": "node_ap",
+}
+
+
+def _node_class(node_type: str) -> str:
+    if is_client_node_type(node_type):
+        return "node_client"
+    return _DEVICE_NODE_CLASSES.get(node_type, "node_other")
+
+
 def _render_node_classes(
     lines: list[str],
     *,
@@ -166,15 +205,8 @@ def _render_node_classes(
     id_map: dict[str, str],
     theme: MermaidTheme,
 ) -> None:
-    class_map = {
-        "gateway": "node_gateway",
-        "switch": "node_switch",
-        "ap": "node_ap",
-        "client": "node_client",
-        "other": "node_other",
-    }
     for name, node_type in node_types.items():
-        class_name = class_map.get(node_type, "node_other")
+        class_name = _node_class(node_type)
         node_id = id_map.get(name)
         if node_id:
             lines.append(f"  class {node_id} {class_name};")
@@ -349,6 +381,7 @@ def _add_groups_and_edges(
         _render_group_sections(
             lines, groups, group_order=group_order, id_map=id_map, node_names=node_names
         )
+        _render_ungrouped_nodes(lines, edge_list, groups, id_map=id_map, node_names=node_names)
     use_node_labels = not groups
     poe_links, wireless_links = _render_edge_lines(
         lines, edge_list, id_map=id_map, use_node_labels=use_node_labels, node_names=node_names

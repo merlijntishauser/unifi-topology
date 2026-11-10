@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..model.classify import is_client_node_type
 from ..model.topology import Edge
 from .svg_labels import (
     _compact_edge_label,
@@ -43,13 +44,11 @@ def _client_attachment(
     edge: Edge,
     node_types: dict[str, str],
 ) -> tuple[str, str] | None:
-    left_type = node_types.get(edge.left, "other")
-    right_type = node_types.get(edge.right, "other")
-    if left_type == "client" and right_type != "client":
-        return edge.left, edge.right
-    if right_type == "client" and left_type != "client":
-        return edge.right, edge.left
-    return None
+    left_is_client = is_client_node_type(node_types.get(edge.left))
+    right_is_client = is_client_node_type(node_types.get(edge.right))
+    if left_is_client == right_is_client:
+        return None
+    return (edge.left, edge.right) if left_is_client else (edge.right, edge.left)
 
 
 def _upstream_name_from_label(context: EdgeLabelContext) -> str | None:

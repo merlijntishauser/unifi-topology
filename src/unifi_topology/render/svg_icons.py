@@ -6,7 +6,7 @@ import base64
 from collections.abc import Callable
 from pathlib import Path
 
-from .svg_theme import SvgTheme
+from .svg_theme import SvgTheme, _darken_hex
 
 # Icon file mappings per icon set
 # Isometric set uses existing icons from root and isometric/ directories
@@ -104,16 +104,6 @@ _ICON_SETS = {
         _ICON_FILES_UNIFI,
     ),
 }
-
-
-def _darken_hex(color: str, factor: float = 0.35) -> str:
-    """Darken a hex color by *factor* (0..1). Returns 6-digit hex."""
-    c = color.lstrip("#")
-    if len(c) != 6:
-        return color
-    r, g, b = int(c[0:2], 16), int(c[2:4], 16), int(c[4:6], 16)
-    m = 1.0 - factor
-    return f"#{int(r * m):02x}{int(g * m):02x}{int(b * m):02x}"
 
 
 def _build_decal_colors(theme: SvgTheme, factor: float = 0.35) -> dict[str, str]:

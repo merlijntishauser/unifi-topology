@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ..model.topology import Edge
 from ._svg_iso_district_layout import _iso_district_grid
+from ._svg_iso_group_layout import iso_grouped_grid
 from ._svg_iso_routing import edge_occupancy, edge_route
 from ._svg_tree_layout import _tree_layout_indices
 from .svg_iso_geometry import IsoLayout, _iso_project, _iso_project_center
@@ -95,6 +96,35 @@ def _iso_grid_positions(
         return _iso_district_grid(edges, node_types)
     positions_index, levels = _tree_layout_indices(edges, node_types)
     return _tree_grid_positions(layout, positions_index, levels)
+
+
+def _iso_group_gap(layout: IsoLayout, options: SvgOptions) -> float:
+    """Whole grid cells between group blocks, so their padded boundaries stay apart."""
+    boundary_padding = options.group_padding / layout.step_width + 0.5
+    return math.ceil(layout.grid_spacing_x + 2 * boundary_padding) + 1
+
+
+def _iso_node_grid(
+    layout: IsoLayout,
+    edges: list[Edge],
+    node_types: dict[str, str],
+    options: SvgOptions,
+    groups: dict[str, list[str]] | None,
+    group_order: list[str] | None,
+) -> dict[str, tuple[float, float]]:
+    """Place nodes on the grid, one block per group in grouped layout mode."""
+    if options.layout_mode != "grouped" or not groups:
+        return _iso_grid_positions(layout, edges, node_types, options)
+    return iso_grouped_grid(
+        edges,
+        node_types,
+        groups,
+        group_order,
+        place=lambda block_edges, block_types: _iso_grid_positions(
+            layout, block_edges, block_types, options
+        ),
+        gap=_iso_group_gap(layout, options),
+    )
 
 
 def _route_corner_positions(
@@ -227,9 +257,11 @@ def _iso_layout_positions(
     edges: list[Edge],
     node_types: dict[str, str],
     options: SvgOptions,
+    groups: dict[str, list[str]] | None = None,
+    group_order: list[str] | None = None,
 ) -> IsoLayoutPositions:
     layout = _iso_layout(options)
-    grid_positions = _iso_grid_positions(layout, edges, node_types, options)
+    grid_positions = _iso_node_grid(layout, edges, node_types, options, groups, group_order)
     positions = _project_grid(layout, grid_positions)
     min_x, min_y, max_x, max_y = _position_extents(positions)
     offset_x, offset_y = _iso_offsets(layout, min_x, min_y)

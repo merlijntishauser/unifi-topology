@@ -36,6 +36,7 @@ _edge_opacity = _svg_edge_shared._edge_opacity
 _edge_render_state = _svg_edge_shared._edge_render_state
 _infra_label_text = _svg_edge_labels_record._infra_label_text
 _render_vlan_endpoint_markers = _svg_edge_shared._render_vlan_endpoint_markers
+_vlan_marker_stack_height = _svg_edge_shared._vlan_marker_stack_height
 _upstream_name_from_label = _svg_edge_labels_record._upstream_name_from_label
 _vlan_data_attrs = _svg_edge_shared._vlan_data_attrs
 
@@ -112,6 +113,10 @@ def _render_standard_edge(
     )
 
 
+# Extra shift for VLAN markers so they clear the PoE bolt drawn on the edge.
+_POE_ICON_CLEARANCE = 10
+
+
 def _render_single_edge(
     lines: list[str],
     edge: Edge,
@@ -145,7 +150,10 @@ def _render_single_edge(
             state.base_attrs,
             state.opacity,
         )
-        _render_vlan_endpoint_markers(lines, dst_cx, dst_top + 4, state.display_vlans, theme)
+        # Stack the markers beside the edge, ending just above the node.
+        marker_x = dst_cx - (_POE_ICON_CLEARANCE if edge.poe else 0)
+        marker_y = dst_top - _vlan_marker_stack_height(state.display_vlans)
+        _render_vlan_endpoint_markers(lines, marker_x, marker_y, state.display_vlans, theme)
     else:
         _render_standard_edge(lines, path, edge, state.opacity_attr, state.base_attrs)
 

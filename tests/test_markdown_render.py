@@ -562,3 +562,24 @@ def test_peer_and_clients_render_with_break():
     client_ports = {"Switch": [(15, "Client A"), (15, "Client B")]}
     output = render_device_port_overview([device], port_map, client_ports=client_ports)
     assert "<br/>" in output and "AP (Port 9)" in output
+
+
+def test_lag_member_connection_is_not_repeated_as_orphan_row():
+    ports = [
+        PortInfo(
+            port_idx=idx,
+            name=f"Port {idx}",
+            ifname=f"eth{idx}",
+            speed=1000,
+            aggregation_group="lag1",
+            port_poe=False,
+            poe_enable=False,
+            poe_good=False,
+            poe_power=0.0,
+        )
+        for idx in (7, 8)
+    ]
+    device = _device_with_ports("Switch", ports=ports)
+    port_map = {("Switch", "Core"): "Port 7", ("Core", "Switch"): "Port 3"}
+    output = render_device_port_overview([device], port_map)
+    assert output.count("Core") == 1

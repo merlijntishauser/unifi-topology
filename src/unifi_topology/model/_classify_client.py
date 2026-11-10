@@ -229,6 +229,16 @@ def _classify_client_from_vendor(client: object) -> str | None:
     return _classify_by_vendor(vendor)
 
 
+CLIENT_NODE_TYPES = frozenset(
+    {"camera", "tv", "phone", "printer", "nas", "speaker", "game_console", "iot", "client"}
+)
+
+
+def is_client_node_type(node_type: str | None) -> bool:
+    """Return True for any category that :func:`classify_client_type` can produce."""
+    return node_type in CLIENT_NODE_TYPES
+
+
 def classify_client_type(client: object) -> str:
     """Classify a client into a device category.
 

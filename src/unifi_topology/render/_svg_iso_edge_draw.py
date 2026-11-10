@@ -16,6 +16,7 @@ from .svg_theme import SvgTheme
 
 _edge_render_state = _svg_edge_shared._edge_render_state
 _render_vlan_endpoint_markers = _svg_edge_shared._render_vlan_endpoint_markers
+_vlan_marker_stack_height = _svg_edge_shared._vlan_marker_stack_height
 
 
 def _iso_front_anchor(
@@ -253,8 +254,9 @@ def _render_single_iso_edge(
             state.base_attrs,
             state.opacity,
         )
-        marker_x = dst_cx + layout.tile_width * 0.3
-        marker_y = dst_cy - layout.tile_height * 0.2
+        # Just past the tile's right corner, clear of the top face.
+        marker_x = dst_cx + layout.tile_width / 2 + 12
+        marker_y = dst_cy - _vlan_marker_stack_height(state.display_vlans)
         _render_vlan_endpoint_markers(lines, marker_x, marker_y, state.display_vlans, theme)
     else:
         _render_iso_standard_edge(lines, path, edge, width_px, state.base_attrs, state.opacity_attr)

@@ -282,3 +282,17 @@ def test_wan_gateway_not_in_edges_does_not_crash():
         wan_info=wan_info,
     )
     assert "graph LR" in output
+
+
+def test_render_mermaid_labels_nodes_outside_every_group():
+    output = render_mermaid(
+        [Edge("sw", "aa:bb:cc:dd:ee:ff")],
+        groups={"switch": ["sw"]},
+        node_names={"sw": "Switch", "aa:bb:cc:dd:ee:ff": "Front Door Camera"},
+    )
+    assert 'aa_bb_cc_dd_ee_ff["Front Door Camera"];' in output
+
+
+def test_render_mermaid_classes_classified_clients_as_clients():
+    output = render_mermaid([Edge("sw", "cam")], node_types={"sw": "switch", "cam": "camera"})
+    assert "class cam node_client;" in output

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ..model.topology import Edge, VpnTunnel, WanInfo
 from . import _svg_dual_render, _svg_render_flow
-from ._svg_node_types import _TYPE_COLORS, _safe_node_type
+from ._svg_node_types import _safe_node_type
 from ._svg_render_common import finish_svg_document, start_svg_document
 from .svg_edges import _render_svg_edges
 from .svg_icons import _load_icons
@@ -185,7 +185,7 @@ def _append_svg_node_frame(
     theme: SvgTheme,
 ) -> None:
     safe_type = _safe_node_type(node_type)
-    stroke = theme.node_stroke or _TYPE_COLORS[safe_type][1]
+    stroke = theme.node_outline(safe_type)
     lines.append(f"<g{group_attrs}>")
     lines.append(f"<title>{_escape_text(name)}</title>")
     lines.append(
