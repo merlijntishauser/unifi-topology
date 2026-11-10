@@ -47,20 +47,26 @@ def _group_id_string(value: object) -> str | None:
     return None
 
 
+# Field aliases shared with the adapter's cache serializer, so a raw API record
+# and its cached form are read the same way.
+AGGREGATION_GROUP_KEYS = (
+    "aggregation_group",
+    "aggregation_id",
+    "aggregate_id",
+    "agg_id",
+    "lag_id",
+    "lag_group",
+    "link_aggregation_group",
+    "link_aggregation_id",
+    "aggregate",
+    "aggregated_by",
+)
+NATIVE_VLAN_KEYS = ("native_networkconf_id", "port_vlan", "vlan", "native_vlan", "pvid")
+TAGGED_VLAN_KEYS = ("tagged_vlan_mgmt", "tagged_vlans", "vlan_trunk_mgmt", "allowed_vlans")
+
+
 def _aggregation_group(port_entry: object) -> object | None:
-    return RawRecord(port_entry).present(
-        "aggregation_group",
-        "aggregation_id",
-        "aggregate_id",
-        "agg_id",
-        "lag_id",
-        "lag_group",
-        "link_aggregation_group",
-        "link_aggregation_id",
-        "aggregate",
-        "aggregated_by",
-        skip_values=(None, "", False),
-    )
+    return RawRecord(port_entry).present(*AGGREGATION_GROUP_KEYS, skip_values=(None, "", False))
 
 
 def _is_empty_vlan_string(value: str) -> bool:
@@ -152,8 +158,8 @@ def _port_info_from_entry(
         poe_good=as_bool(record.get("poe_good")),
         poe_power=_as_float(record.get("poe_power")),
         up=record.optional_bool("up"),
-        native_vlan=_resolve_vlan_id(record.get("native_vlan"), network_vlan_map),
-        tagged_vlans=_coerce_vlan_list(record.get("tagged_vlans"), network_vlan_map),
+        native_vlan=_resolve_vlan_id(record.first(*NATIVE_VLAN_KEYS), network_vlan_map),
+        tagged_vlans=_coerce_vlan_list(record.first(*TAGGED_VLAN_KEYS), network_vlan_map),
         wan_networkconf_id=_extract_wan_networkconf_id(port_entry),
     )
 

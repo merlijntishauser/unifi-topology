@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from ..model._topology_port_coerce import (
+    AGGREGATION_GROUP_KEYS,
+    NATIVE_VLAN_KEYS,
+    TAGGED_VLAN_KEYS,
+)
 from ..model.helpers import as_list, first_attr, get_field
 from ..model.lldp import coerce_lldp
 from ..model.snapshot import lldp_entry_to_dict
@@ -20,50 +25,30 @@ def _serialize_lldp_entries(value: object | None) -> list[dict[str, object]]:
     return serialized
 
 
+def _without_none(payload: dict[str, object | None]) -> dict[str, object]:
+    """Drop absent fields so a cached record reads like the raw API record."""
+    return {key: value for key, value in payload.items() if value is not None}
+
+
 def _serialize_port_entry(entry: object) -> dict[str, object]:
-    aggregation_group = first_attr(
-        entry,
-        "aggregation_group",
-        "aggregation_id",
-        "aggregate_id",
-        "agg_id",
-        "lag_id",
-        "lag_group",
-        "link_aggregation_group",
-        "link_aggregation_id",
-        "aggregate",
-        "aggregated_by",
+    return _without_none(
+        {
+            "port_idx": first_attr(entry, "port_idx", "portIdx"),
+            "name": first_attr(entry, "name"),
+            "ifname": first_attr(entry, "ifname"),
+            "speed": first_attr(entry, "speed"),
+            "up": first_attr(entry, "up"),
+            "aggregation_group": first_attr(entry, *AGGREGATION_GROUP_KEYS),
+            "port_poe": first_attr(entry, "port_poe"),
+            "poe_enable": first_attr(entry, "poe_enable"),
+            "poe_good": first_attr(entry, "poe_good"),
+            "poe_mode": first_attr(entry, "poe_mode"),
+            "poe_power": first_attr(entry, "poe_power"),
+            "native_vlan": first_attr(entry, *NATIVE_VLAN_KEYS),
+            "tagged_vlans": first_attr(entry, *TAGGED_VLAN_KEYS),
+            "wan_networkconf_id": first_attr(entry, "wan_networkconf_id"),
+        }
     )
-    native_vlan = first_attr(
-        entry,
-        "native_networkconf_id",
-        "port_vlan",
-        "vlan",
-        "native_vlan",
-        "pvid",
-    )
-    tagged_vlans = first_attr(
-        entry,
-        "tagged_vlan_mgmt",
-        "tagged_vlans",
-        "vlan_trunk_mgmt",
-        "allowed_vlans",
-    )
-    return {
-        "port_idx": first_attr(entry, "port_idx", "portIdx"),
-        "name": first_attr(entry, "name"),
-        "ifname": first_attr(entry, "ifname"),
-        "speed": first_attr(entry, "speed"),
-        "up": first_attr(entry, "up"),
-        "aggregation_group": aggregation_group,
-        "port_poe": first_attr(entry, "port_poe"),
-        "poe_enable": first_attr(entry, "poe_enable"),
-        "poe_good": first_attr(entry, "poe_good"),
-        "poe_power": first_attr(entry, "poe_power"),
-        "native_vlan": native_vlan,
-        "tagged_vlans": tagged_vlans,
-        "wan_networkconf_id": first_attr(entry, "wan_networkconf_id"),
-    }
 
 
 def _serialize_port_table(value: object | None) -> list[dict[str, object]]:
@@ -113,6 +98,9 @@ def _serialize_device_for_cache(device: object) -> dict[str, object]:
     payload = {
         "name": get_field(device, "name"),
         "model_name": get_field(device, "model_name"),
+        "model_in_lts": get_field(device, "model_in_lts"),
+        "model_in_eol": get_field(device, "model_in_eol"),
+        "shortname": get_field(device, "shortname"),
         "model": get_field(device, "model"),
         "mac": get_field(device, "mac"),
         "ip": first_attr(device, "ip", "ip_address"),
@@ -120,6 +108,8 @@ def _serialize_device_for_cache(device: object) -> dict[str, object]:
         "state": get_field(device, "state"),
         "in_gateway_mode": get_field(device, "in_gateway_mode"),
         "displayable_version": first_attr(device, "displayable_version", "version"),
+        "version": get_field(device, "version"),
+        "connect_request_ip": get_field(device, "connect_request_ip"),
         "uptime": get_field(device, "uptime"),
         "num_sta": get_field(device, "num_sta"),
         "system-stats": get_field(device, "system-stats"),
@@ -133,7 +123,7 @@ def _serialize_device_for_cache(device: object) -> dict[str, object]:
         "network_table": _serialize_network_table(get_field(device, "network_table")),
     }
     payload.update(_device_uplink_fields(device))
-    return payload
+    return _without_none(payload)
 
 
 def _serialize_devices_for_cache(devices: Sequence[object]) -> list[dict[str, object]]:
