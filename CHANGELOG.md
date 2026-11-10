@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-11-10
+
 ### Fixed
 - Port VLANs were only read from the cache-shaped keys, so a fresh fetch (cache miss or `use_cache=False`) produced edges without VLANs while the same call on a cache hit had them. The port coercer now reads the raw API keys (`native_networkconf_id`, `tagged_vlan_mgmt` and the other aliases) as well, sharing one alias list with the cache serializer
 - The device cache dropped `connect_request_ip`, `version`, port `poe_mode` and the model display fields, and wrote absent fields as `null`. On a cache hit `Device.public_ip` was lost, `model_name` could differ, and `normalize_device_stats` returned `name='None'`. Cached records now keep those fields and omit absent ones. Cache files written before this change lack the new fields until they expire or `invalidate_cache` is called
@@ -342,7 +344,8 @@ First stable release, extracted from `unifi-network-maps` v1.6.x.
 - PyPI trusted publishing via GitHub Actions
 - Dependabot and CodeQL workflows
 
-[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/merlijntishauser/unifi-topology/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/merlijntishauser/unifi-topology/compare/v3.2.1...v3.3.0
 [3.2.1]: https://github.com/merlijntishauser/unifi-topology/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.2...v3.2.0
 [3.1.2]: https://github.com/merlijntishauser/unifi-topology/compare/v3.1.1...v3.1.2
